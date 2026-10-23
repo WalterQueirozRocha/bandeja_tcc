@@ -1,7 +1,16 @@
 import { prisma } from "./banco";
-import { importarFatores, importarFormas, importarIg, importarMarcadores, importarTaco, sugerirFormasCsv } from "./importadores";
+import {
+  importarFatores,
+  importarFormas,
+  importarIg,
+  importarMarcadores,
+  importarTaco,
+  importarUsuarios,
+  sugerirFormasCsv,
+} from "./importadores";
 
-// Uso: npm run importar -- <etapa>
+// Uso: npm run importar -- <etapa>   (usuarios: npm run importar -- usuarios --senha=...)
+const senha = process.argv.find((a) => a.startsWith("--senha="))?.slice("--senha=".length);
 const ETAPAS: Record<string, () => Promise<string> | string> = {
   taco: importarTaco,
   "formas:sugerir": sugerirFormasCsv,
@@ -9,7 +18,9 @@ const ETAPAS: Record<string, () => Promise<string> | string> = {
   fatores: importarFatores,
   marcadores: importarMarcadores,
   ig: importarIg,
+  usuarios: () => importarUsuarios(senha),
 };
+// `usuarios` fica fora do `tudo`: a planilha não é versionada e pede a senha inicial.
 const TUDO = ["taco", "formas", "fatores", "marcadores", "ig"];
 
 const etapa = process.argv[2] ?? "";
