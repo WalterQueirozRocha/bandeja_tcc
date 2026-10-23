@@ -160,6 +160,8 @@ model Ingrediente {
   // forma preparada da TACO aponta para a crua (P1)
   forma_crua_id         Int?
   modo_preparo          ModoPreparo?
+  // desabilitado: some das consultas, mas continua nos registros
+  ativo                 Boolean              @default(true)
 
   forma_crua        Ingrediente?          @relation("FormaPreparada", fields: [forma_crua_id], references: [id])
   formas_preparadas Ingrediente[]         @relation("FormaPreparada")
@@ -209,6 +211,7 @@ model Preparacao {
   nome                 String
   porcao_g             Float
   peso_final_calculado Float?
+  ativo                Boolean @default(true)
 
   itens              ItemPreparacao[]
   marcadores_cozinha MarcadorPreparacao[]
@@ -244,6 +247,7 @@ model Cardapio {
   id      Int      @id @default(autoincrement())
   data    DateTime @db.Date
   periodo Periodo
+  ativo   Boolean  @default(true)
 
   itens ItemCardapio[]
 }
@@ -253,6 +257,8 @@ model ItemCardapio {
   cardapio_id   Int
   preparacao_id Int
   preco         Decimal @db.Decimal(10, 2)
+  // retirado do cardápio depois de vendido
+  ativo         Boolean @default(true)
 
   cardapio    Cardapio    @relation(fields: [cardapio_id], references: [id], onDelete: Cascade)
   preparacao  Preparacao  @relation(fields: [preparacao_id], references: [id])
@@ -267,8 +273,9 @@ model Usuario {
   email      String @unique
   papel      Papel
   senha_hash String
+  ativo      Boolean @default(true)
 
-  aluno                 Aluno?                @relation("UsuarioAluno")
+  aluno                Aluno?                @relation("UsuarioAluno")
   consentimentos        Aluno[]               @relation("Consentimento")
   vinculos              VinculoResponsavel[]
   restricoes_declaradas RestricaoDeclarada[]
@@ -349,6 +356,11 @@ model ItemVenda {
   venda_id         Int
   item_cardapio_id Int
   compatibilidade  Compatibilidade
+  // valores no momento da venda: editar a preparação ou o cardápio não muda o passado
+  preco                    Decimal  @db.Decimal(10, 2)
+  carboidrato_disponivel_g Float?
+  cg                       Float? // Rytz; nulo = não calculável
+  categorias_atencao       String[] @default([]) // base da contagem semanal (RF11)
 
   venda         Venda        @relation(fields: [venda_id], references: [id], onDelete: Cascade)
   item_cardapio ItemCardapio @relation(fields: [item_cardapio_id], references: [id])
