@@ -6,6 +6,7 @@
     "packages/*"
   ],
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "npm run dev -w @bandeja/web",
     "build": "npm run build -w @bandeja/web",
     "typecheck": "npm run typecheck --workspaces --if-present",
