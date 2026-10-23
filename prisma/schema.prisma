@@ -1,0 +1,389 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../packages/dados/src/generated/prisma"
+}
+
+// A URL de conexão fica em prisma.config.ts (Prisma 7).
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------- Tipos fechados ----------
+
+enum TipoCategoria {
+  ALERGENICO
+  LACTOSE
+  GLUTEN
+  ORIGEM_ANIMAL
+}
+
+enum OrigemIngrediente {
+  TACO
+  ROTULO
+}
+
+// Grupos da TACO 4ª ed. — conferir na publicação durante o I1
+enum GrupoAlimentar {
+  CEREAIS
+  VERDURAS_HORTALICAS
+  FRUTAS
+  GORDURAS_OLEOS
+  PESCADOS_FRUTOS_MAR
+  CARNES
+  LEITE
+  BEBIDAS
+  OVOS
+  PRODUTOS_ACUCARADOS
+  MISCELANEAS
+  OUTROS_INDUSTRIALIZADOS
+  ALIMENTOS_PREPARADOS
+  LEGUMINOSAS
+  NOZES_SEMENTES
+}
+
+enum CategoriaCarboidrato {
+  GLICOSE
+  FRUTOSE
+  GALACTOSE
+  MALTOSE
+  TREALOSE
+  SACAROSE
+  LACTOSE
+  ISOMALTULOSE
+  MALTOTRIOSE_MALTOTETRAOSE
+  AMIDO
+  MALTODEXTRINA
+  MALTITOL
+  XILITOL
+  NENHUM
+}
+
+enum ModoPreparo {
+  CRU
+  COZIDO
+  ASSADO
+  GRELHADO
+  FRITO
+}
+
+enum Presenca {
+  CONTEM
+  PODE_CONTER
+}
+
+enum OrigemMarcador {
+  MAPEAMENTO
+  ROTULO
+}
+
+enum ListaIG {
+  LISTA_1
+  LISTA_2
+}
+
+enum Periodo {
+  MANHA
+  TARDE
+}
+
+enum Papel {
+  OPERADOR
+  ALUNO
+  RESPONSAVEL
+  COORDENACAO
+}
+
+enum TipoRestricao {
+  ALERGIA
+  DOENCA_CELIACA
+  INTOLERANCIA
+  RELIGIOSA
+  PREFERENCIA
+}
+
+enum SituacaoBloqueio {
+  SOLICITADA
+  EXECUTADA
+  RECUSADA
+}
+
+enum ResultadoVenda {
+  CONCLUIDA
+  BLOQUEADA
+  CANCELADA_PELO_OPERADOR
+}
+
+enum Compatibilidade {
+  COMPATIVEL
+  ATENCAO
+  BLOQUEADO
+}
+
+enum GrupoSintoma {
+  PELE
+  BOCA_GARGANTA
+  BARRIGA
+  RESPIRACAO
+  OUTROS
+}
+
+// ---------- Cadastro nutricional e cardápio (Fig. 4) ----------
+
+model CategoriaRestricao {
+  codigo            String        @id // ex.: TRIGO, GLUTEN, LACTOSE, SUINA
+  nome              String
+  tipo              TipoCategoria
+  fonte_regulatoria String
+
+  marcadores_ingrediente MarcadorIngrediente[]
+  marcadores_preparacao  MarcadorPreparacao[]
+  restricoes             RestricaoDeclarada[]
+  notificacoes           Notificacao[]
+}
+
+model Ingrediente {
+  id                    Int                  @id @default(autoincrement())
+  nome                  String
+  grupo_alimentar       GrupoAlimentar
+  origem                OrigemIngrediente
+  codigo_taco           Int?                 @unique
+  // por 100 g; nulo = não analisado na TACO ("NA" ou "*")
+  energia_kcal          Float?
+  proteina_g            Float?
+  lipideos_g            Float?
+  carboidrato_g         Float?
+  fibra_g               Float?
+  cinzas_g              Float?
+  umidade_g             Float?
+  categoria_carboidrato CategoriaCarboidrato
+  rds_percentual        Float?
+  // forma preparada da TACO aponta para a crua (P1)
+  forma_crua_id         Int?
+  modo_preparo          ModoPreparo?
+
+  forma_crua        Ingrediente?          @relation("FormaPreparada", fields: [forma_crua_id], references: [id])
+  formas_preparadas Ingrediente[]         @relation("FormaPreparada")
+  marcadores        MarcadorIngrediente[]
+  valor_ig          ValorIG?
+  itens_preparacao  ItemPreparacao[]
+}
+
+model MarcadorIngrediente {
+  ingrediente_id   Int
+  categoria_codigo String
+  presenca         Presenca
+  origem           OrigemMarcador
+  conferido_por_1  String?
+  conferido_por_2  String?
+  data             DateTime       @default(now())
+
+  ingrediente Ingrediente        @relation(fields: [ingrediente_id], references: [id], onDelete: Cascade)
+  categoria   CategoriaRestricao @relation(fields: [categoria_codigo], references: [codigo])
+
+  @@id([ingrediente_id, categoria_codigo])
+}
+
+model ValorIG {
+  id                  Int     @id @default(autoincrement())
+  ingrediente_id      Int     @unique
+  ig                  Float // escala da glicose
+  item_correspondente String
+  lista               ListaIG
+  justificativa       String
+  conferido_por_1     String?
+  conferido_por_2     String?
+
+  ingrediente Ingrediente @relation(fields: [ingrediente_id], references: [id], onDelete: Cascade)
+}
+
+model FatorPreparo {
+  id              Int            @id @default(autoincrement())
+  modo_preparo    ModoPreparo
+  grupo_alimentar GrupoAlimentar
+  fator_coccao    Float
+  referencia      String
+}
+
+model Preparacao {
+  id                   Int    @id @default(autoincrement())
+  nome                 String
+  porcao_g             Float
+  peso_final_calculado Float?
+
+  itens              ItemPreparacao[]
+  marcadores_cozinha MarcadorPreparacao[]
+  itens_cardapio     ItemCardapio[]
+  bloqueios          SolicitacaoBloqueio[]
+}
+
+model ItemPreparacao {
+  preparacao_id     Int
+  ingrediente_id    Int
+  quantidade_crua_g Float
+  modo_preparo      ModoPreparo
+
+  preparacao  Preparacao  @relation(fields: [preparacao_id], references: [id], onDelete: Cascade)
+  ingrediente Ingrediente @relation(fields: [ingrediente_id], references: [id])
+
+  @@id([preparacao_id, ingrediente_id])
+}
+
+model MarcadorPreparacao {
+  preparacao_id    Int
+  categoria_codigo String
+  presenca         Presenca @default(PODE_CONTER) // sempre PODE_CONTER (contato na cozinha)
+  motivo           String
+
+  preparacao Preparacao         @relation(fields: [preparacao_id], references: [id], onDelete: Cascade)
+  categoria  CategoriaRestricao @relation(fields: [categoria_codigo], references: [codigo])
+
+  @@id([preparacao_id, categoria_codigo])
+}
+
+model Cardapio {
+  id      Int      @id @default(autoincrement())
+  data    DateTime @db.Date
+  periodo Periodo
+
+  itens ItemCardapio[]
+}
+
+model ItemCardapio {
+  id            Int     @id @default(autoincrement())
+  cardapio_id   Int
+  preparacao_id Int
+  preco         Decimal @db.Decimal(10, 2)
+
+  cardapio    Cardapio    @relation(fields: [cardapio_id], references: [id], onDelete: Cascade)
+  preparacao  Preparacao  @relation(fields: [preparacao_id], references: [id])
+  itens_venda ItemVenda[]
+}
+
+// ---------- Perfis, vendas e sintomas (Fig. 5) ----------
+
+model Usuario {
+  id         Int    @id @default(autoincrement())
+  nome       String
+  email      String @unique
+  papel      Papel
+  senha_hash String
+
+  aluno                 Aluno?                @relation("UsuarioAluno")
+  consentimentos        Aluno[]               @relation("Consentimento")
+  vinculos              VinculoResponsavel[]
+  restricoes_declaradas RestricaoDeclarada[]
+  bloqueios_solicitados SolicitacaoBloqueio[]
+  vendas_registradas    Venda[]
+  notificacoes          Notificacao[]
+}
+
+model Aluno {
+  id                Int       @id @default(autoincrement())
+  usuario_id        Int?      @unique
+  serie             String
+  consentimento_por Int?
+  consentimento_em  DateTime?
+
+  usuario        Usuario?              @relation("UsuarioAluno", fields: [usuario_id], references: [id])
+  consentido_por Usuario?              @relation("Consentimento", fields: [consentimento_por], references: [id])
+  responsaveis   VinculoResponsavel[]
+  restricoes     RestricaoDeclarada[]
+  bloqueios      SolicitacaoBloqueio[]
+  vendas         Venda[]
+  notificacoes   Notificacao[]
+  sintomas       RegistroSintoma[]
+}
+
+model VinculoResponsavel {
+  aluno_id       Int
+  responsavel_id Int
+
+  aluno       Aluno   @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  responsavel Usuario @relation(fields: [responsavel_id], references: [id], onDelete: Cascade)
+
+  @@id([aluno_id, responsavel_id])
+}
+
+model RestricaoDeclarada {
+  id                 Int           @id @default(autoincrement())
+  aluno_id           Int
+  categoria_codigo   String
+  tipo               TipoRestricao
+  limite_notificacao Int           @default(2) // usado só no acompanhamento
+  declarada_por      Int
+  data               DateTime      @default(now())
+
+  aluno     Aluno              @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  categoria CategoriaRestricao @relation(fields: [categoria_codigo], references: [codigo])
+  autor     Usuario            @relation(fields: [declarada_por], references: [id])
+}
+
+model SolicitacaoBloqueio {
+  id             Int              @id @default(autoincrement())
+  responsavel_id Int
+  aluno_id       Int
+  preparacao_id  Int
+  situacao       SituacaoBloqueio @default(SOLICITADA)
+  data           DateTime         @default(now())
+
+  responsavel Usuario    @relation(fields: [responsavel_id], references: [id])
+  aluno       Aluno      @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  preparacao  Preparacao @relation(fields: [preparacao_id], references: [id])
+}
+
+model Venda {
+  id          Int            @id @default(autoincrement())
+  aluno_id    Int
+  operador_id Int
+  data_hora   DateTime       @default(now())
+  resultado   ResultadoVenda
+
+  aluno    Aluno       @relation(fields: [aluno_id], references: [id])
+  operador Usuario     @relation(fields: [operador_id], references: [id])
+  itens    ItemVenda[]
+
+  @@index([aluno_id, data_hora]) // contagem semanal e histórico
+}
+
+model ItemVenda {
+  venda_id         Int
+  item_cardapio_id Int
+  compatibilidade  Compatibilidade
+
+  venda         Venda        @relation(fields: [venda_id], references: [id], onDelete: Cascade)
+  item_cardapio ItemCardapio @relation(fields: [item_cardapio_id], references: [id])
+
+  @@id([venda_id, item_cardapio_id])
+}
+
+model Notificacao {
+  id               Int      @id @default(autoincrement())
+  destinatario_id  Int
+  aluno_id         Int
+  categoria_codigo String
+  periodo          DateTime @db.Date // segunda-feira da semana
+  enviada_em       DateTime @default(now())
+
+  destinatario Usuario            @relation(fields: [destinatario_id], references: [id])
+  aluno        Aluno              @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  categoria    CategoriaRestricao @relation(fields: [categoria_codigo], references: [codigo])
+}
+
+model Sintoma {
+  codigo    String       @id
+  descricao String
+  grupo     GrupoSintoma
+
+  registros RegistroSintoma[]
+}
+
+model RegistroSintoma {
+  id             Int      @id @default(autoincrement())
+  aluno_id       Int
+  sintoma_codigo String
+  data_hora      DateTime
+  observacao     String?  @db.VarChar(100) // só para o sintoma "outro"
+
+  aluno   Aluno   @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  sintoma Sintoma @relation(fields: [sintoma_codigo], references: [codigo])
+}
