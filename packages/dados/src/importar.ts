@@ -1,0 +1,30 @@
+import { prisma } from "./banco";
+import { importarFatores, importarFormas, importarIg, importarMarcadores, importarTaco, sugerirFormasCsv } from "./importadores";
+
+// Uso: npm run importar -- <etapa>
+const ETAPAS: Record<string, () => Promise<string> | string> = {
+  taco: importarTaco,
+  "formas:sugerir": sugerirFormasCsv,
+  formas: importarFormas,
+  fatores: importarFatores,
+  marcadores: importarMarcadores,
+  ig: importarIg,
+};
+const TUDO = ["taco", "formas", "fatores", "marcadores", "ig"];
+
+const etapa = process.argv[2] ?? "";
+const fila = etapa === "tudo" ? TUDO : [etapa];
+
+async function main() {
+  if (!fila.every((e) => e in ETAPAS)) {
+    throw new Error(`etapa desconhecida "${etapa}". Use: ${[...Object.keys(ETAPAS), "tudo"].join(", ")}`);
+  }
+  for (const e of fila) console.log(`${e}: ${await ETAPAS[e]!()}`);
+}
+
+main()
+  .catch((e: Error) => {
+    console.error(e.message);
+    process.exitCode = 1;
+  })
+  .finally(() => prisma.$disconnect());

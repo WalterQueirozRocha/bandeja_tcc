@@ -1,0 +1,100 @@
+codigo_taco_preparado;nome_preparado;modo_preparo;codigo_taco_cru;nome_cru
+1;Arroz, integral, cozido;COZIDO;2;Arroz, integral, cru
+3;Arroz, tipo 1, cozido;COZIDO;4;Arroz, tipo 1, cru
+5;Arroz, tipo 2, cozido;COZIDO;6;Arroz, tipo 2, cru
+37;Lasanha, massa fresca, cozida;COZIDO;38;Lasanha, massa fresca, crua
+56;Pastel, de carne, frito;FRITO;55;Pastel, de carne, cru
+58;Pastel, de queijo, frito;FRITO;57;Pastel, de queijo, cru
+60;Pastel, massa, frita;FRITO;59;Pastel, massa, crua
+64;Abóbora, cabotian, cozida;COZIDO;65;Abóbora, cabotian, crua
+70;Abobrinha, italiana, cozida;COZIDO;71;Abobrinha, italiana, crua
+86;Batata, baroa, cozida;COZIDO;87;Batata, baroa, crua
+88;Batata, doce, cozida;COZIDO;89;Batata, doce, crua
+91;Batata, inglesa, cozida;COZIDO;92;Batata, inglesa, crua
+93;Batata, inglesa, frita;FRITO;92;Batata, inglesa, crua
+95;Berinjela, cozida;COZIDO;96;Berinjela, crua
+97;Beterraba, cozida;COZIDO;98;Beterraba, crua
+100;Brócolis, cozido;COZIDO;101;Brócolis, cru
+102;Cará, cozido;COZIDO;103;Cará, cru
+109;Cenoura, cozida;COZIDO;110;Cenoura, crua
+112;Chuchu, cozido;COZIDO;113;Chuchu, cru
+118;Couve-flor, cozida;COZIDO;117;Couve-flor, crua
+129;Mandioca, cozida;COZIDO;130;Mandioca, crua
+132;Mandioca, frita;FRITO;130;Mandioca, crua
+140;Pão, de queijo, assado;ASSADO;141;Pão, de queijo, cru
+273;Abadejo, filé, congelado, assado;ASSADO;275;Abadejo, filé, congelado, cru
+274;Abadejo, filé, congelado,cozido;COZIDO;275;Abadejo, filé, congelado, cru
+276;Abadejo, filé, congelado, grelhado;GRELHADO;275;Abadejo, filé, congelado, cru
+282;Cação, posta, cozida;COZIDO;283;Cação, posta, crua
+284;Camarão, Rio Grande, grande, cozido;COZIDO;285;Camarão, Rio Grande, grande, cru
+297;Lambari, congelado, frito;FRITO;296;Lambari, congelado, cru
+301;Merluza, filé, assado;ASSADO;302;Merluza, filé, cru
+303;Merluza, filé, frito;FRITO;302;Merluza, filé, cru
+305;Pescada, branca, frita;FRITO;304;Pescada, branca, crua
+308;Pescada, filé, frito;FRITO;307;Pescada, filé, cru
+311;Pintado, assado;ASSADO;312;Pintado, cru
+313;Pintado, grelhado;GRELHADO;312;Pintado, cru
+317;Salmão, sem pele, fresco, grelhado;GRELHADO;316;Salmão, sem pele, fresco, cru
+326;Carne, bovina, acém, moído, cozido;COZIDO;327;Carne, bovina, acém, moído, cru
+328;Carne, bovina, acém, sem gordura, cozido;COZIDO;329;Carne, bovina, acém, sem gordura, cru
+332;Carne, bovina, bucho, cozido;COZIDO;333;Carne, bovina, bucho, cru
+335;Carne, bovina, capa de contra-filé, com gordura, grelhada;GRELHADO;334;Carne, bovina, capa de contra-filé, com gordura, crua
+337;Carne, bovina, capa de contra-filé, sem gordura, grelhada;GRELHADO;336;Carne, bovina, capa de contra-filé, sem gordura, crua
+338;Carne, bovina, charque, cozido;COZIDO;339;Carne, bovina, charque, cru
+342;Carne, bovina, contra-filé de costela, grelhado;GRELHADO;341;Carne, bovina, contra-filé de costela, cru
+344;Carne, bovina, contra-filé, com gordura, grelhado;GRELHADO;343;Carne, bovina, contra-filé, com gordura, cru
+346;Carne, bovina, contra-filé, sem gordura, grelhado;GRELHADO;345;Carne, bovina, contra-filé, sem gordura, cru
+347;Carne, bovina, costela, assada;ASSADO;348;Carne, bovina, costela, crua
+349;Carne, bovina, coxão duro, sem gordura, cozido;COZIDO;350;Carne, bovina, coxão duro, sem gordura, cru
+351;Carne, bovina, coxão mole, sem gordura, cozido;COZIDO;352;Carne, bovina, coxão mole, sem gordura, cru
+353;Carne, bovina, cupim, assado;ASSADO;354;Carne, bovina, cupim, cru
+356;Carne, bovina, fígado, grelhado;GRELHADO;355;Carne, bovina, fígado, cru
+358;Carne, bovina, filé mingnon, sem gordura, grelhado;GRELHADO;357;Carne, bovina, filé mingnon, sem gordura, cru
+359;Carne, bovina, flanco, sem gordura, cozido;COZIDO;360;Carne, bovina, flanco, sem gordura, cru
+361;Carne, bovina, fraldinha, com gordura, cozida;COZIDO;362;Carne, bovina, fraldinha, com gordura, crua
+363;Carne, bovina, lagarto, cozido;COZIDO;364;Carne, bovina, lagarto, cru
+365;Carne, bovina, língua, cozida;COZIDO;366;Carne, bovina, língua, crua
+368;Carne, bovina, maminha, grelhada;GRELHADO;367;Carne, bovina, maminha, crua
+370;Carne, bovina, miolo de alcatra, sem gordura, grelhado;GRELHADO;369;Carne, bovina, miolo de alcatra, sem gordura, cru
+371;Carne, bovina, músculo, sem gordura, cozido;COZIDO;372;Carne, bovina, músculo, sem gordura, cru
+374;Carne, bovina, paleta, sem gordura, cozida;COZIDO;375;Carne, bovina, paleta, sem gordura, crua
+377;Carne, bovina, patinho, sem gordura, grelhado;GRELHADO;376;Carne, bovina, patinho, sem gordura, cru
+378;Carne, bovina, peito, sem gordura, cozido;COZIDO;379;Carne, bovina, peito, sem gordura, cru
+381;Carne, bovina, picanha, com gordura, grelhada;GRELHADO;380;Carne, bovina, picanha, com gordura, crua
+383;Carne, bovina, picanha, sem gordura, grelhada;GRELHADO;382;Carne, bovina, picanha, sem gordura, crua
+384;Carne, bovina, seca, cozida;COZIDO;385;Carne, bovina, seca, crua
+388;Croquete, de carne, frito;FRITO;387;Croquete, de carne, cru
+395;Frango, coração, grelhado;GRELHADO;394;Frango, coração, cru
+396;Frango, coxa, com pele, assada;ASSADO;397;Frango, coxa, com pele, crua
+398;Frango, coxa, sem pele, cozida;COZIDO;399;Frango, coxa, sem pele, crua
+403;Frango, inteiro, sem pele, assado;ASSADO;405;Frango, inteiro, sem pele, cru
+404;Frango, inteiro, sem pele, cozido;COZIDO;405;Frango, inteiro, sem pele, cru
+406;Frango, peito, com pele, assado;ASSADO;407;Frango, peito, com pele, cru
+408;Frango, peito, sem pele, cozido;COZIDO;409;Frango, peito, sem pele, cru
+410;Frango, peito, sem pele, grelhado;GRELHADO;409;Frango, peito, sem pele, cru
+411;Frango, sobrecoxa, com pele, assada;ASSADO;412;Frango, sobrecoxa, com pele, crua
+413;Frango, sobrecoxa, sem pele, assada;ASSADO;414;Frango, sobrecoxa, sem pele, crua
+416;Hambúrguer, bovino, frito;FRITO;415;Hambúrguer, bovino, cru
+417;Hambúrguer, bovino, grelhado;GRELHADO;415;Hambúrguer, bovino, cru
+419;Lingüiça, frango, frita;FRITO;418;Lingüiça, frango, crua
+420;Lingüiça, frango, grelhada;GRELHADO;418;Lingüiça, frango, crua
+422;Lingüiça, porco, frita;FRITO;421;Lingüiça, porco, crua
+423;Lingüiça, porco, grelhada;GRELHADO;421;Lingüiça, porco, crua
+425;Peru, congelado, assado;ASSADO;426;Peru, congelado, cru
+428;Porco, bisteca, frita;FRITO;427;Porco, bisteca, crua
+429;Porco, bisteca, grelhada;GRELHADO;427;Porco, bisteca, crua
+430;Porco, costela, assada;ASSADO;431;Porco, costela, crua
+432;Porco, lombo, assado;ASSADO;433;Porco, lombo, cru
+435;Porco, pernil, assado;ASSADO;436;Porco, pernil, cru
+440;Quibe, assado;ASSADO;441;Quibe, cru
+442;Quibe, frito;FRITO;441;Quibe, cru
+445;Toucinho, frito;FRITO;444;Toucinho, cru
+490;Ovo, de galinha, inteiro, frito;FRITO;489;Ovo, de galinha, inteiro, cru
+561;Feijão, carioca, cozido;COZIDO;562;Feijão, carioca, cru
+563;Feijão, fradinho, cozido;COZIDO;564;Feijão, fradinho, cru
+565;Feijão, jalo, cozido;COZIDO;566;Feijão, jalo, cru
+567;Feijão, preto, cozido;COZIDO;568;Feijão, preto, cru
+569;Feijão, rajado, cozido;COZIDO;570;Feijão, rajado, cru
+571;Feijão, rosinha, cozido;COZIDO;572;Feijão, rosinha, cru
+573;Feijão, roxo, cozido;COZIDO;574;Feijão, roxo, cru
+577;Lentilha, cozida;COZIDO;578;Lentilha, crua
