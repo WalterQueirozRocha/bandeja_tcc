@@ -1,3 +1,4 @@
+import { Indicador, PAINEL } from "@/components/indicador";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
 import { alunosDoResponsavel } from "@/repositories/alunos";
 import { alunoDaConsulta } from "@/services/alunos";
@@ -24,31 +25,36 @@ export default async function Historico({ searchParams }: PageProps<"/historico"
   }
 
   return (
-    <main className="flex flex-col gap-3 p-4">
-      <h1 className="text-2xl font-semibold">Histórico de consumo</h1>
+    <main className="flex flex-col gap-4 p-4">
+      <h1>Histórico de consumo</h1>
       {alunos.length > 1 && (
         <form className="flex gap-2">
-          <select name="aluno_id" defaultValue={alunoParam} className="rounded border p-2">
+          <select name="aluno_id" defaultValue={alunoParam} aria-label="Aluno" className="campo">
             {alunos.map((a) => (
               <option key={a.id} value={a.id}>
                 {a.nome}
               </option>
             ))}
           </select>
-          <button type="submit" className="rounded border px-4">
+          <button type="submit" className="btn-primario">
             Ver
           </button>
         </form>
       )}
-      {vendas.length === 0 && <p>Nenhum consumo registrado.</p>}
-      <ul className="flex flex-col gap-3">
+      {vendas.length === 0 && <p className="text-secondary">Nenhum consumo registrado.</p>}
+      <ul className="grid gap-4 md:grid-cols-2">
         {vendas.map((v) => (
-          <li key={v.venda_id} className="rounded border p-3">
-            <p className="font-semibold">{new Date(v.data_hora).toLocaleString("pt-BR", { timeZone: "America/Bahia" })}</p>
-            <p>{v.itens.map((i) => i.nome).join(", ")}</p>
-            <p className="text-sm">
-              Carboidrato disponível: {num(v.carboidrato_disponivel_g)} g · CG da refeição: {num(v.cg_refeicao)} ({v.rotulo})
-            </p>
+          <li key={v.venda_id} className="cartao flex flex-col gap-3">
+            <div>
+              <p className="text-sm text-secondary tabular-nums">
+                {new Date(v.data_hora).toLocaleString("pt-BR", { timeZone: "America/Bahia" })}
+              </p>
+              <p className="font-semibold">{v.itens.map((i) => i.nome).join(", ")}</p>
+            </div>
+            <dl className={`${PAINEL} grid-cols-2`}>
+              <Indicador rotulo="Carb. disponível" valor={`${num(v.carboidrato_disponivel_g)} g`} destaque />
+              <Indicador rotulo={`CG da refeição (${v.rotulo})`} valor={num(v.cg_refeicao)} />
+            </dl>
           </li>
         ))}
       </ul>

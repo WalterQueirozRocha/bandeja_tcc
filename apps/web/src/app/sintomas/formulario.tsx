@@ -43,29 +43,40 @@ export function FormularioSintoma({ alunoId, grupos }: { alunoId: number; grupos
   }
 
   return (
-    <form action={registrar} className="flex flex-col gap-3">
-      {grupos.map((g) => (
-        <fieldset key={g.grupo} className="flex flex-col gap-1">
-          <legend className="font-semibold">{NOME_GRUPO[g.grupo]}</legend>
-          {g.sintomas.map((s) => (
-            <label key={s.codigo} className="flex gap-2">
-              <input type="radio" name="sintoma" value={s.codigo} checked={sintoma === s.codigo} onChange={() => setSintoma(s.codigo)} />
-              {s.descricao}
-            </label>
-          ))}
-        </fieldset>
-      ))}
+    <form action={registrar} className="flex flex-col gap-4">
+      <div className="grid gap-4 md:grid-cols-2">
+        {grupos.map((g) => (
+          <div key={g.grupo} className="cartao">
+            <fieldset className="flex flex-col gap-2">
+              <legend className="mb-2 font-heading font-bold">{NOME_GRUPO[g.grupo]}</legend>
+              {g.sintomas.map((s) => (
+                <label
+                  key={s.codigo}
+                  className="flex cursor-pointer items-center gap-2 rounded-lg border border-borda p-2 has-checked:border-brand-royal has-checked:ring-1 has-checked:ring-brand-royal"
+                >
+                  <input type="radio" name="sintoma" value={s.codigo} checked={sintoma === s.codigo} onChange={() => setSintoma(s.codigo)} />
+                  {s.descricao}
+                </label>
+              ))}
+            </fieldset>
+          </div>
+        ))}
+      </div>
       {sintoma === "OUTRO" && (
-        <input name="observacao" maxLength={100} required placeholder="Descreva em poucas palavras" className="rounded border p-2" />
+        <input name="observacao" maxLength={100} required placeholder="Descreva em poucas palavras" className="campo" />
       )}
-      <label className="flex flex-col gap-1">
+      <label className="flex flex-col gap-1 text-sm font-medium">
         Data e hora
-        <input type="datetime-local" name="data_hora" defaultValue={agoraLocal()} required className="rounded border p-2" />
+        <input type="datetime-local" name="data_hora" defaultValue={agoraLocal()} required className="campo" />
       </label>
-      <button type="submit" disabled={!sintoma} className="rounded bg-zinc-900 p-2 text-white disabled:opacity-40">
+      <button type="submit" disabled={!sintoma} className="btn-primario">
         Registrar
       </button>
-      {mensagem && <p role="status">{mensagem}</p>}
+      {mensagem && (
+        <p role="status" className="font-medium">
+          {mensagem}
+        </p>
+      )}
     </form>
   );
 }

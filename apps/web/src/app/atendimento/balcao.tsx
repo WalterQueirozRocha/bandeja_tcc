@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Alerta } from "@/components/alerta";
 
 type Item = { id: number; nome: string; preco: number };
 type Aluno = { id: number; nome: string; serie: string };
@@ -16,6 +17,10 @@ const TITULO = {
   CANCELADA_PELO_OPERADOR: "Venda encerrada",
   CONFIRMACAO_NECESSARIA: "Atenção: confirme com o aluno",
 };
+
+const ESTADO = { CONCLUIDA: "COMPATIVEL", BLOQUEADA: "BLOQUEADO", CONFIRMACAO_NECESSARIA: "ATENCAO" } as const;
+
+const opcao = "flex cursor-pointer items-center gap-3 rounded-lg border border-borda bg-surface-card p-3 has-checked:border-brand-royal has-checked:ring-1 has-checked:ring-brand-royal";
 
 export function Balcao({ itens }: { itens: Item[] }) {
   const [busca, setBusca] = useState("");
@@ -42,51 +47,64 @@ export function Balcao({ itens }: { itens: Item[] }) {
 
   const alertas = resposta?.itens?.flatMap((i) => i.alertas) ?? [];
   const alternativas = [...new Set(resposta?.itens?.flatMap((i) => i.alternativas?.map((a) => a.nome) ?? []) ?? [])];
+  const estado = resposta && !resposta.erro && resposta.resultado !== "CANCELADA_PELO_OPERADOR" ? ESTADO[resposta.resultado] : null;
 
   return (
-    <section className="flex flex-col gap-3">
-      <div className="flex gap-2">
-        <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Nome do aluno" className="flex-1 rounded border p-2" />
-        <button type="button" onClick={buscarAlunos} className="rounded border px-4">
-          Buscar aluno
-        </button>
-      </div>
-      {alunos.map((a) => (
-        <label key={a.id} className="flex gap-2">
-          <input type="radio" name="aluno" checked={aluno?.id === a.id} onChange={() => {
-              setAluno(a);
-              setResposta(null);
-            }}
-          />
-          {a.nome} ({a.serie})
-        </label>
-      ))}
-
-      <fieldset className="flex flex-col gap-1">
-        <legend className="font-semibold">Itens</legend>
-        {itens.map((i) => (
-          <label key={i.id} className="flex gap-2">
+    <div className="grid gap-4 md:grid-cols-2">
+      <section className="cartao flex flex-col gap-3">
+        <h2>Aluno</h2>
+        <div className="flex gap-2">
+          <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Nome do aluno" className="campo min-w-0 flex-1" />
+          <button type="button" onClick={buscarAlunos} className="btn-secundario">
+            Buscar aluno
+          </button>
+        </div>
+        {alunos.map((a) => (
+          <label key={a.id} className={opcao}>
             <input
-              type="checkbox"
-              checked={marcados.includes(i.id)}
-              onChange={(e) => setMarcados(e.target.checked ? [...marcados, i.id] : marcados.filter((m) => m !== i.id))}
+              type="radio"
+              name="aluno"
+              checked={aluno?.id === a.id}
+              onChange={() => {
+                setAluno(a);
+                setResposta(null);
+              }}
             />
-            {i.nome} — R$ {i.preco.toFixed(2).replace(".", ",")}
+            <span>
+              {a.nome} <span className="text-secondary">({a.serie})</span>
+            </span>
           </label>
         ))}
-      </fieldset>
+      </section>
 
-      <button type="button" disabled={!aluno || marcados.length === 0} onClick={() => vender()} className="rounded bg-zinc-900 p-2 text-white disabled:opacity-40">
-        Registrar venda
-      </button>
+      <section className="cartao flex flex-col gap-3">
+        <fieldset className="flex flex-col gap-2">
+          <legend className="mb-2 font-heading text-lg font-bold">Itens</legend>
+          {itens.map((i) => (
+            <label key={i.id} className={opcao}>
+              <input
+                type="checkbox"
+                checked={marcados.includes(i.id)}
+                onChange={(e) => setMarcados(e.target.checked ? [...marcados, i.id] : marcados.filter((m) => m !== i.id))}
+              />
+              <span className="flex-1">{i.nome}</span>
+              <span className="text-secondary tabular-nums">R$ {i.preco.toFixed(2).replace(".", ",")}</span>
+            </label>
+          ))}
+        </fieldset>
+        <button type="button" disabled={!aluno || marcados.length === 0} onClick={() => vender()} className="btn-primario">
+          Registrar venda
+        </button>
+      </section>
 
       {resposta && (
-        <div role="alert" data-testid="resultado-venda" className={`rounded border-2 p-3 ${resposta.resultado === "BLOQUEADA" ? "border-red-600" : "border-amber-500"}`}>
+        <div role="alert" data-testid="resultado-venda" className="md:col-span-2">
           {resposta.erro ? (
-            <p>{resposta.erro}</p>
+            <Alerta estado="BLOQUEADO">{resposta.erro}</Alerta>
+          ) : !estado ? (
+            <p className="cartao font-semibold">{TITULO[resposta.resultado]}</p>
           ) : (
-            <>
-              <p className="text-lg font-bold">{TITULO[resposta.resultado]}</p>
+            <Alerta estado={estado} titulo={TITULO[resposta.resultado]}>
               {alertas.map((a) => (
                 <p key={a} className="font-semibold">
                   {a}
@@ -94,19 +112,19 @@ export function Balcao({ itens }: { itens: Item[] }) {
               ))}
               {alternativas.length > 0 && <p>Sugestões compatíveis: {alternativas.join(", ")}</p>}
               {resposta.resultado === "CONFIRMACAO_NECESSARIA" && (
-                <div className="mt-2 flex gap-2">
-                  <button type="button" onClick={() => vender("CONCLUIR")} className="rounded bg-zinc-900 px-4 py-2 text-white">
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <button type="button" onClick={() => vender("CONCLUIR")} className="btn-primario">
                     Concluir venda
                   </button>
-                  <button type="button" onClick={() => vender("ENCERRAR")} className="rounded border px-4 py-2">
+                  <button type="button" onClick={() => vender("ENCERRAR")} className="btn-secundario">
                     Encerrar venda
                   </button>
                 </div>
               )}
-            </>
+            </Alerta>
           )}
         </div>
       )}
-    </section>
+    </div>
   );
 }

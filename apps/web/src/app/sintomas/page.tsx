@@ -1,3 +1,4 @@
+import { Alerta } from "@/components/alerta";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
 import { buscarAlunoDoUsuario } from "@/repositories/alunos";
 import { registrosDoAluno } from "@/repositories/sintomas";
@@ -12,18 +13,21 @@ export default async function Sintomas() {
   const [{ aviso, grupos }, registros] = await Promise.all([listaDeSintomas(), registrosDoAluno(aluno.id)]);
 
   return (
-    <main className="flex flex-col gap-3 p-4">
-      <p role="note" data-testid="aviso-sintomas" className="rounded border-2 border-red-600 p-3 font-semibold">
+    <main className="flex flex-col gap-4 p-4">
+      <Alerta estado="AVISO" role="note" data-testid="aviso-sintomas" className="sticky top-2 z-10 font-semibold shadow-sm">
         {aviso}
-      </p>
-      <h1 className="text-2xl font-semibold">Como estou me sentindo</h1>
+      </Alerta>
+      <h1>Como estou me sentindo</h1>
       <FormularioSintoma alunoId={aluno.id} grupos={grupos} />
-      <h2 className="text-lg font-semibold">Meus registros</h2>
-      {registros.length === 0 && <p>Nenhum registro.</p>}
-      <ul className="flex flex-col gap-1">
+      <h2>Meus registros</h2>
+      {registros.length === 0 && <p className="text-secondary">Nenhum registro.</p>}
+      <ul className="flex flex-col gap-2">
         {registros.map((r) => (
-          <li key={r.id} className="rounded border p-2">
-            {r.data_hora.toLocaleString("pt-BR", { timeZone: "America/Bahia" })} — {r.sintoma.descricao}
+          <li key={r.id} className="cartao py-3">
+            <span className="block text-sm text-secondary tabular-nums">
+              {r.data_hora.toLocaleString("pt-BR", { timeZone: "America/Bahia" })}
+            </span>
+            {r.sintoma.descricao}
             {r.observacao && `: ${r.observacao}`}
           </li>
         ))}

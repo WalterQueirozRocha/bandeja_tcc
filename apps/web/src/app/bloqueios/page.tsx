@@ -1,3 +1,4 @@
+import { Selo } from "@/components/alerta";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
 import { alunosDoResponsavel } from "@/repositories/alunos";
 import { listarPreparacoes } from "@/repositories/preparacoes";
@@ -15,16 +16,23 @@ export default async function Bloqueios() {
     : [[], []];
 
   return (
-    <main className="flex flex-col gap-3 p-4">
-      <h1 className="text-2xl font-semibold">Bloqueios</h1>
+    <main className="flex flex-col gap-4 p-4">
+      <h1>Bloqueios</h1>
       {responsavel && <NovoBloqueio alunos={alunos} preparacoes={preparacoes.map((p) => ({ id: p.id, nome: p.nome }))} />}
-      {bloqueios.length === 0 && <p>Nenhum bloqueio.</p>}
+      {bloqueios.length === 0 && <p className="text-secondary">Nenhum bloqueio.</p>}
       <ul className="flex flex-col gap-2">
         {bloqueios.map((b) => (
-          <li key={b.id} className="flex flex-wrap items-center gap-2 rounded border p-2">
+          <li key={b.id} className="cartao flex flex-wrap items-center gap-3 py-3">
             <span className="flex-1">
-              {b.aluno.nome} — {b.preparacao.nome} — <strong>{b.situacao}</strong>
+              <span className="font-semibold">{b.preparacao.nome}</span>
+              <span className="block text-sm text-secondary">{b.aluno.nome}</span>
             </span>
+            {/* Executado = venda bloqueada (RF14); as outras situações não têm cor semântica. */}
+            {b.situacao === "EXECUTADA" ? (
+              <Selo estado="BLOQUEADO">{b.situacao}</Selo>
+            ) : (
+              <span className="rounded-full border border-borda px-2.5 py-0.5 text-xs font-bold text-secondary">{b.situacao}</span>
+            )}
             <AcaoBloqueio id={b.id} papel={sessao.papel} situacao={b.situacao} />
           </li>
         ))}

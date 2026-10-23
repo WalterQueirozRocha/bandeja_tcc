@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { Alerta, ROTULO, Selo } from "@/components/alerta";
+import { Indicador, PAINEL } from "@/components/indicador";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
 import { hojeNaBahia } from "@/lib/datas";
 import { alunosDoResponsavel } from "@/repositories/alunos";
@@ -7,9 +10,8 @@ import { montarCardapio } from "@/services/cardapios";
 import { ErroNegocio } from "@/services/erros";
 
 const num = (n: number) => n.toLocaleString("pt-BR", { maximumFractionDigits: 1 });
-const MARCA = { COMPATIVEL: "Compatível", ATENCAO: "Atenção", BLOQUEADO: "Bloqueado" } as const;
 
-// Página mínima (RF07, CT23): a compatibilidade vem pronta do servidor.
+// RF07, CT23: a compatibilidade vem pronta do servidor.
 export default async function Cardapio({ searchParams }: PageProps<"/cardapio">) {
   const sessao = await exigirSessaoNaPagina();
   const params = await searchParams;
@@ -29,16 +31,16 @@ export default async function Cardapio({ searchParams }: PageProps<"/cardapio">)
   }
 
   return (
-    <main className="flex flex-col gap-3 p-4">
-      <h1 className="text-2xl font-semibold">Cardápio</h1>
+    <main className="flex flex-col gap-4 p-4">
+      <h1>Cardápio</h1>
       <form className="flex flex-wrap gap-2">
-        <input type="date" name="data" defaultValue={data} className="rounded border p-2" />
-        <select name="periodo" defaultValue={periodo} className="rounded border p-2">
+        <input type="date" name="data" defaultValue={data} aria-label="Data" className="campo" />
+        <select name="periodo" defaultValue={periodo} aria-label="Turno" className="campo">
           <option value="MANHA">Manhã</option>
           <option value="TARDE">Tarde</option>
         </select>
         {alunos.length > 0 && (
-          <select name="aluno_id" defaultValue={alunoParam ?? alunos[0]!.id} className="rounded border p-2">
+          <select name="aluno_id" defaultValue={alunoParam ?? alunos[0]!.id} aria-label="Aluno" className="campo">
             {alunos.map((a) => (
               <option key={a.id} value={a.id}>
                 {a.nome}
@@ -46,44 +48,68 @@ export default async function Cardapio({ searchParams }: PageProps<"/cardapio">)
             ))}
           </select>
         )}
-        <button type="submit" className="rounded bg-zinc-900 px-4 text-white">
+        <button type="submit" className="btn-primario">
           Ver
         </button>
       </form>
 
       {!conteudo ? (
-        <p>Nenhum cardápio publicado para esta data e turno.</p>
+        <p className="text-secondary">Nenhum cardápio publicado para esta data e turno.</p>
       ) : (
-        <ul className="flex flex-col gap-3">
-          {conteudo.itens.map((item) => (
-            <li key={item.id} className="rounded border p-3" data-testid="item-cardapio">
-              <div className="flex justify-between gap-2">
-                <strong>{item.nome}</strong>
-                <span>R$ {item.preco.toFixed(2).replace(".", ",")}</span>
-              </div>
-              {item.compatibilidade && (
-                <p data-testid="compatibilidade">
-                  {MARCA[item.compatibilidade.resultado]}
-                  {item.compatibilidade.alertas.map((a) => ` · ${a.texto}`)}
-                </p>
-              )}
-              {"alternativas" in item && item.alternativas.length > 0 && (
-                <p className="text-sm" data-testid="alternativas">
-                  Alternativas compatíveis: {item.alternativas.map((a) => a.nome).join(", ")}
-                </p>
-              )}
-              <p className="text-sm">
-                Alergênicos:{" "}
-                {item.alergenos.length
-                  ? item.alergenos.map((a) => `${a.nome}${a.presenca === "PODE_CONTER" ? " (pode conter)" : ""}`).join(", ")
-                  : "nenhum marcado"}
-              </p>
-              <p className="text-sm">
-                Carboidrato disponível: {num(item.carga_glicemica.carboidrato_disponivel_g)} g
-                {item.carga_glicemica.rytz && ` · CG ${num(item.carga_glicemica.rytz.cg)} (${item.carga_glicemica.rotulo})`}
-              </p>
-            </li>
-          ))}
+        <ul className="grid gap-4 md:grid-cols-2">
+          {conteudo.itens.map((item) => {
+            const cg = item.carga_glicemica;
+            const contem = item.alergenos.filter((a) => a.presenca === "CONTEM").map((a) => a.nome);
+            const podeConter = item.alergenos.filter((a) => a.presenca === "PODE_CONTER").map((a) => a.nome);
+            return (
+              <li key={item.id} className="cartao flex flex-col gap-3" data-testid="item-cardapio">
+                <div>
+                  <h2 className="text-base">
+                    <Link href={`/preparacoes/${item.preparacao_id}`} className="text-brand-navy">
+                      {item.nome}
+                    </Link>
+                  </h2>
+                  <p className="text-sm text-secondary tabular-nums">R$ {item.preco.toFixed(2).replace(".", ",")}</p>
+                </div>
+
+                {item.compatibilidade && (
+                  <div data-testid="compatibilidade" className="flex flex-col items-start gap-2">
+                    <Selo estado={item.compatibilidade.resultado}>{ROTULO[item.compatibilidade.resultado]}</Selo>
+                    {item.compatibilidade.alertas.map((a) => (
+                      <Alerta key={a.texto} estado={a.resultado} className="w-full text-sm font-semibold">
+                        {a.texto}
+                      </Alerta>
+                    ))}
+                  </div>
+                )}
+
+                <dl className={`${PAINEL} grid-cols-2`}>
+                  <Indicador rotulo="Carb. disponível" valor={`${num(cg.carboidrato_disponivel_g)} g`} destaque />
+                  <Indicador rotulo={`CG (Rytz · ${cg.rotulo})`} valor={cg.rytz ? num(cg.rytz.cg) : "—"} />
+                </dl>
+
+                <div className="flex flex-col gap-1 text-sm">
+                  {contem.length === 0 && podeConter.length === 0 && <p className="text-secondary">Nenhum alergênico marcado.</p>}
+                  {contem.length > 0 && (
+                    <p className="rounded-md border border-bloqueado bg-bloqueado-fundo px-2 py-1 text-bloqueado-texto">
+                      <strong className="uppercase">Contém:</strong> {contem.join(", ")}
+                    </p>
+                  )}
+                  {podeConter.length > 0 && (
+                    <p className="rounded-md border border-atencao bg-atencao-fundo px-2 py-1 text-atencao-texto">
+                      <strong className="uppercase">Pode conter:</strong> {podeConter.join(", ")}
+                    </p>
+                  )}
+                </div>
+
+                {"alternativas" in item && item.alternativas.length > 0 && (
+                  <p className="text-sm font-medium text-compativel-texto" data-testid="alternativas">
+                    Alternativas compatíveis: {item.alternativas.map((a) => a.nome).join(", ")}
+                  </p>
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
     </main>
