@@ -1,9 +1,18 @@
-import { prisma, type GrupoAlimentar, type OrigemIngrediente, type OrigemMarcador, type Presenca, type Prisma } from "@bandeja/dados";
+import {
+  prisma,
+  type GrupoAlimentar,
+  type ModoPreparo,
+  type OrigemIngrediente,
+  type OrigemMarcador,
+  type Presenca,
+  type Prisma,
+} from "@bandeja/dados";
 
 export type FiltroIngredientes = {
   busca?: string;
   grupo?: GrupoAlimentar;
   origem?: OrigemIngrediente;
+  inativos?: boolean;
   pagina: number;
   tamanho: number;
 };
@@ -16,10 +25,11 @@ export type NovoMarcador = {
   conferido_por_2?: string | null;
 };
 
-export async function listarIngredientes({ busca, grupo, origem, pagina, tamanho }: FiltroIngredientes) {
+export async function listarIngredientes({ busca, grupo, origem, inativos, pagina, tamanho }: FiltroIngredientes) {
   const where: Prisma.IngredienteWhereInput = {
     grupo_alimentar: grupo,
     origem,
+    ativo: inativos ? undefined : true,
     ...(busca && { nome: { contains: busca, mode: "insensitive" } }),
   };
   const [total, itens] = await prisma.$transaction([
@@ -36,6 +46,7 @@ export async function listarIngredientes({ busca, grupo, origem, pagina, tamanho
         grupo_alimentar: true,
         origem: true,
         modo_preparo: true,
+        ativo: true,
         marcadores: { select: { categoria_codigo: true, presenca: true } },
       },
     }),
@@ -65,6 +76,28 @@ export function criarIngredienteRotulo(
   });
 }
 
+export function atualizarIngrediente(id: number, dados: Prisma.IngredienteUpdateInput) {
+  return prisma.ingrediente.update({ where: { id }, data: dados });
+}
+
+export type DadosIg = Omit<Prisma.ValorIGUncheckedCreateInput, "id" | "ingrediente_id">;
+
+export function salvarIg(ingrediente_id: number, dados: DadosIg) {
+  return prisma.valorIG.upsert({ where: { ingrediente_id }, update: dados, create: { ...dados, ingrediente_id } });
+}
+
+export function apagarIg(ingrediente_id: number) {
+  return prisma.valorIG.deleteMany({ where: { ingrediente_id } });
+}
+
+export function ligarFormaCrua(id: number, forma_crua_id: number | null, modo_preparo: ModoPreparo | null) {
+  return prisma.ingrediente.update({
+    where: { id },
+    data: { forma_crua_id, modo_preparo },
+    select: { id: true, nome: true, forma_crua_id: true, modo_preparo: true },
+  });
+}
+
 export async function substituirMarcadores(ingrediente_id: number, marcadores: NovoMarcador[]) {
   const [, , atualizados] = await prisma.$transaction([
     prisma.marcadorIngrediente.deleteMany({ where: { ingrediente_id } }),
@@ -72,6 +105,14 @@ export async function substituirMarcadores(ingrediente_id: number, marcadores: N
     prisma.marcadorIngrediente.findMany({ where: { ingrediente_id } }),
   ]);
   return atualizados;
+}
+
+export function apagarIngrediente(id: number) {
+  return prisma.ingrediente.delete({ where: { id } });
+}
+
+export function mudarAtivoIngrediente(id: number, ativo: boolean) {
+  return prisma.ingrediente.update({ where: { id }, data: { ativo }, select: { id: true, ativo: true } });
 }
 
 export async function codigosCategorias() {
