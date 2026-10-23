@@ -1,0 +1,24 @@
+{
+  "name": "@bandeja/dados",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "seed": "tsx --env-file-if-exists=../../.env src/seed.ts",
+    "importar": "tsx --env-file-if-exists=../../.env src/importar.ts"
+  },
+  "devDependencies": {
+    "tsx": "4.23.15",
+    "typescript": "^5",
+    "vitest": "5.0.5"
+  },
+  "dependencies": {
+    "@bandeja/dominio": "^0.1.0",
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "bcryptjs": "3.0.3"
+  }
+}
