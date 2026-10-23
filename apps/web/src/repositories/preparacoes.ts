@@ -22,6 +22,7 @@ const camposCalculo = {
 
 export const selecaoIngredienteCalculo = {
   ...camposCalculo,
+  ativo: true,
   formas_preparadas: { select: camposCalculo },
 } satisfies Prisma.IngredienteSelect;
 
@@ -35,12 +36,20 @@ export type DadosPreparacao = {
   contato_cozinha: { categoria_codigo: string; motivo: string }[];
 };
 
-export function listarPreparacoes(busca?: string) {
+export function listarPreparacoes(busca?: string, inativos = false) {
   return prisma.preparacao.findMany({
-    where: busca ? { nome: { contains: busca, mode: "insensitive" } } : undefined,
+    where: { ativo: inativos ? undefined : true, ...(busca && { nome: { contains: busca, mode: "insensitive" } }) },
     orderBy: { nome: "asc" },
-    select: { id: true, nome: true, porcao_g: true, peso_final_calculado: true },
+    select: { id: true, nome: true, porcao_g: true, peso_final_calculado: true, ativo: true },
   });
+}
+
+export function apagarPreparacao(id: number) {
+  return prisma.preparacao.delete({ where: { id } });
+}
+
+export function mudarAtivoPreparacao(id: number, ativo: boolean) {
+  return prisma.preparacao.update({ where: { id }, data: { ativo }, select: { id: true, ativo: true } });
 }
 
 const inclusaoCalculo = {

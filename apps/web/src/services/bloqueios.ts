@@ -1,5 +1,5 @@
 import type { Sessao } from "@/lib/acesso";
-import { preparacoesExistentes } from "@/repositories/cardapios";
+import { preparacoesAtivas } from "@/repositories/cardapios";
 import {
   apagarBloqueio,
   buscarBloqueio,
@@ -15,7 +15,7 @@ import { ErroNegocio } from "./erros";
 // RF14 / P6: o responsável solicita o bloqueio de uma preparação; vale depois que o operador executa.
 export async function solicitarBloqueio(sessao: Sessao, aluno_id: number, preparacao_id: number) {
   await exigirAcessoAoAluno(sessao, aluno_id, ["RESPONSAVEL"]);
-  if (!(await preparacoesExistentes([preparacao_id])).has(preparacao_id)) throw new ErroNegocio("Preparação não encontrada");
+  if (!(await preparacoesAtivas([preparacao_id])).has(preparacao_id)) throw new ErroNegocio("Preparação não encontrada ou desabilitada");
   if (await existeBloqueioAtivo(aluno_id, preparacao_id)) throw new ErroNegocio("Já existe bloqueio ativo para esta preparação");
   return criarBloqueio(sessao.id, aluno_id, preparacao_id);
 }

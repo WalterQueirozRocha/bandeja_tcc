@@ -11,16 +11,19 @@ import type { GrupoAlimentar, ModoPreparo } from "@bandeja/dados";
 import type { DadosPreparacaoEntrada } from "@/lib/validacao";
 import { codigosCategorias } from "@/repositories/ingredientes";
 import {
+  apagarPreparacao,
   atualizarPreparacao,
   buscarIngredientesCalculo,
   buscarPreparacao,
   buscarPreparacoes,
   criarPreparacao,
   listarFatores,
+  mudarAtivoPreparacao,
   nomesCategorias,
   type IngredienteCalculo,
 } from "@/repositories/preparacoes";
 import { ErroNegocio } from "./erros";
+import { apagarOuDesabilitar } from "./exclusao";
 
 type Fator = { grupo_alimentar: GrupoAlimentar; modo_preparo: ModoPreparo; fator_coccao: number };
 
@@ -73,7 +76,10 @@ function paraDominio(ingrediente: IngredienteCalculo, quantidade_crua_g: number,
 }
 
 export async function salvarPreparacao(dados: DadosPreparacaoEntrada, id?: number) {
-  if (id !== undefined && !(await buscarPreparacao(id))) throw new ErroNegocio("Preparação não encontrada", 404);
+  const atual = id === undefined ? null : await buscarPreparacao(id);
+  if (id !== undefined && !atual) throw new ErroNegocio("Preparação não encontrada", 404);
+  // B2: ingrediente desabilitado não entra; o que já estava na ficha pode continuar.
+  const jaNaFicha = new Set(atual?.itens.map((i) => i.ingrediente_id));
   const [ingredientes, fatores, categorias] = await Promise.all([
     buscarIngredientesCalculo(dados.itens.map((i) => i.ingrediente_id)),
     listarFatores(),
@@ -86,6 +92,7 @@ export async function salvarPreparacao(dados: DadosPreparacaoEntrada, id?: numbe
     const ingrediente = porId.get(entrada.ingrediente_id);
     const modos = ingrediente ? modosDoIngrediente(ingrediente, fatores) : [];
     if (!ingrediente) erros.push(`Ingrediente ${entrada.ingrediente_id} não encontrado`);
+    else if (!ingrediente.ativo && !jaNaFicha.has(ingrediente.id)) erros.push(`${ingrediente.nome} está desabilitado`);
     else if (ingrediente.forma_crua_id !== null) {
       erros.push(`${ingrediente.nome} já é uma forma preparada: use o ingrediente cru com o modo ${ingrediente.modo_preparo}`);
     } else if (!modos.includes(entrada.modo_preparo)) {
@@ -101,6 +108,17 @@ export async function salvarPreparacao(dados: DadosPreparacaoEntrada, id?: numbe
     peso_final_calculado: comporPreparacao(itens, dados.porcao_g).peso_final_g,
   };
   return id === undefined ? criarPreparacao(salvar) : atualizarPreparacao(id, salvar);
+}
+
+// B2: em uso = está em algum cardápio ou bloqueio.
+export async function excluirPreparacao(id: number) {
+  if (!(await buscarPreparacao(id))) throw new ErroNegocio("Preparação não encontrada", 404);
+  return apagarOuDesabilitar(() => apagarPreparacao(id), () => mudarAtivoPreparacao(id, false));
+}
+
+export async function habilitarPreparacao(id: number) {
+  if (!(await buscarPreparacao(id))) throw new ErroNegocio("Preparação não encontrada", 404);
+  return mudarAtivoPreparacao(id, true);
 }
 
 type PreparacaoCalculo = NonNullable<Awaited<ReturnType<typeof buscarPreparacao>>>;

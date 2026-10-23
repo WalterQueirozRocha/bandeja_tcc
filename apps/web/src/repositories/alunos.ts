@@ -1,11 +1,14 @@
-import { prisma, type TipoRestricao } from "@bandeja/dados";
+import { prisma, type Prisma, type TipoRestricao } from "@bandeja/dados";
 
 export type NovaRestricao = { categoria_codigo: string; tipo: TipoRestricao; limite_notificacao: number };
+
+// Aluno cujo usuário foi desabilitado some das consultas (vendas e registros continuam).
+export const alunoAtivo = { NOT: { usuario: { is: { ativo: false } } } } satisfies Prisma.AlunoWhereInput;
 
 // Para o operador identificar o aluno no balcão: só nome e série, nada de saúde.
 export async function buscarAlunos(busca?: string) {
   const alunos = await prisma.aluno.findMany({
-    where: busca ? { usuario: { nome: { contains: busca, mode: "insensitive" } } } : undefined,
+    where: { ...alunoAtivo, ...(busca && { usuario: { nome: { contains: busca, mode: "insensitive" } } }) },
     select: { id: true, serie: true, usuario: { select: { nome: true } } },
     orderBy: { id: "asc" },
     take: 50,
@@ -19,7 +22,7 @@ export function buscarAlunoDoUsuario(usuario_id: number) {
 
 export async function alunosDoResponsavel(responsavel_id: number) {
   const vinculos = await prisma.vinculoResponsavel.findMany({
-    where: { responsavel_id },
+    where: { responsavel_id, aluno: alunoAtivo },
     select: { aluno: { select: { id: true, serie: true, usuario: { select: { nome: true } } } } },
     orderBy: { aluno_id: "asc" },
   });

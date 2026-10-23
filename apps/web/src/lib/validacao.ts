@@ -2,8 +2,10 @@ import { z } from "zod";
 import {
   CategoriaCarboidrato,
   GrupoAlimentar,
+  ListaIG,
   ModoPreparo,
   OrigemIngrediente,
+  Papel,
   Periodo,
   Presenca,
   SituacaoBloqueio,
@@ -15,10 +17,38 @@ export const login = z.object({
   senha: z.string().min(1),
 });
 
+// B2: `?inativos=true` lista também os desabilitados (só para quem pode habilitar).
+const inativos = z.stringbool().optional();
+
+// B1-M: cadastro manual de usuários (mesmas regras do importador `usuarios`).
+const SENHA_MINIMA = 6;
+const nomeUsuario = z.string().trim().min(1).max(200);
+const emailUsuario = z.email().transform((e) => e.toLowerCase());
+const serie = z.string().trim().min(1).max(50);
+const senha = z.string().min(SENHA_MINIMA).max(100);
+
+export const novoUsuario = z
+  .object({ nome: nomeUsuario, email: emailUsuario, papel: z.enum(Papel), senha, serie: serie.optional() })
+  .refine((u) => (u.papel === "ALUNO") === (u.serie !== undefined), { message: "série é obrigatória para aluno e só vale para aluno", path: ["serie"] });
+
+export const edicaoUsuario = z.object({ nome: nomeUsuario, email: emailUsuario, serie: serie.optional(), senha: senha.optional() });
+
+export const buscaUsuarios = z.object({
+  busca: z.string().trim().max(100).optional(),
+  papel: z.enum(Papel).optional(),
+  inativos,
+});
+
+export const vinculo = z.object({ responsavel_id: z.number().int().positive() });
+
+export type NovoUsuario = z.infer<typeof novoUsuario>;
+export type EdicaoUsuario = z.infer<typeof edicaoUsuario>;
+
 export const buscaIngredientes = z.object({
   busca: z.string().trim().max(100).optional(),
   grupo: z.enum(GrupoAlimentar).optional(),
   origem: z.enum(OrigemIngrediente).optional(),
+  inativos,
   pagina: z.coerce.number().int().min(1).default(1),
   tamanho: z.coerce.number().int().min(1).max(100).default(50),
 });
@@ -54,7 +84,47 @@ export const ingredienteRotulo = z.object({
 
 export const substituicaoMarcadores = z.object({ marcadores: listaMarcadores });
 
-export const buscaPreparacoes = z.object({ busca: z.string().trim().max(100).optional() });
+// M4: edição parcial; no ingrediente da TACO só valem categoria_carboidrato e rds_percentual.
+export const edicaoIngrediente = ingredienteRotulo
+  .omit({ marcadores: true })
+  .partial()
+  .refine((dados) => Object.keys(dados).length > 0, "nada a alterar");
+
+// Criação manual com as mesmas regras das planilhas (M1–M3). CRU sempre usa fator 1.
+const modoCozido = z.enum(ModoPreparo).exclude(["CRU"]);
+const conferente = z.string().trim().min(1).max(100);
+
+export const fator = z.object({
+  grupo_alimentar: z.enum(GrupoAlimentar),
+  modo_preparo: modoCozido,
+  fator_coccao: z.number().positive().max(20),
+  referencia: z.string().trim().min(1).max(300),
+});
+
+// IG na escala do pão é convertido para a da glicose (÷ 1,4), como no importador.
+export const valorIg = z
+  .object({
+    ig: z.number().positive().max(200),
+    escala: z.enum(["GLICOSE", "PAO"]).default("GLICOSE"),
+    lista: z.enum(ListaIG),
+    item_correspondente: z.string().trim().min(1).max(200),
+    justificativa: z.string().trim().min(1).max(500),
+    conferido_por_1: conferente,
+    conferido_por_2: conferente,
+  })
+  .refine((v) => v.conferido_por_1.toLowerCase() !== v.conferido_por_2.toLowerCase(), {
+    message: "a conferência deve ser feita por outra pessoa",
+    path: ["conferido_por_2"],
+  });
+
+export const formaCrua = z.object({ forma_crua_id: z.number().int().positive(), modo_preparo: modoCozido });
+
+export type EdicaoIngrediente = z.infer<typeof edicaoIngrediente>;
+export type FatorEntrada = z.infer<typeof fator>;
+export type ValorIgEntrada = z.infer<typeof valorIg>;
+export type FormaCrua = z.infer<typeof formaCrua>;
+
+export const buscaPreparacoes = z.object({ busca: z.string().trim().max(100).optional(), inativos });
 
 const unicos = (valores: unknown[]) => new Set(valores).size === valores.length;
 
@@ -92,6 +162,7 @@ export const cardapio = z.object({
 export const buscaCardapios = z.object({
   data: z.iso.date().optional(),
   periodo: z.enum(Periodo).optional(),
+  inativos,
 });
 
 export const consultaAluno = z.object({ aluno_id: z.coerce.number().int().positive().optional() });

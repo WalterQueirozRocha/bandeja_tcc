@@ -3,8 +3,8 @@ import { paraData } from "./cardapios";
 
 export function cardapiosDoPeriodo(de: string, ate: string, periodo?: Periodo) {
   return prisma.cardapio.findMany({
-    where: { data: { gte: paraData(de), lte: paraData(ate) }, periodo },
-    select: { id: true, itens: { select: { preparacao_id: true } } },
+    where: { data: { gte: paraData(de), lte: paraData(ate) }, periodo, ativo: true },
+    select: { id: true, itens: { where: { ativo: true }, select: { preparacao_id: true } } },
   });
 }
 

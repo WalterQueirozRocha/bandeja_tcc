@@ -10,7 +10,7 @@ export async function GET(req: Request) {
   if (sessao instanceof Response) return sessao;
   const filtro = lerConsulta(req, buscaIngredientes);
   if (filtro instanceof Response) return filtro;
-  return Response.json(await listarIngredientes(filtro));
+  return Response.json(await listarIngredientes({ ...filtro, inativos: sessao.papel === "OPERADOR" && filtro.inativos }));
 }
 
 // Cadastro de industrializado pelo rótulo: só o operador.

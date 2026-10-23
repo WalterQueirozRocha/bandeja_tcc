@@ -1,10 +1,23 @@
 import { exigirPerfil } from "@/lib/acesso";
 import { cardapio, consultaAluno, lerConsulta, lerCorpo, lerId } from "@/lib/validacao";
 import { alunoDaConsulta } from "@/services/alunos";
-import { editarCardapio, montarCardapio } from "@/services/cardapios";
+import { editarCardapio, excluirCardapio, montarCardapio } from "@/services/cardapios";
 import { respostaDeErro } from "@/services/erros";
 
 const naoEncontrado = () => Response.json({ erro: "Cardápio não encontrado" }, { status: 404 });
+
+// B2: apaga se nada foi vendido; senão desabilita (libera a data e o turno). Só o operador.
+export async function DELETE(req: Request, ctx: RouteContext<"/api/cardapios/[id]">) {
+  const sessao = await exigirPerfil(req, ["OPERADOR"]);
+  if (sessao instanceof Response) return sessao;
+  const id = await lerId(ctx);
+  if (!id) return naoEncontrado();
+  try {
+    return Response.json(await excluirCardapio(id));
+  } catch (e) {
+    return respostaDeErro(e);
+  }
+}
 
 // RF07: aluno e responsável recebem a compatibilidade; operador e coordenação, o cardápio geral.
 export async function GET(req: Request, ctx: RouteContext<"/api/cardapios/[id]">) {

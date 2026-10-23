@@ -2,9 +2,22 @@ import { exigirPerfil } from "@/lib/acesso";
 import { lerCorpo, lerId, preparacao } from "@/lib/validacao";
 import { buscarPreparacao } from "@/repositories/preparacoes";
 import { respostaDeErro } from "@/services/erros";
-import { salvarPreparacao } from "@/services/preparacoes";
+import { excluirPreparacao, salvarPreparacao } from "@/services/preparacoes";
 
 const naoEncontrada = () => Response.json({ erro: "Preparação não encontrada" }, { status: 404 });
+
+// B2: apaga se nunca foi usada; senão desabilita. Só o operador.
+export async function DELETE(req: Request, ctx: RouteContext<"/api/preparacoes/[id]">) {
+  const sessao = await exigirPerfil(req, ["OPERADOR"]);
+  if (sessao instanceof Response) return sessao;
+  const id = await lerId(ctx);
+  if (!id) return naoEncontrada();
+  try {
+    return Response.json(await excluirPreparacao(id));
+  } catch (e) {
+    return respostaDeErro(e);
+  }
+}
 
 export async function GET(req: Request, ctx: RouteContext<"/api/preparacoes/[id]">) {
   const sessao = await exigirPerfil(req);

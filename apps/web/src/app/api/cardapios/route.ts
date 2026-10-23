@@ -9,8 +9,8 @@ export async function GET(req: Request) {
   if (sessao instanceof Response) return sessao;
   const filtro = lerConsulta(req, buscaCardapios);
   if (filtro instanceof Response) return filtro;
-  const lista = await listarCardapios(filtro);
-  return Response.json(lista.map((c) => ({ id: c.id, data: paraIso(c.data), periodo: c.periodo, itens: c._count.itens })));
+  const lista = await listarCardapios({ ...filtro, inativos: sessao.papel === "OPERADOR" && filtro.inativos });
+  return Response.json(lista.map((c) => ({ id: c.id, data: paraIso(c.data), periodo: c.periodo, ativo: c.ativo, itens: c._count.itens })));
 }
 
 // RF05: publicar (criar = publicar). Só o operador.

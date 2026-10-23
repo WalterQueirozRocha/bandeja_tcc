@@ -9,7 +9,7 @@ export async function GET(req: Request) {
   if (sessao instanceof Response) return sessao;
   const filtro = lerConsulta(req, buscaPreparacoes);
   if (filtro instanceof Response) return filtro;
-  return Response.json(await listarPreparacoes(filtro.busca));
+  return Response.json(await listarPreparacoes(filtro.busca, sessao.papel === "OPERADOR" && filtro.inativos));
 }
 
 // Ficha técnica (RF02, RF03): só o operador.
