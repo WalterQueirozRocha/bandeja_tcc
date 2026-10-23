@@ -8,11 +8,11 @@ import {
   alunoComResponsaveis,
   buscarItensCardapio,
   comTravaDoAluno,
+  consumosNaSemana,
   gravarNotificacao,
   gravarVenda,
   historicoDoAluno,
   notificacaoExiste,
-  preparacoesEmAtencaoNaSemana,
   restricoesAcompanhamento,
 } from "@/repositories/vendas";
 import { montarCardapio } from "./cardapios";
@@ -42,7 +42,19 @@ export async function registrarVenda(operador_id: number, dados: VendaEntrada) {
       { id: item.preparacao_id, nome: item.preparacao.nome },
       prep.alergenos.map((a) => ({ categoria: a.categoria, nome: a.nome })),
     );
-    return { item_cardapio_id: id, nome: item.preparacao.nome, compatibilidade: resultado, alertas };
+    return {
+      item_cardapio_id: id,
+      nome: item.preparacao.nome,
+      compatibilidade: resultado,
+      alertas,
+      // B4: valores do momento da venda.
+      valores: {
+        preco: item.preco,
+        carboidrato_disponivel_g: prep.carga_glicemica.carboidrato_disponivel_g,
+        cg: prep.carga_glicemica.rytz?.cg ?? null,
+        categorias_atencao: alertas.filter((a) => a.resultado === "ATENCAO").map((a) => a.categoria!),
+      },
+    };
   });
   const tem = (c: Compatibilidade) => itens.some((i) => i.compatibilidade === c);
   const alternativas = await alternativasNoBalcao(
@@ -71,11 +83,11 @@ export async function registrarVenda(operador_id: number, dados: VendaEntrada) {
     aluno.id,
     operador_id,
     resultado,
-    itens.map(({ item_cardapio_id, compatibilidade }) => ({ item_cardapio_id, compatibilidade })),
+    itens.map(({ item_cardapio_id, compatibilidade, valores }) => ({ item_cardapio_id, compatibilidade, ...valores })),
   );
   const contagem =
     resultado === "CONCLUIDA" && tem("ATENCAO")
-      ? await contarENotificar(aluno, itens.flatMap((i) => i.alertas.filter((a) => a.resultado === "ATENCAO").map((a) => a.categoria!)), venda.data_hora)
+      ? await contarENotificar(aluno, itens.flatMap((i) => i.valores.categorias_atencao), venda.data_hora)
       : [];
   return { gravada: true, venda_id: venda.id, ...resposta(resultado), contagem };
 }
@@ -101,19 +113,14 @@ type AlunoNotificacao = NonNullable<Awaited<ReturnType<typeof alunoComResponsave
 // RF11 / doc §4.7: conta os consumos da semana (incluindo esta venda) só das categorias em ATENÇÃO nesta venda.
 async function contarENotificar(aluno: AlunoNotificacao, categoriasDaVenda: string[], agora: Date) {
   const semana = semanaDe(agora);
-  const [restricoes, preparacoes, nomes] = await Promise.all([
-    restricoesAcompanhamento(aluno.id),
-    preparacoesEmAtencaoNaSemana(aluno.id, semana.inicio, semana.fim),
-    nomesCategorias(),
-  ]);
-  // ponytail: categorias recalculadas pela preparação atual (decisão 2 do I4); gravar no ItemVenda se precisar do histórico fiel.
-  const resumos = await resumirPreparacoes([...new Set(preparacoes)]);
+  const [restricoes, nomes] = await Promise.all([restricoesAcompanhamento(aluno.id), nomesCategorias()]);
   const periodo = new Date(`${semana.segunda}T00:00:00Z`);
   const nomeAluno = aluno.usuario?.nome ?? `Aluno ${aluno.id}`;
 
   const contagem = [];
   for (const r of restricoes.filter((r) => categoriasDaVenda.includes(r.categoria_codigo))) {
-    const consumos = preparacoes.filter((p) => resumos.get(p)?.alergenos.some((a) => a.categoria === r.categoria_codigo)).length;
+    // B4: conta pelas categorias gravadas em cada venda, não pela preparação atual.
+    const consumos = await consumosNaSemana(aluno.id, r.categoria_codigo, semana.inicio, semana.fim);
     const categoria = nomes.get(r.categoria_codigo) ?? r.categoria_codigo;
     let notificados = 0;
     for (const { responsavel } of aluno.responsaveis) {
@@ -142,18 +149,15 @@ export async function lerHistorico(aluno_id: number, de?: string, ate?: string) 
     de ? inicioDoDiaNaBahia(de) : undefined,
     ate ? inicioDoDiaNaBahia(ate, 1) : undefined,
   );
-  const resumos = await resumirPreparacoes([...new Set(vendas.flatMap((v) => v.itens.map((i) => i.item_cardapio.preparacao_id)))]);
+  // B4: preço, carboidrato e CG gravados na venda (vendas anteriores à migração não têm carboidrato nem CG).
   return vendas.map((v) => {
-    const itens = v.itens.map((i) => {
-      const cg = resumos.get(i.item_cardapio.preparacao_id)?.carga_glicemica;
-      return {
-        nome: i.item_cardapio.preparacao.nome,
-        preco: Number(i.item_cardapio.preco),
-        compatibilidade: i.compatibilidade,
-        carboidrato_disponivel_g: cg?.carboidrato_disponivel_g ?? 0,
-        cg: cg?.rytz?.cg ?? null,
-      };
-    });
+    const itens = v.itens.map((i) => ({
+      nome: i.item_cardapio.preparacao.nome,
+      preco: Number(i.preco),
+      compatibilidade: i.compatibilidade,
+      carboidrato_disponivel_g: i.carboidrato_disponivel_g ?? 0,
+      cg: i.cg,
+    }));
     return {
       venda_id: v.id,
       data_hora: v.data_hora,
