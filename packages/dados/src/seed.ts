@@ -56,12 +56,12 @@ export const SINTOMAS: [codigo: string, descricao: string, grupo: GrupoSintoma][
 ];
 
 // Usuários fictícios só para desenvolvimento e testes (nunca em produção).
-export const SENHA_TESTE = "bandeja-teste";
+export const SENHA_TESTE = "123456";
 export const USUARIOS_TESTE: [email: string, nome: string, papel: Papel][] = [
-  ["operador@bandeja.test", "Operador Teste", "OPERADOR"],
-  ["aluno@bandeja.test", "Aluno Teste", "ALUNO"],
-  ["responsavel@bandeja.test", "Responsável Teste", "RESPONSAVEL"],
-  ["coordenacao@bandeja.test", "Coordenação Teste", "COORDENACAO"],
+  ["operador@gmail.com", "Operador Teste", "OPERADOR"],
+  ["aluno@gmail.com", "Aluno Teste", "ALUNO"],
+  ["responsavel@gmail.com", "Responsável Teste", "RESPONSAVEL"],
+  ["coordenacao@gmail.com", "Coordenação Teste", "COORDENACAO"],
 ];
 
 export async function semear() {
