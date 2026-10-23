@@ -12,7 +12,8 @@ export async function POST(req: Request) {
 
   const usuario = await buscarUsuarioPorEmail(dados.email);
   const senhaOk = await bcrypt.compare(dados.senha, usuario?.senha_hash ?? HASH_FICTICIO);
-  if (!usuario || !senhaOk) return Response.json({ erro: "E-mail ou senha inválidos" }, { status: 401 });
+  // Desabilitado recebe a mesma resposta: não revela que a conta existe.
+  if (!usuario || !usuario.ativo || !senhaOk) return Response.json({ erro: "E-mail ou senha inválidos" }, { status: 401 });
 
   const token = await emitirToken({ id: usuario.id, papel: usuario.papel });
   const seguro = process.env.NODE_ENV === "production" ? "; Secure" : "";

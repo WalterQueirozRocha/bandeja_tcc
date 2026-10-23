@@ -2,6 +2,7 @@ import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { Papel } from "@bandeja/dados";
+import { usuarioAtivo } from "@/repositories/usuarios";
 
 export const COOKIE_SESSAO = "bandeja_sessao";
 export const DURACAO_SESSAO_S = 8 * 60 * 60;
@@ -23,14 +24,17 @@ export async function emitirToken(sessao: Sessao) {
     .sign(segredo());
 }
 
+// Além do token, o usuário precisa continuar ativo: desabilitar corta a sessão na hora (3b).
 export async function verificarToken(token: string | undefined): Promise<Sessao | null> {
   if (!token) return null;
+  let sessao: Sessao;
   try {
     const { payload } = await jwtVerify(token, segredo(), { algorithms: ["HS256"] });
-    return { id: Number(payload.sub), papel: payload.papel as Papel };
+    sessao = { id: Number(payload.sub), papel: payload.papel as Papel };
   } catch {
     return null;
   }
+  return (await usuarioAtivo(sessao.id)) ? sessao : null;
 }
 
 // Bearer (API/app) ou cookie httpOnly (web).
