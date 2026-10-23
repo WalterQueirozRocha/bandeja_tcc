@@ -1,26 +1,124 @@
 @import "tailwindcss";
 
+/*
+ * Tokens do Manual de Identidade Visual (Opção B): light-dark(claro, escuro).
+ * Os tons escuros derivam da versão 2.2 da logo (não estão no manual).
+ * Tema: segue o sistema; data-tema="claro" | "escuro" no <html> fixa a escolha.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light dark;
+  --brand-navy: light-dark(#0f172a, #f8fafc);
+  --brand-primary: light-dark(#1e40af, #2563eb);
+  --brand-primary-hover: light-dark(#2563eb, #1d4ed8);
+  --brand-royal: light-dark(#2563eb, #38bdf8);
+  --brand-sky: #38bdf8;
+  --brand-teal: light-dark(#0d9488, #2dd4bf);
+  --surface-bg: light-dark(#f8fafc, #0f172a);
+  --surface-card: light-dark(#ffffff, #1e293b);
+  --text-secondary: light-dark(#475569, #94a3b8);
+  --borda: light-dark(#e2e8f0, #334155);
+  --logo-sub: light-dark(#2563eb, #38bdf8);
+  --logo-contorno: light-dark(transparent, #334155);
+
+  --bloqueado: light-dark(#dc2626, #ef4444);
+  --bloqueado-fundo: light-dark(#fef2f2, #450a0a);
+  --bloqueado-texto: light-dark(#991b1b, #fecaca);
+  --atencao: light-dark(#d97706, #f59e0b);
+  --atencao-fundo: light-dark(#fffbeb, #451a03);
+  --atencao-texto: light-dark(#92400e, #fde68a);
+  --compativel: light-dark(#16a34a, #22c55e);
+  --compativel-fundo: light-dark(#f0fdf4, #052e16);
+  --compativel-texto: light-dark(#166534, #bbf7d0);
+  --aviso: light-dark(#2563eb, #3b82f6);
+  --aviso-fundo: light-dark(#eff6ff, #172554);
+  --aviso-texto: light-dark(#1e3a8a, #bfdbfe);
+}
+
+:root[data-tema="claro"] {
+  color-scheme: light;
+}
+
+:root[data-tema="escuro"] {
+  color-scheme: dark;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-jakarta), var(--font-inter), ui-sans-serif, sans-serif;
+
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-primary-hover: var(--brand-primary-hover);
+  --color-brand-royal: var(--brand-royal);
+  --color-brand-sky: var(--brand-sky);
+  --color-brand-teal: var(--brand-teal);
+  --color-surface-bg: var(--surface-bg);
+  --color-surface-card: var(--surface-card);
+  --color-secondary: var(--text-secondary);
+  --color-borda: var(--borda);
+  --color-logo-sub: var(--logo-sub);
+
+  --color-bloqueado: var(--bloqueado);
+  --color-bloqueado-fundo: var(--bloqueado-fundo);
+  --color-bloqueado-texto: var(--bloqueado-texto);
+  --color-atencao: var(--atencao);
+  --color-atencao-fundo: var(--atencao-fundo);
+  --color-atencao-texto: var(--atencao-texto);
+  --color-compativel: var(--compativel);
+  --color-compativel-fundo: var(--compativel-fundo);
+  --color-compativel-texto: var(--compativel-texto);
+  --color-aviso: var(--aviso);
+  --color-aviso-fundo: var(--aviso-fundo);
+  --color-aviso-texto: var(--aviso-texto);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply bg-surface-bg font-sans text-brand-navy;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-heading font-bold text-brand-navy;
+  }
+
+  h1 {
+    @apply text-2xl font-extrabold tracking-tight;
+  }
+
+  h2 {
+    @apply text-lg;
+  }
+
+  a {
+    @apply text-brand-royal underline-offset-2 hover:underline;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-royal;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .cartao {
+    @apply rounded-xl border border-borda bg-surface-card p-4 shadow-sm;
+  }
+
+  .campo {
+    @apply rounded-lg border border-borda bg-surface-card px-3 py-2 text-brand-navy placeholder:text-secondary focus:border-brand-royal focus:outline-none;
+  }
+
+  .btn-primario {
+    @apply rounded-lg bg-brand-primary px-4 py-2 font-semibold text-white hover:bg-brand-primary-hover disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .btn-secundario {
+    @apply rounded-lg border border-borda bg-surface-card px-4 py-2 font-medium text-brand-navy hover:border-brand-royal disabled:opacity-40;
+  }
+
+  .logo-icone {
+    border-radius: 25%;
+    box-shadow: 0 0 0 1px var(--logo-contorno);
+  }
 }

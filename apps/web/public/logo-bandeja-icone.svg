@@ -1,0 +1,12 @@
+<svg width="512" height="512" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="64" height="64" rx="16" fill="#0F172A"/>
+  <!-- Tray Outer Rim -->
+  <rect x="11" y="14" width="42" height="36" rx="6" fill="#1E293B" stroke="#38BDF8" stroke-width="2.2"/>
+  <!-- 3 Compartments: TACO Composition (#2563EB), Glycemic Load (#0D9488), Allergen Derivation (#1E40AF) -->
+  <rect x="15" y="18" width="15" height="12" rx="3" fill="#2563EB"/>
+  <rect x="34" y="18" width="15" height="12" rx="3" fill="#0D9488"/>
+  <rect x="15" y="34" width="34" height="12" rx="3" fill="#1E40AF"/>
+  <!-- Verification Check Badge -->
+  <circle cx="46" cy="44" r="9" fill="#10B981" stroke="#0F172A" stroke-width="2.5"/>
+  <path d="M42.5 44L45 46.5L50 41.5" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
