@@ -22,9 +22,8 @@ export async function listaDeSintomas() {
 // RF12 / doc §4.8: só grava. Nenhum cálculo, alerta, contagem ou notificação.
 export async function registrarSintoma(aluno_id: number, dados: SintomaEntrada, agora = new Date()) {
   if (!(await buscarSintoma(dados.sintoma_codigo))) throw new ErroNegocio(`Sintoma inexistente: ${dados.sintoma_codigo}`);
-  const outro = dados.sintoma_codigo === SINTOMA_OUTRO;
-  if (outro && !dados.observacao) throw new ErroNegocio('Descreva brevemente o sintoma "Outro"');
-  if (!outro && dados.observacao) throw new ErroNegocio('O texto livre é só para o sintoma "Outro"');
+  // Doc v3 §4.8: no "Outro" o texto é opcional; nos demais, não se aceita texto.
+  if (dados.sintoma_codigo !== SINTOMA_OUTRO && dados.observacao) throw new ErroNegocio('O texto livre é só para o sintoma "Outro"');
   const data_hora = new Date(dados.data_hora);
   if (data_hora.getTime() > agora.getTime() + TOLERANCIA_FUTURO_MS) throw new ErroNegocio("A data e a hora não podem estar no futuro");
   return gravarRegistro(aluno_id, dados.sintoma_codigo, data_hora, dados.observacao ?? null);

@@ -63,7 +63,7 @@ export function FormularioSintoma({ alunoId, grupos }: { alunoId: number; grupos
         ))}
       </div>
       {sintoma === "OUTRO" && (
-        <input name="observacao" maxLength={100} required placeholder="Descreva em poucas palavras" className="campo" />
+        <input name="observacao" maxLength={100} aria-label="Observação" placeholder="Descreva em poucas palavras (opcional)" className="campo" />
       )}
       <label className="flex flex-col gap-1 text-sm font-medium">
         Data e hora
