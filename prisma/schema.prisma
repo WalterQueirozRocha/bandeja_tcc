@@ -107,6 +107,12 @@ enum SituacaoBloqueio {
   RECUSADA
 }
 
+enum SituacaoRegistros {
+  SOLICITADA
+  AUTORIZADA
+  RECUSADA
+}
+
 enum ResultadoVenda {
   CONCLUIDA
   BLOQUEADA
@@ -207,7 +213,7 @@ model FatorPreparo {
 }
 
 model Preparacao {
-  id                   Int    @id @default(autoincrement())
+  id                   Int     @id @default(autoincrement())
   nome                 String
   porcao_g             Float
   peso_final_calculado Float?
@@ -268,20 +274,22 @@ model ItemCardapio {
 // ---------- Perfis, vendas e sintomas (Fig. 5) ----------
 
 model Usuario {
-  id         Int    @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   nome       String
-  email      String @unique
+  email      String  @unique
   papel      Papel
   senha_hash String
   ativo      Boolean @default(true)
 
-  aluno                Aluno?                @relation("UsuarioAluno")
-  consentimentos        Aluno[]               @relation("Consentimento")
+  aluno                 Aluno?                 @relation("UsuarioAluno")
+  consentimentos        Aluno[]                @relation("Consentimento")
   vinculos              VinculoResponsavel[]
   restricoes_declaradas RestricaoDeclarada[]
   bloqueios_solicitados SolicitacaoBloqueio[]
   vendas_registradas    Venda[]
   notificacoes          Notificacao[]
+  registros_solicitados SolicitacaoRegistros[] @relation("RegistrosSolicitados")
+  registros_decididos   SolicitacaoRegistros[] @relation("RegistrosDecididos")
 }
 
 model Aluno {
@@ -291,14 +299,15 @@ model Aluno {
   consentimento_por Int?
   consentimento_em  DateTime?
 
-  usuario        Usuario?              @relation("UsuarioAluno", fields: [usuario_id], references: [id])
-  consentido_por Usuario?              @relation("Consentimento", fields: [consentimento_por], references: [id])
-  responsaveis   VinculoResponsavel[]
-  restricoes     RestricaoDeclarada[]
-  bloqueios      SolicitacaoBloqueio[]
-  vendas         Venda[]
-  notificacoes   Notificacao[]
-  sintomas       RegistroSintoma[]
+  usuario                Usuario?               @relation("UsuarioAluno", fields: [usuario_id], references: [id])
+  consentido_por         Usuario?               @relation("Consentimento", fields: [consentimento_por], references: [id])
+  responsaveis           VinculoResponsavel[]
+  restricoes             RestricaoDeclarada[]
+  bloqueios              SolicitacaoBloqueio[]
+  vendas                 Venda[]
+  notificacoes           Notificacao[]
+  sintomas               RegistroSintoma[]
+  solicitacoes_registros SolicitacaoRegistros[]
 }
 
 model VinculoResponsavel {
@@ -353,14 +362,14 @@ model Venda {
 }
 
 model ItemVenda {
-  venda_id         Int
-  item_cardapio_id Int
-  compatibilidade  Compatibilidade
+  venda_id                 Int
+  item_cardapio_id         Int
+  compatibilidade          Compatibilidade
   // valores no momento da venda: editar a preparação ou o cardápio não muda o passado
-  preco                    Decimal  @db.Decimal(10, 2)
+  preco                    Decimal         @db.Decimal(10, 2)
   carboidrato_disponivel_g Float?
   cg                       Float? // Rytz; nulo = não calculável
-  categorias_atencao       String[] @default([]) // base da contagem semanal (RF11)
+  categorias_atencao       String[]        @default([]) // base da contagem semanal (RF11)
 
   venda         Venda        @relation(fields: [venda_id], references: [id], onDelete: Cascade)
   item_cardapio ItemCardapio @relation(fields: [item_cardapio_id], references: [id])
@@ -395,7 +404,23 @@ model RegistroSintoma {
   sintoma_codigo String
   data_hora      DateTime
   observacao     String?  @db.VarChar(100) // só para o sintoma "outro"
+  registrado_em  DateTime @default(now()) // quando foi gravado; limite do que um pedido autorizado libera (RF20)
 
   aluno   Aluno   @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
   sintoma Sintoma @relation(fields: [sintoma_codigo], references: [codigo])
+}
+
+// RF20: o responsável pede os registros de sintomas; a coordenação decide sem ver o conteúdo.
+model SolicitacaoRegistros {
+  id             Int               @id @default(autoincrement())
+  responsavel_id Int
+  aluno_id       Int
+  situacao       SituacaoRegistros @default(SOLICITADA)
+  solicitada_em  DateTime          @default(now())
+  decidida_por   Int?
+  decidida_em    DateTime?
+
+  responsavel Usuario  @relation("RegistrosSolicitados", fields: [responsavel_id], references: [id])
+  decisor     Usuario? @relation("RegistrosDecididos", fields: [decidida_por], references: [id], onDelete: Restrict)
+  aluno       Aluno    @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
 }
