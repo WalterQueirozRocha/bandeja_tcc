@@ -28,9 +28,12 @@ export const LINKS: Record<Papel, { href: string; rotulo: string }[]> = {
     { href: "/perfil", rotulo: "Perfil de saúde" },
     { href: "/historico", rotulo: "Histórico" },
     { href: "/bloqueios", rotulo: "Bloqueios" },
+    { href: "/registros-sintomas", rotulo: "Registros de sintomas" },
   ],
   COORDENACAO: [
     { href: "/panorama", rotulo: "Panorama" },
+    { href: "/cardapio", rotulo: "Cardápio" },
+    { href: "/registros-sintomas", rotulo: "Pedidos de registros" },
     { href: "/usuarios", rotulo: "Usuários" },
     { href: "/ingredientes", rotulo: "Ingredientes" },
   ],
