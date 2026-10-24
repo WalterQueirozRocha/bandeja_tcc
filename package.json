@@ -16,6 +16,7 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed": "npm run seed -w @bandeja/dados",
+    "db:demo": "npm run demo -w @bandeja/dados --",
     "importar": "npm run importar -w @bandeja/dados --",
     "avaliar": "npm run avaliar -w @bandeja/web --"
   },

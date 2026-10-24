@@ -8,7 +8,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "seed": "tsx --env-file-if-exists=../../.env src/seed.ts",
-    "importar": "tsx --env-file-if-exists=../../.env src/importar.ts"
+    "importar": "tsx --env-file-if-exists=../../.env src/importar.ts",
+    "demo": "tsx --env-file-if-exists=../../.env src/demo.ts"
   },
   "devDependencies": {
     "tsx": "4.23.15",
