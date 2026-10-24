@@ -71,10 +71,23 @@ export async function usuarioEmUso(id: number) {
     where: { id },
     select: {
       _count: {
-        select: { vinculos: true, consentimentos: true, restricoes_declaradas: true, bloqueios_solicitados: true, vendas_registradas: true, notificacoes: true },
+        select: {
+          vinculos: true,
+          consentimentos: true,
+          restricoes_declaradas: true,
+          bloqueios_solicitados: true,
+          vendas_registradas: true,
+          notificacoes: true,
+          registros_solicitados: true,
+          registros_decididos: true,
+        },
       },
       aluno: {
-        select: { _count: { select: { responsaveis: true, restricoes: true, bloqueios: true, vendas: true, notificacoes: true, sintomas: true } } },
+        select: {
+          _count: {
+            select: { responsaveis: true, restricoes: true, bloqueios: true, vendas: true, notificacoes: true, sintomas: true, solicitacoes_registros: true },
+          },
+        },
       },
     },
   });

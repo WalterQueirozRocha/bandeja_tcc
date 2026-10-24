@@ -9,6 +9,7 @@ import {
   Periodo,
   Presenca,
   SituacaoBloqueio,
+  SituacaoRegistros,
   TipoRestricao,
 } from "@bandeja/dados";
 
@@ -205,7 +206,14 @@ export const buscaBloqueios = z.object({ situacao: z.enum(SituacaoBloqueio).opti
 
 export const decisaoBloqueio = z.object({ situacao: z.enum(["EXECUTADA", "RECUSADA"]) });
 
-// RF12: data/hora com fuso (a tela converte a hora local); texto curto só para "Outro".
+// RF20: o responsável pede os registros de um aluno; a coordenação decide.
+export const novoPedidoRegistros = z.object({ aluno_id: z.number().int().positive() });
+
+export const buscaPedidosRegistros = z.object({ situacao: z.enum(SituacaoRegistros).optional() });
+
+export const decisaoPedidoRegistros = z.object({ situacao: z.enum(["AUTORIZADA", "RECUSADA"]) });
+
+// RF12: data/hora com fuso (a tela converte a hora local); texto curto (opcional) só para "Outro".
 export const registroSintoma = z.object({
   sintoma_codigo: z.string().trim().min(1),
   data_hora: z.iso.datetime({ offset: true }),
