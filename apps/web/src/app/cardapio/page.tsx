@@ -59,8 +59,11 @@ export default async function Cardapio({ searchParams }: PageProps<"/cardapio">)
         <ul className="grid gap-4 md:grid-cols-2">
           {conteudo.itens.map((item) => {
             const cg = item.carga_glicemica;
-            const contem = item.alergenos.filter((a) => a.presenca === "CONTEM").map((a) => a.nome);
-            const podeConter = item.alergenos.filter((a) => a.presenca === "PODE_CONTER").map((a) => a.nome);
+            // RNF05: cada alergênico com o ingrediente de origem.
+            const comOrigem = (presenca: string) =>
+              item.alergenos.filter((a) => a.presenca === presenca).map((a) => `${a.nome} (${a.origens.join(", ")})`);
+            const contem = comOrigem("CONTEM");
+            const podeConter = comOrigem("PODE_CONTER");
             return (
               <li key={item.id} className="cartao flex flex-col gap-3" data-testid="item-cardapio">
                 <div>
@@ -83,10 +86,14 @@ export default async function Cardapio({ searchParams }: PageProps<"/cardapio">)
                   </div>
                 )}
 
-                <dl className={`${PAINEL} grid-cols-2`}>
+                <dl className={`${PAINEL} grid-cols-3`}>
                   <Indicador rotulo="Carb. disponível" valor={`${num(cg.carboidrato_disponivel_g)} g`} destaque />
                   <Indicador rotulo={`CG (Rytz · ${cg.rotulo})`} valor={cg.rytz ? num(cg.rytz.cg) : "—"} />
+                  <Indicador rotulo={`CG (FAO · ${cg.rotulo})`} valor={cg.fao ? num(cg.fao.cg) : "—"} />
                 </dl>
+                <Link href={`/preparacoes/${item.preparacao_id}#fontes`} className="text-sm">
+                  Fontes e hipóteses
+                </Link>
 
                 <div className="flex flex-col gap-1 text-sm">
                   {contem.length === 0 && podeConter.length === 0 && <p className="text-secondary">Nenhum alergênico marcado.</p>}

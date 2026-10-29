@@ -95,7 +95,7 @@ export default async function Preparacao({ params }: PageProps<"/preparacoes/[id
         )}
       </section>
 
-      <section className="cartao flex flex-col gap-2">
+      <section id="fontes" className="cartao flex flex-col gap-2">
         <h2>Fontes e hipóteses</h2>
         <ul className="list-disc pl-5 text-sm text-secondary">
           {[...new Set(cg.hipoteses)].map((h) => (
