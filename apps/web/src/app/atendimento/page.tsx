@@ -1,3 +1,4 @@
+import { Alerta } from "@/components/alerta";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
 import { hojeNaBahia } from "@/lib/datas";
 import { buscarCardapioPorDataPeriodo } from "@/repositories/cardapios";
@@ -27,6 +28,12 @@ export default async function Atendimento({ searchParams }: PageProps<"/atendime
           Trocar cardápio
         </button>
       </form>
+      {/* FC-07 (D7 = A): o servidor aceita, mas o operador vê que não é o cardápio do dia. */}
+      {cardapio && data !== hojeNaBahia() && (
+        <Alerta estado="ATENCAO" titulo="Este não é o cardápio de hoje" data-testid="aviso-outra-data">
+          A venda será registrada com a data e a hora de agora.
+        </Alerta>
+      )}
       {cardapio ? (
         <Balcao itens={cardapio.itens.map((i) => ({ id: i.id, nome: i.nome, preco: i.preco }))} />
       ) : (
