@@ -369,6 +369,7 @@ model ItemVenda {
   preco                    Decimal         @db.Decimal(10, 2)
   carboidrato_disponivel_g Float?
   cg                       Float? // Rytz; nulo = não calculável
+  cg_fao                   Float? // FAO/OMS; nulo = não calculável (sem carboidrato disponível grava 0)
   categorias_atencao       String[]        @default([]) // base da contagem semanal (RF11)
 
   venda         Venda        @relation(fields: [venda_id], references: [id], onDelete: Cascade)
