@@ -15,6 +15,7 @@ export type ItemVendido = {
   preco: Prisma.Decimal;
   carboidrato_disponivel_g: number;
   cg: number | null;
+  cg_fao: number | null;
   categorias_atencao: string[];
 };
 
@@ -89,7 +90,8 @@ export function historicoDoAluno(aluno_id: number, de?: Date, ate?: Date) {
           preco: true,
           carboidrato_disponivel_g: true,
           cg: true,
-          item_cardapio: { select: { preparacao: { select: { nome: true } } } },
+          cg_fao: true,
+          item_cardapio: { select: { preparacao: { select: { id: true, nome: true } } } },
         },
       },
     },

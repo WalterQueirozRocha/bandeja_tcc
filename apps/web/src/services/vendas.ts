@@ -1,4 +1,4 @@
-import { avaliar, cgRefeicao, deveNotificar, semanaDe, textos, ROTULO_ESTIMATIVA, type Compatibilidade } from "@bandeja/dominio";
+import { avaliar, cgRefeicao, cgRefeicaoSeCalculavel, deveNotificar, semanaDe, textos, ROTULO_ESTIMATIVA, type Compatibilidade } from "@bandeja/dominio";
 import type { ResultadoVenda } from "@bandeja/dados";
 import { inicioDoDiaNaBahia } from "@/lib/datas";
 import type { VendaEntrada } from "@/lib/validacao";
@@ -52,6 +52,8 @@ export async function registrarVenda(operador_id: number, dados: VendaEntrada) {
         preco: item.preco,
         carboidrato_disponivel_g: prep.carga_glicemica.carboidrato_disponivel_g,
         cg: prep.carga_glicemica.rytz?.cg ?? null,
+        // FC-01: sem carboidrato disponível a CG é 0, e não "não calculável" (não tira a refeição do cálculo).
+        cg_fao: prep.carga_glicemica.fao?.cg ?? (prep.carga_glicemica.carboidrato_disponivel_g === 0 ? 0 : null),
         categorias_atencao: alertas.filter((a) => a.resultado === "ATENCAO").map((a) => a.categoria!),
       },
     };
@@ -152,11 +154,13 @@ export async function lerHistorico(aluno_id: number, de?: string, ate?: string) 
   // B4: preço, carboidrato e CG gravados na venda (vendas anteriores à migração não têm carboidrato nem CG).
   return vendas.map((v) => {
     const itens = v.itens.map((i) => ({
+      preparacao_id: i.item_cardapio.preparacao.id,
       nome: i.item_cardapio.preparacao.nome,
       preco: Number(i.preco),
       compatibilidade: i.compatibilidade,
       carboidrato_disponivel_g: i.carboidrato_disponivel_g ?? 0,
       cg: i.cg,
+      cg_fao: i.cg_fao,
     }));
     return {
       venda_id: v.id,
@@ -164,6 +168,8 @@ export async function lerHistorico(aluno_id: number, de?: string, ate?: string) 
       itens,
       carboidrato_disponivel_g: itens.reduce((s, i) => s + i.carboidrato_disponivel_g, 0),
       cg_refeicao: cgRefeicao(itens.flatMap((i) => (i.cg === null ? [] : [i.cg]))),
+      // FC-01 / RF04: a refeição também pela FAO/OMS; vendas anteriores à coluna ficam "não calculável".
+      cg_refeicao_fao: cgRefeicaoSeCalculavel(itens.map((i) => i.cg_fao)),
       rotulo: ROTULO_ESTIMATIVA,
     };
   });

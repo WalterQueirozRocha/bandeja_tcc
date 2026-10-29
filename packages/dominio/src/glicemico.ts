@@ -84,6 +84,9 @@ export function igFao(componentes: ComponenteGlicemico[]): Estimativa {
 // Eq. 2.3.
 export const cargaGlicemica = (ig: number, carboidratoDisponivel_g: number) => (ig * carboidratoDisponivel_g) / 100;
 export const cgRefeicao = (cargas: number[]) => cargas.reduce((s, c) => s + c, 0);
+// FAO/OMS: a refeição só tem CG quando todas as preparações têm (mesma regra do pareamento); null = não calculável.
+export const cgRefeicaoSeCalculavel = (cargas: (number | null)[]) =>
+  cargas.includes(null) ? null : cgRefeicao(cargas as number[]);
 
 export type MetaGlicemica = Pick<ComponenteGlicemico, "categoria_carboidrato" | "rds_percentual" | "ig">;
 

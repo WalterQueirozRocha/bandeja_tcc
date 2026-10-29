@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Indicador, PAINEL } from "@/components/indicador";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
 import { alunosDoResponsavel } from "@/repositories/alunos";
@@ -27,6 +28,9 @@ export default async function Historico({ searchParams }: PageProps<"/historico"
   return (
     <main className="flex flex-col gap-4 p-4">
       <h1>Histórico de consumo</h1>
+      <p className="text-sm text-secondary">
+        CG estimada pelos modelos de Rytz et al. (2019) e da FAO/OMS (1998). As hipóteses de cada item estão na ficha da preparação (clique no nome).
+      </p>
       {alunos.length > 1 && (
         <form className="flex gap-2">
           <select name="aluno_id" defaultValue={alunoParam} aria-label="Aluno" className="campo">
@@ -49,11 +53,19 @@ export default async function Historico({ searchParams }: PageProps<"/historico"
               <p className="text-sm text-secondary tabular-nums">
                 {new Date(v.data_hora).toLocaleString("pt-BR", { timeZone: "America/Bahia" })}
               </p>
-              <p className="font-semibold">{v.itens.map((i) => i.nome).join(", ")}</p>
+              <p className="font-semibold">
+                {v.itens.map((i, n) => (
+                  <span key={n}>
+                    {n > 0 && ", "}
+                    <Link href={`/preparacoes/${i.preparacao_id}#fontes`}>{i.nome}</Link>
+                  </span>
+                ))}
+              </p>
             </div>
-            <dl className={`${PAINEL} grid-cols-2`}>
+            <dl className={`${PAINEL} grid-cols-3`}>
               <Indicador rotulo="Carb. disponível" valor={`${num(v.carboidrato_disponivel_g)} g`} destaque />
-              <Indicador rotulo={`CG da refeição (${v.rotulo})`} valor={num(v.cg_refeicao)} />
+              <Indicador rotulo={`CG da refeição (Rytz · ${v.rotulo})`} valor={num(v.cg_refeicao)} />
+              <Indicador rotulo={`CG da refeição (FAO · ${v.rotulo})`} valor={v.cg_refeicao_fao === null ? "—" : num(v.cg_refeicao_fao)} />
             </dl>
           </li>
         ))}
