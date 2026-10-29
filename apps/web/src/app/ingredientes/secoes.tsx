@@ -174,7 +174,7 @@ export function EdicaoTaco({ id, categoria, rds }: { id: number; categoria: stri
         </button>
       </div>
       <p className="text-xs text-secondary">
-        Reimportar a TACO volta estes dois campos ao padrão e ao <code>carboidratos.csv</code>: registre a mudança também na planilha.
+        Reimportar a TACO mantém estes dois campos, exceto se o alimento estiver no <code>carboidratos.csv</code>: aí vale a planilha.
       </p>
       {aviso && <span role="status" className="text-sm">{aviso}</span>}
       <MensagemErro erro={erro} />

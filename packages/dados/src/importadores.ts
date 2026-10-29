@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import bcrypt from "bcryptjs";
 import { faltaMarcadorGluten } from "@bandeja/dominio";
 import { prisma } from "./banco";
+import { recalcularPesosFinais } from "./pesos";
 import { escreverTabela, lerLinhas, lerTabela, numero, planilha } from "./csv";
 import { CategoriaCarboidrato, GrupoAlimentar, ListaIG, ModoPreparo, Papel, Presenca } from "./generated/prisma/client";
 import { categoriaCarboidratoPadrao, lerAlimentosTaco, sugerirFormas } from "./taco";
@@ -48,13 +49,13 @@ export async function importarTaco() {
   await prisma.$transaction(
     alimentos.map((a) => {
       const exc = excecoes.get(a.codigo_taco);
-      const dados = {
-        ...a,
-        origem: "TACO" as const,
-        categoria_carboidrato: exc?.categoria ?? categoriaCarboidratoPadrao(a),
-        rds_percentual: exc?.rds ?? null,
-      };
-      return prisma.ingrediente.upsert({ where: { codigo_taco: a.codigo_taco }, update: dados, create: dados });
+      const dados = { ...a, origem: "TACO" as const };
+      // FC-09: alimento já importado mantém a categoria e o RDS editados na tela; só a planilha de exceções os troca.
+      return prisma.ingrediente.upsert({
+        where: { codigo_taco: a.codigo_taco },
+        update: { ...dados, ...(exc && { categoria_carboidrato: exc.categoria, rds_percentual: exc.rds }) },
+        create: { ...dados, categoria_carboidrato: exc?.categoria ?? categoriaCarboidratoPadrao(a), rds_percentual: exc?.rds ?? null },
+      });
     }),
   );
   return `${alimentos.length} alimentos da TACO (${excecoes.size} exceções de carboidrato)`;
@@ -129,7 +130,8 @@ export async function importarFatores() {
       return id ? prisma.fatorPreparo.update({ where: { id }, data: f }) : prisma.fatorPreparo.create({ data: f });
     }),
   );
-  return `${fatores.length} fatores de cocção`;
+  const recalculadas = await recalcularPesosFinais();
+  return `${fatores.length} fatores de cocção (${recalculadas} preparações com o peso final recalculado)`;
 }
 
 export async function importarMarcadores() {

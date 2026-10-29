@@ -107,6 +107,11 @@ export async function substituirMarcadores(ingrediente_id: number, marcadores: N
   return atualizados;
 }
 
+// Alguma preparação usa o ingrediente nesse modo (ou, com { not }, em outro modo)?
+export async function usadoEmPreparacao(ingrediente_id: number, modo_preparo: ModoPreparo | { not: ModoPreparo }) {
+  return (await prisma.itemPreparacao.count({ where: { ingrediente_id, modo_preparo } })) > 0;
+}
+
 export function apagarIngrediente(id: number) {
   return prisma.ingrediente.delete({ where: { id } });
 }

@@ -1,3 +1,4 @@
+import { recalcularPesosFinais } from "@bandeja/dados";
 import type { FatorEntrada } from "@/lib/validacao";
 import { apagarFator, atualizarFator, buscarFator, buscarFatorPorChave, criarFator, fatorEmUso } from "@/repositories/fatores";
 import { ErroNegocio } from "./erros";
@@ -29,7 +30,10 @@ export async function editarFator(id: number, dados: FatorEntrada) {
   const mudouChave = atual.grupo_alimentar !== dados.grupo_alimentar || atual.modo_preparo !== dados.modo_preparo;
   if (mudouChave && (await fatorEmUso(atual.grupo_alimentar, atual.modo_preparo))) throw emUso(atual);
   await conferirChaveLivre(dados, id);
-  return atualizarFator(id, dados);
+  const fator = await atualizarFator(id, dados);
+  // FC-08: o peso final gravado nas preparações acompanha o novo valor.
+  if (atual.fator_coccao !== dados.fator_coccao) await recalcularPesosFinais();
+  return fator;
 }
 
 export async function removerFator(id: number) {

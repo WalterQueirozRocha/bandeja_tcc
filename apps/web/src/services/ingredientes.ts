@@ -1,5 +1,5 @@
 import { faltaMarcadorGluten } from "@bandeja/dominio";
-import type { OrigemMarcador } from "@bandeja/dados";
+import type { ModoPreparo, OrigemMarcador } from "@bandeja/dados";
 import type { EdicaoIngrediente, FormaCrua, IngredienteRotulo, MarcadorEntrada, ValorIgEntrada } from "@/lib/validacao";
 import {
   apagarIg,
@@ -12,6 +12,7 @@ import {
   mudarAtivoIngrediente,
   salvarIg,
   substituirMarcadores,
+  usadoEmPreparacao,
   type NovoMarcador,
 } from "@/repositories/ingredientes";
 import { listarFatores } from "@/repositories/preparacoes";
@@ -33,7 +34,7 @@ async function exigirIngrediente(id: number) {
 }
 
 // M4: no rótulo edita tudo; na TACO só a categoria de carboidrato e o RDS (o resto vem da tabela).
-// Atenção: reimportar a TACO volta esses dois campos ao padrão + carboidratos.csv.
+// Reimportar a TACO mantém esses dois campos, exceto quando o alimento está no carboidratos.csv (FC-09).
 const SO_TACO = ["categoria_carboidrato", "rds_percentual"];
 
 export async function editarIngrediente(id: number, dados: EdicaoIngrediente) {
@@ -42,7 +43,19 @@ export async function editarIngrediente(id: number, dados: EdicaoIngrediente) {
   if (ingrediente.origem === "TACO" && proibidos.length) {
     throw new ErroNegocio(`Ingrediente da TACO: só categoria_carboidrato e rds_percentual podem ser editados (recebido: ${proibidos.join(", ")})`);
   }
+  // FC-11: o fator de cocção vem do grupo; trocar o grupo mudaria (ou quebraria) as preparações cozidas que usam o ingrediente.
+  const mudouGrupo = dados.grupo_alimentar !== undefined && dados.grupo_alimentar !== ingrediente.grupo_alimentar;
+  if (mudouGrupo && (await usadoEmPreparacao(id, { not: "CRU" }))) {
+    throw new ErroNegocio(`${ingrediente.nome} está em preparação com modo de preparo além do cru, e o fator depende do grupo: troque o modo nessas preparações antes de mudar o grupo`);
+  }
   return atualizarIngrediente(id, dados);
+}
+
+// FC-12: FRITO exige a forma frita da TACO (v3 §4.4); ela não sai enquanto uma preparação usa a forma crua frita.
+async function conferirFormaFritaLivre(forma: { nome: string; forma_crua_id: number | null; modo_preparo: ModoPreparo | null }) {
+  if (forma.modo_preparo === "FRITO" && forma.forma_crua_id !== null && (await usadoEmPreparacao(forma.forma_crua_id, "FRITO"))) {
+    throw new ErroNegocio(`${forma.nome} é a forma frita usada por preparações no modo FRITO: troque o modo nessas preparações antes`);
+  }
 }
 
 // M2 (= valores-ig.csv): um IG por ingrediente, com conferência dupla; escala do pão ÷ 1,4.
@@ -59,6 +72,7 @@ export async function removerIg(id: number) {
 // M3 (= formas-preparadas.csv): liga a forma preparada da TACO à sua forma crua.
 export async function definirFormaCrua(id: number, { forma_crua_id, modo_preparo }: FormaCrua) {
   const [forma, crua] = [await exigirIngrediente(id), await buscarIngrediente(forma_crua_id)];
+  if (forma.forma_crua_id !== forma_crua_id || forma.modo_preparo !== modo_preparo) await conferirFormaFritaLivre(forma);
   const erros: string[] = [];
   if (!crua) erros.push("Forma crua não encontrada");
   else {
@@ -74,7 +88,9 @@ export async function definirFormaCrua(id: number, { forma_crua_id, modo_preparo
 }
 
 export async function removerFormaCrua(id: number) {
-  if ((await exigirIngrediente(id)).forma_crua_id === null) throw new ErroNegocio("Ingrediente sem forma crua ligada", 404);
+  const forma = await exigirIngrediente(id);
+  if (forma.forma_crua_id === null) throw new ErroNegocio("Ingrediente sem forma crua ligada", 404);
+  await conferirFormaFritaLivre(forma);
   return ligarFormaCrua(id, null, null);
 }
 
