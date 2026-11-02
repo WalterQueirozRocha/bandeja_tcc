@@ -97,7 +97,15 @@ export async function salvarPreparacao(dados: DadosPreparacaoEntrada, id?: numbe
       erros.push(`${ingrediente.nome} já é uma forma preparada: use o ingrediente cru com o modo ${ingrediente.modo_preparo}`);
     } else if (!modos.includes(entrada.modo_preparo)) {
       erros.push(`${ingrediente.nome}: modo ${entrada.modo_preparo} não disponível (disponíveis: ${modos.join(", ")})`);
-    } else itens.push(paraDominio(ingrediente, entrada.quantidade_crua_g, entrada.modo_preparo, fatores).item);
+    } else {
+      // D6 / FC-02: alimento da TACO (e a forma preparada que o modo usa) só com a marcação conferida, inclusive o que já estava na ficha.
+      const forma = ingrediente.formas_preparadas.find((f) => f.modo_preparo === entrada.modo_preparo);
+      const naoConferidos = [ingrediente, ...(forma ? [forma] : [])].filter(
+        (i) => i.origem === "TACO" && !i.marcacao_conferida_em,
+      );
+      if (naoConferidos.length) erros.push(...naoConferidos.map((i) => `${i.nome}: marcação de alergênicos ainda não conferida`));
+      else itens.push(paraDominio(ingrediente, entrada.quantidade_crua_g, entrada.modo_preparo, fatores).item);
+    }
   }
   const invalidas = dados.contato_cozinha.filter((c) => !categorias.has(c.categoria_codigo)).map((c) => c.categoria_codigo);
   if (invalidas.length) erros.push(`Categorias inexistentes: ${invalidas.join(", ")}`);

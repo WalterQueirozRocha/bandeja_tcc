@@ -47,6 +47,7 @@ export async function listarIngredientes({ busca, grupo, origem, inativos, pagin
         origem: true,
         modo_preparo: true,
         ativo: true,
+        marcacao_conferida_em: true,
         marcadores: { select: { categoria_codigo: true, presenca: true } },
       },
     }),
@@ -98,11 +99,26 @@ export function ligarFormaCrua(id: number, forma_crua_id: number | null, modo_pr
   });
 }
 
-export async function substituirMarcadores(ingrediente_id: number, marcadores: NovoMarcador[]) {
+export type Conferencia = { conferido_por_1: string; conferido_por_2: string };
+
+// D6: na TACO, a conferência do conjunto é gravada no ingrediente junto com os marcadores.
+export async function substituirMarcadores(ingrediente_id: number, marcadores: NovoMarcador[], conferencia?: Conferencia) {
   const [, , atualizados] = await prisma.$transaction([
     prisma.marcadorIngrediente.deleteMany({ where: { ingrediente_id } }),
     prisma.marcadorIngrediente.createMany({ data: marcadores.map((m) => ({ ...m, ingrediente_id })) }),
     prisma.marcadorIngrediente.findMany({ where: { ingrediente_id } }),
+    ...(conferencia
+      ? [
+          prisma.ingrediente.update({
+            where: { id: ingrediente_id },
+            data: {
+              marcacao_conferida_por_1: conferencia.conferido_por_1,
+              marcacao_conferida_por_2: conferencia.conferido_por_2,
+              marcacao_conferida_em: new Date(),
+            },
+          }),
+        ]
+      : []),
   ]);
   return atualizados;
 }

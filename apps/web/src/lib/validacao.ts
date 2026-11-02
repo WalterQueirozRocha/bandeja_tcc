@@ -60,9 +60,9 @@ const semRepetir = (marcadores: { categoria_codigo: string }[]) =>
 const marcador = z.object({
   categoria_codigo: z.string().trim().min(1),
   presenca: z.enum(Presenca),
-  conferido_por_1: z.string().trim().min(1).optional(),
-  conferido_por_2: z.string().trim().min(1).optional(),
 });
+
+const conferente = z.string().trim().min(1).max(100);
 
 const listaMarcadores = z.array(marcador).refine(semRepetir, "categoria repetida");
 
@@ -83,7 +83,12 @@ export const ingredienteRotulo = z.object({
   marcadores: listaMarcadores.default([]),
 });
 
-export const substituicaoMarcadores = z.object({ marcadores: listaMarcadores });
+// D6: na TACO a conferência dupla vale para o conjunto (lista vazia = conferido, sem alergênico).
+export const substituicaoMarcadores = z.object({
+  marcadores: listaMarcadores,
+  conferido_por_1: conferente.optional(),
+  conferido_por_2: conferente.optional(),
+});
 
 // M4: edição parcial; no ingrediente da TACO só valem categoria_carboidrato e rds_percentual.
 export const edicaoIngrediente = ingredienteRotulo
@@ -93,7 +98,6 @@ export const edicaoIngrediente = ingredienteRotulo
 
 // Criação manual com as mesmas regras das planilhas (M1–M3). CRU sempre usa fator 1.
 const modoCozido = z.enum(ModoPreparo).exclude(["CRU"]);
-const conferente = z.string().trim().min(1).max(100);
 
 export const fator = z.object({
   grupo_alimentar: z.enum(GrupoAlimentar),
@@ -213,12 +217,26 @@ export const buscaPedidosRegistros = z.object({ situacao: z.enum(SituacaoRegistr
 
 export const decisaoPedidoRegistros = z.object({ situacao: z.enum(["AUTORIZADA", "RECUSADA"]) });
 
+// D2: com `id` marca uma notificação; sem corpo (ou sem `id`), todas.
+export const marcacaoLidas = z.object({ id: z.number().int().positive().optional() }).optional();
+
 // RF12: data/hora com fuso (a tela converte a hora local); texto curto (opcional) só para "Outro".
+// D3: o que comeu antes (itens das próprias compras e/ou alimento de fora); ao menos um, conferido no serviço.
+const itemComprado = z.object({ venda_id: z.number().int().positive(), item_cardapio_id: z.number().int().positive() });
+
 export const registroSintoma = z.object({
   sintoma_codigo: z.string().trim().min(1),
   data_hora: z.iso.datetime({ offset: true }),
   observacao: z.string().trim().min(1).max(100).optional(),
+  itens: z
+    .array(itemComprado)
+    .max(30)
+    .refine((l) => new Set(l.map((i) => `${i.venda_id}:${i.item_cardapio_id}`)).size === l.length, "item repetido")
+    .default([]),
+  alimento_externo: z.string().trim().min(1).max(100).optional(),
 });
+
+export const consultaItensSintoma = z.object({ ate: z.iso.datetime({ offset: true }) });
 
 export const consultaPanorama = z.object({
   de: z.iso.date(),
@@ -233,6 +251,7 @@ export type CardapioEntrada = z.infer<typeof cardapio>;
 export type PerfilEntrada = z.infer<typeof perfilSaude>;
 export type IngredienteRotulo = z.infer<typeof ingredienteRotulo>;
 export type MarcadorEntrada = z.infer<typeof marcador>;
+export type SubstituicaoMarcadores = z.infer<typeof substituicaoMarcadores>;
 
 function invalido(erro: z.ZodError) {
   return Response.json(

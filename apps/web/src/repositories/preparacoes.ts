@@ -5,6 +5,8 @@ const camposCalculo = {
   id: true,
   nome: true,
   grupo_alimentar: true,
+  origem: true,
+  marcacao_conferida_em: true,
   forma_crua_id: true,
   modo_preparo: true,
   energia_kcal: true,

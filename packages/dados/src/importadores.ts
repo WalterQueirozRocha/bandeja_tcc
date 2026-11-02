@@ -139,11 +139,27 @@ export async function importarMarcadores() {
   const categorias = new Set((await prisma.categoriaRestricao.findMany({ select: { codigo: true } })).map((c) => c.codigo));
   const erros: string[] = [];
   const porIngrediente = new Map<number, string[]>();
+  // D6: a conferência vale para o conjunto do alimento; linha sem categoria e sem presença = conferido, sem alergênico.
+  const conferencias = new Map<number, { conferido_por_1: string; conferido_por_2: string }>();
+  const semAlergenico = new Map<number, string>(); // ingrediente → linha
   const marcadores = lerTabela(planilha("marcadores.csv")).flatMap((l) => {
     const ingrediente_id = ids.get(Number(l.codigo_taco));
     const categoria_codigo = l.categoria ?? "";
     conferenciaDupla(l, erros);
+    if (ingrediente_id && l.conferido_por_1 && l.conferido_por_2) {
+      const conferencia = { conferido_por_1: l.conferido_por_1, conferido_por_2: l.conferido_por_2 };
+      const anterior = conferencias.get(ingrediente_id) ?? conferencia;
+      const mesma = (a: string, b: string) => a.toLowerCase() === b.toLowerCase();
+      if (!mesma(anterior.conferido_por_1, conferencia.conferido_por_1) || !mesma(anterior.conferido_por_2, conferencia.conferido_por_2)) {
+        erros.push(`linha ${l.linha}: conferentes diferentes das outras linhas do mesmo alimento`);
+      }
+      conferencias.set(ingrediente_id, anterior);
+    }
     if (!ingrediente_id) erros.push(`linha ${l.linha}: código TACO ${l.codigo_taco} não importado`);
+    else if (!categoria_codigo && !l.presenca) {
+      if (porIngrediente.has(ingrediente_id) || semAlergenico.has(ingrediente_id)) erros.push(`linha ${l.linha}: "sem alergênico" junto com outra linha do mesmo alimento`);
+      semAlergenico.set(ingrediente_id, l.linha);
+    } else if (semAlergenico.has(ingrediente_id)) erros.push(`linha ${l.linha}: marcador num alimento marcado como "sem alergênico"`);
     else if (!categorias.has(categoria_codigo)) erros.push(`linha ${l.linha}: categoria inválida "${categoria_codigo}"`);
     else if (!emEnum(Presenca, l.presenca ?? "")) erros.push(`linha ${l.linha}: presenca inválida "${l.presenca}"`);
     else if (porIngrediente.get(ingrediente_id)?.includes(categoria_codigo)) erros.push(`linha ${l.linha}: categoria repetida no ingrediente`);
@@ -162,26 +178,36 @@ export async function importarMarcadores() {
   });
   // S1 sobre a união com os marcadores que o ingrediente já tem (a importação mescla).
   const jaGravados = await prisma.marcadorIngrediente.findMany({
-    where: { ingrediente_id: { in: [...porIngrediente.keys()] } },
+    where: { ingrediente_id: { in: [...porIngrediente.keys(), ...semAlergenico.keys()] } },
     select: { ingrediente_id: true, categoria_codigo: true },
   });
   for (const [id, cats] of porIngrediente) {
     const todas = [...cats, ...jaGravados.filter((m) => m.ingrediente_id === id).map((m) => m.categoria_codigo)];
     if (faltaMarcadorGluten(todas)) erros.push(`código TACO ${[...ids].find(([, v]) => v === id)?.[0]}: cereal com glúten sem o marcador GLUTEN`);
   }
+  for (const [id, linha] of semAlergenico) {
+    if (jaGravados.some((m) => m.ingrediente_id === id)) erros.push(`linha ${linha}: o alimento já tem marcadores gravados; para tirar, use a tela do ingrediente`);
+  }
   conferir(erros, "marcadores.csv");
 
   // Mescla por (ingrediente, categoria): mantém os editados pela API. Para remover, PUT .../marcadores.
-  await prisma.$transaction(
-    marcadores.map(({ ingrediente_id, categoria_codigo, ...dados }) =>
+  const agora = new Date();
+  await prisma.$transaction([
+    ...marcadores.map(({ ingrediente_id, categoria_codigo, ...dados }) =>
       prisma.marcadorIngrediente.upsert({
         where: { ingrediente_id_categoria_codigo: { ingrediente_id, categoria_codigo } },
         update: dados,
         create: { ingrediente_id, categoria_codigo, ...dados },
       }),
     ),
-  );
-  return `${marcadores.length} marcadores em ${porIngrediente.size} ingredientes`;
+    ...[...conferencias].map(([id, c]) =>
+      prisma.ingrediente.update({
+        where: { id },
+        data: { marcacao_conferida_por_1: c.conferido_por_1, marcacao_conferida_por_2: c.conferido_por_2, marcacao_conferida_em: agora },
+      }),
+    ),
+  ]);
+  return `${marcadores.length} marcadores em ${porIngrediente.size} ingredientes; ${conferencias.size} alimentos com a marcação conferida (${semAlergenico.size} sem alergênico)`;
 }
 
 // IG na escala do pão é convertido para a escala da glicose (÷ 1,4; FAO/OMS, 1998).

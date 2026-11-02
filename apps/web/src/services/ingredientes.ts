@@ -1,6 +1,6 @@
 import { faltaMarcadorGluten } from "@bandeja/dominio";
 import type { ModoPreparo, OrigemMarcador } from "@bandeja/dados";
-import type { EdicaoIngrediente, FormaCrua, IngredienteRotulo, MarcadorEntrada, ValorIgEntrada } from "@/lib/validacao";
+import type { EdicaoIngrediente, FormaCrua, IngredienteRotulo, MarcadorEntrada, SubstituicaoMarcadores, ValorIgEntrada } from "@/lib/validacao";
 import {
   apagarIg,
   apagarIngrediente,
@@ -13,6 +13,7 @@ import {
   salvarIg,
   substituirMarcadores,
   usadoEmPreparacao,
+  type Conferencia,
   type NovoMarcador,
 } from "@/repositories/ingredientes";
 import { listarFatores } from "@/repositories/preparacoes";
@@ -94,29 +95,29 @@ export async function removerFormaCrua(id: number) {
   return ligarFormaCrua(id, null, null);
 }
 
-// Regras comuns ao cadastro e à edição: categorias existentes, S1 e conferência dupla no MAPEAMENTO.
-async function prepararMarcadores(entrada: MarcadorEntrada[], origem: OrigemMarcador): Promise<NovoMarcador[]> {
+// Regras comuns ao cadastro e à edição: categorias existentes e S1. No MAPEAMENTO, os marcadores herdam a conferência do conjunto.
+async function prepararMarcadores(entrada: MarcadorEntrada[], origem: OrigemMarcador, conferencia?: Conferencia): Promise<NovoMarcador[]> {
   const existentes = await codigosCategorias();
   const invalidas = entrada.filter((m) => !existentes.has(m.categoria_codigo)).map((m) => m.categoria_codigo);
   if (invalidas.length) throw new ErroNegocio(`Categorias inexistentes: ${invalidas.join(", ")}`);
   if (faltaMarcadorGluten(entrada.map((m) => m.categoria_codigo))) {
     throw new ErroNegocio("Ingrediente com trigo, centeio, cevada ou aveia deve ter o marcador GLUTEN");
   }
-  if (origem === "MAPEAMENTO") {
-    const semConferencia = entrada.filter(
-      (m) => !m.conferido_por_1 || !m.conferido_por_2 || m.conferido_por_1.toLowerCase() === m.conferido_por_2.toLowerCase(),
-    );
-    if (semConferencia.length) {
-      throw new ErroNegocio("Marcadores da TACO exigem conferência dupla por duas pessoas diferentes");
-    }
-  }
   return entrada.map((m) => ({
     categoria_codigo: m.categoria_codigo,
     presenca: m.presenca,
     origem,
-    conferido_por_1: m.conferido_por_1 ?? null,
-    conferido_por_2: m.conferido_por_2 ?? null,
+    conferido_por_1: conferencia?.conferido_por_1 ?? null,
+    conferido_por_2: conferencia?.conferido_por_2 ?? null,
   }));
+}
+
+// D6 / RF01: a marcação da TACO só vale conferida por duas pessoas diferentes.
+function exigirConferenciaDupla({ conferido_por_1: a, conferido_por_2: b }: SubstituicaoMarcadores): Conferencia {
+  if (!a || !b || a.toLowerCase() === b.toLowerCase()) {
+    throw new ErroNegocio("Marcação da TACO exige conferência dupla por duas pessoas diferentes");
+  }
+  return { conferido_por_1: a, conferido_por_2: b };
 }
 
 export async function cadastrarPorRotulo({ marcadores, ...dados }: IngredienteRotulo) {
@@ -140,10 +141,11 @@ export async function habilitarIngrediente(id: number) {
   return mudarAtivoIngrediente(id, true);
 }
 
-// A origem segue a do ingrediente: TACO → MAPEAMENTO, rótulo → ROTULO.
-export async function editarMarcadores(id: number, marcadores: MarcadorEntrada[]) {
+// A origem segue a do ingrediente: TACO → MAPEAMENTO (com a conferência do conjunto), rótulo → ROTULO.
+export async function editarMarcadores(id: number, dados: SubstituicaoMarcadores) {
   const ingrediente = await buscarIngrediente(id);
   if (!ingrediente) throw new ErroNegocio("Ingrediente não encontrado", 404);
-  const origem = ingrediente.origem === "TACO" ? "MAPEAMENTO" : "ROTULO";
-  return substituirMarcadores(id, await prepararMarcadores(marcadores, origem));
+  if (ingrediente.origem !== "TACO") return substituirMarcadores(id, await prepararMarcadores(dados.marcadores, "ROTULO"));
+  const conferencia = exigirConferenciaDupla(dados);
+  return substituirMarcadores(id, await prepararMarcadores(dados.marcadores, "MAPEAMENTO", conferencia), conferencia);
 }
