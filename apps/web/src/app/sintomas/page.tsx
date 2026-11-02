@@ -2,7 +2,7 @@ import { Alerta } from "@/components/alerta";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
 import { buscarAlunoDoUsuario } from "@/repositories/alunos";
 import { registrosDoAluno } from "@/repositories/sintomas";
-import { listaDeSintomas } from "@/services/sintomas";
+import { descreverAlimento, listaDeSintomas } from "@/services/sintomas";
 import { FormularioSintoma } from "./formulario";
 
 // RF12/RF13: diário do próprio aluno, com o aviso fixo sempre visível.
@@ -29,6 +29,7 @@ export default async function Sintomas() {
             </span>
             {r.sintoma.descricao}
             {r.observacao && `: ${r.observacao}`}
+            {descreverAlimento(r) && <span className="block text-sm text-secondary">{descreverAlimento(r)}</span>}
           </li>
         ))}
       </ul>
