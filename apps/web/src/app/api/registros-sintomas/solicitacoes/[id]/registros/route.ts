@@ -10,7 +10,7 @@ export async function GET(req: Request, ctx: RouteContext<"/api/registros-sintom
   const id = await lerId(ctx);
   if (!id) return Response.json({ erro: "Acesso negado" }, { status: 403 });
   try {
-    return Response.json(await registrosLiberados(sessao, id));
+    return Response.json(await registrosLiberados(sessao, id, "TELA"));
   } catch (e) {
     return respostaDeErro(e);
   }

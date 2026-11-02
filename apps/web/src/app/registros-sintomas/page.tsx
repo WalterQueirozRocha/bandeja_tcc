@@ -31,6 +31,17 @@ export default async function RegistrosSintomas() {
                 {!responsavel && `${p.responsavel.nome} (${p.responsavel.email}) · `}
                 pedido em <span className="tabular-nums">{dataHoraNaBahia(p.solicitada_em)}</span>
               </span>
+              {p.situacao === "AUTORIZADA" && (
+                <span className="block text-sm text-secondary" data-testid="ultimo-acesso">
+                  {p.ultimo_acesso ? (
+                    <>
+                      Último acesso em <span className="tabular-nums">{dataHoraNaBahia(p.ultimo_acesso)}</span>
+                    </>
+                  ) : (
+                    "Ainda não acessado"
+                  )}
+                </span>
+              )}
               {!responsavel && !p.vinculado && <span className="block text-sm font-medium text-bloqueado-texto">Não está mais vinculado ao aluno</span>}
             </span>
             {/* Autorizado libera o acesso; as outras situações não têm cor semântica. */}

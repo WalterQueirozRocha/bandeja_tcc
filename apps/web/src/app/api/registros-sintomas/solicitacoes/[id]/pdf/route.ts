@@ -10,7 +10,7 @@ export async function GET(req: Request, ctx: RouteContext<"/api/registros-sintom
   const id = await lerId(ctx);
   if (!id) return Response.json({ erro: "Acesso negado" }, { status: 403 });
   try {
-    const pdf = await gerarPdfRegistros(await registrosLiberados(sessao, id));
+    const pdf = await gerarPdfRegistros(await registrosLiberados(sessao, id, "PDF"));
     return new Response(Buffer.from(pdf), {
       headers: {
         "Content-Type": "application/pdf",

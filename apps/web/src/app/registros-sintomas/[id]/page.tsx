@@ -11,7 +11,7 @@ export default async function RegistrosLiberados({ params }: PageProps<"/registr
   if (sessao.papel !== "RESPONSAVEL" || !Number.isInteger(id) || id <= 0) return <main className="p-4">Acesso negado.</main>;
   let dados;
   try {
-    dados = await registrosLiberados(sessao, id);
+    dados = await registrosLiberados(sessao, id, "TELA");
   } catch (e) {
     if (e instanceof ErroNegocio) return <main className="p-4">{e.message}.</main>;
     throw e;
@@ -40,6 +40,7 @@ export default async function RegistrosLiberados({ params }: PageProps<"/registr
             <span className="block text-sm text-secondary tabular-nums">{dataHoraNaBahia(r.data_hora)}</span>
             {r.sintoma}
             {r.observacao && `: ${r.observacao}`}
+            {r.alimento && <span className="block text-sm text-secondary">{r.alimento}</span>}
           </li>
         ))}
       </ul>
