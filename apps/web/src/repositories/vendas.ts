@@ -46,12 +46,12 @@ export async function alunoComResponsaveis(aluno_id: number) {
     select: {
       id: true,
       usuario: { select: { nome: true } },
-      responsaveis: { where: { responsavel: { ativo: true } }, select: { responsavel: { select: { id: true, email: true } } } },
+      responsaveis: { where: { responsavel: { ativo: true } }, select: { responsavel: { select: { id: true } } } },
     },
   });
 }
 
-// Verificar, enviar e gravar a notificação sob uma trava por aluno: vendas simultâneas não duplicam o e-mail.
+// Verificar e gravar a notificação sob uma trava por aluno: vendas simultâneas não duplicam o aviso.
 export function comTravaDoAluno<T>(aluno_id: number, fn: (tx: Prisma.TransactionClient) => Promise<T>) {
   return prisma.$transaction(
     async (tx) => {
@@ -66,14 +66,7 @@ export async function notificacaoExiste(
   tx: Prisma.TransactionClient,
   chave: { destinatario_id: number; aluno_id: number; categoria_codigo: string; periodo: Date },
 ) {
-  return (await tx.notificacao.count({ where: chave })) > 0;
-}
-
-export function gravarNotificacao(
-  tx: Prisma.TransactionClient,
-  dados: { destinatario_id: number; aluno_id: number; categoria_codigo: string; periodo: Date },
-) {
-  return tx.notificacao.create({ data: dados });
+  return (await tx.notificacao.count({ where: { ...chave, tipo: "LIMITE_SEMANAL" } })) > 0;
 }
 
 export function historicoDoAluno(aluno_id: number, de?: Date, ate?: Date) {

@@ -9,18 +9,15 @@ import {
   buscarItensCardapio,
   comTravaDoAluno,
   consumosNaSemana,
-  gravarNotificacao,
   gravarVenda,
   historicoDoAluno,
   notificacaoExiste,
   restricoesAcompanhamento,
 } from "@/repositories/vendas";
+import { criarNotificacoes } from "@/repositories/notificacoes";
 import { montarCardapio } from "./cardapios";
-import { enviarEmail } from "./email";
 import { ErroNegocio } from "./erros";
 import { resumirPreparacoes } from "./preparacoes";
-
-const ASSUNTO_NOTIFICACAO = "Bandeja: consumo da semana";
 
 // Fig. 7 / RF08–RF10. O operador recebe só os textos fixos dos alertas, nunca o perfil (RNF04).
 export async function registrarVenda(operador_id: number, dados: VendaEntrada) {
@@ -113,6 +110,7 @@ async function alternativasNoBalcao(
 type AlunoNotificacao = NonNullable<Awaited<ReturnType<typeof alunoComResponsaveis>>>;
 
 // RF11 / doc §4.7: conta os consumos da semana (incluindo esta venda) só das categorias em ATENÇÃO nesta venda.
+// D2: o aviso é a notificação na plataforma, gravada sob a trava (sem chamada externa).
 async function contarENotificar(aluno: AlunoNotificacao, categoriasDaVenda: string[], agora: Date) {
   const semana = semanaDe(agora);
   const [restricoes, nomes] = await Promise.all([restricoesAcompanhamento(aluno.id), nomesCategorias()]);
@@ -129,12 +127,14 @@ async function contarENotificar(aluno: AlunoNotificacao, categoriasDaVenda: stri
       const chave = { destinatario_id: responsavel.id, aluno_id: aluno.id, categoria_codigo: r.categoria_codigo, periodo };
       const enviou = await comTravaDoAluno(aluno.id, async (tx) => {
         if (!deveNotificar(consumos, r.limite_notificacao, await notificacaoExiste(tx, chave))) return false;
-        await enviarEmail({
-          para: responsavel.email,
-          assunto: ASSUNTO_NOTIFICACAO,
-          texto: textos.notificacao(nomeAluno, consumos, categoria, r.limite_notificacao),
-        });
-        await gravarNotificacao(tx, chave);
+        await criarNotificacoes(tx, [
+          {
+            ...chave,
+            tipo: "LIMITE_SEMANAL",
+            mensagem: textos.notificacao(nomeAluno, consumos, categoria, r.limite_notificacao),
+            link: "/historico",
+          },
+        ]);
         return true;
       });
       if (enviou) notificados++;
