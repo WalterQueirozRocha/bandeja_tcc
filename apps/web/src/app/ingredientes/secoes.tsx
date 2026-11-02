@@ -182,21 +182,28 @@ export function EdicaoTaco({ id, categoria, rds }: { id: number; categoria: stri
   );
 }
 
-// Marcadores do ingrediente; na TACO a mudança exige conferência dupla por duas pessoas.
+// Marcadores do ingrediente; na TACO o conjunto exige conferência dupla por duas pessoas (D6).
 export function EditorMarcadores({ id, taco, inicial, categorias }: { id: number; taco: boolean; inicial: Marcador[]; categorias: Categoria[] }) {
+  const router = useRouter();
   const { erro, ocupado, executar } = useAcao();
   const [lista, setLista] = useState(inicial);
   const [conferentes, setConferentes] = useState({ conferido_por_1: "", conferido_por_2: "" });
   const [aviso, setAviso] = useState("");
 
   async function salvar() {
-    const marcadores = lista.map((m) => ({ ...m, ...(taco && conferentes) }));
-    setAviso((await executar(`/api/ingredientes/${id}/marcadores`, "PUT", { marcadores })) ? "Marcadores salvos." : "");
+    const ok = await executar(`/api/ingredientes/${id}/marcadores`, "PUT", { marcadores: lista, ...(taco && conferentes) });
+    setAviso(ok ? "Marcadores salvos." : "");
+    if (ok) router.refresh(); // atualiza a situação da conferência
   }
 
   return (
     <div className="flex flex-col gap-3">
       <ListaMarcadores lista={lista} setLista={setLista} categorias={categorias} />
+      {taco && (
+        <p className="text-sm text-secondary">
+          A conferência vale para a lista inteira. Salvar sem nenhum marcador registra o alimento como conferido, sem alergênico.
+        </p>
+      )}
       {taco && (
         <div className="grid gap-2 sm:grid-cols-2">
           <label className="flex flex-col gap-1 text-sm font-medium">

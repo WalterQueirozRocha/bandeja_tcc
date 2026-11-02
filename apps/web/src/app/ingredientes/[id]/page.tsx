@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AcoesRegistro, SeloDesabilitado } from "@/components/acao";
+import { Alerta } from "@/components/alerta";
 import { Indicador, PAINEL } from "@/components/indicador";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
 import { CATEGORIA_CARBOIDRATO, GRUPO_ALIMENTAR, LISTA_IG, MODO_PREPARO, ORIGEM_INGREDIENTE, PRESENCA } from "@/lib/rotulos";
@@ -88,11 +89,17 @@ export default async function Ingrediente({ params }: PageProps<"/ingredientes/[
             ))}
           </ul>
         )}
-        {taco && i.marcadores.some((m) => m.conferido_por_1) && (
-          <p className="text-xs text-secondary">
-            Conferência: {[...new Set(i.marcadores.flatMap((m) => [m.conferido_por_1, m.conferido_por_2]).filter(Boolean))].join(", ")}.
-          </p>
-        )}
+        {taco &&
+          (i.marcacao_conferida_em ? (
+            <p className="text-xs text-secondary" data-testid="marcacao-conferida">
+              Marcação conferida por {i.marcacao_conferida_por_1} e {i.marcacao_conferida_por_2} em{" "}
+              {i.marcacao_conferida_em.toLocaleString("pt-BR", { timeZone: "America/Bahia", dateStyle: "short", timeStyle: "short" })}.
+            </p>
+          ) : (
+            <Alerta estado="ATENCAO" role="note" data-testid="marcacao-pendente">
+              Marcação pendente: a ficha técnica não aceita este alimento até a conferência dupla.
+            </Alerta>
+          ))}
       </section>
 
       <section className="cartao flex flex-col gap-3">

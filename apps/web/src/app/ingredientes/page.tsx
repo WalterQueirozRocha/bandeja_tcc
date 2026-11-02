@@ -60,6 +60,12 @@ export default async function Ingredientes({ searchParams }: PageProps<"/ingredi
                 <td className="p-3 text-secondary">{ORIGEM_INGREDIENTE[i.origem]}</td>
                 <td className="p-3">
                   <span className="flex flex-wrap gap-1">
+                    {i.origem === "TACO" && !i.marcacao_conferida_em && (
+                      <span className="rounded-md border border-borda px-1.5 py-0.5 text-xs font-semibold text-secondary">Pendente</span>
+                    )}
+                    {i.origem === "TACO" && i.marcacao_conferida_em && i.marcadores.length === 0 && (
+                      <span className="rounded-md border border-borda px-1.5 py-0.5 text-xs font-semibold text-secondary">Sem alergênico</span>
+                    )}
                     {i.marcadores.map((m) => (
                       <span
                         key={m.categoria_codigo}
