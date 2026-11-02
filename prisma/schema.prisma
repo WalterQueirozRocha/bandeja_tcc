@@ -133,6 +133,22 @@ enum GrupoSintoma {
   OUTROS
 }
 
+enum TipoNotificacao {
+  LIMITE_SEMANAL
+  BLOQUEIO_SOLICITADO
+  BLOQUEIO_EXECUTADO
+  BLOQUEIO_RECUSADO
+  BLOQUEIO_CANCELADO
+  REGISTROS_SOLICITADOS
+  REGISTROS_AUTORIZADOS
+  REGISTROS_RECUSADOS
+}
+
+enum TipoAcessoRegistros {
+  TELA
+  PDF
+}
+
 // ---------- Cadastro nutricional e cardápio (Fig. 4) ----------
 
 model CategoriaRestricao {
@@ -168,6 +184,10 @@ model Ingrediente {
   modo_preparo          ModoPreparo?
   // desabilitado: some das consultas, mas continua nos registros
   ativo                 Boolean              @default(true)
+  // D6: conferência dupla do conjunto de marcadores, inclusive "sem alergênico" (só TACO)
+  marcacao_conferida_por_1 String?
+  marcacao_conferida_por_2 String?
+  marcacao_conferida_em    DateTime?
 
   forma_crua        Ingrediente?          @relation("FormaPreparada", fields: [forma_crua_id], references: [id])
   formas_preparadas Ingrediente[]         @relation("FormaPreparada")
@@ -372,23 +392,32 @@ model ItemVenda {
   cg_fao                   Float? // FAO/OMS; nulo = não calculável (sem carboidrato disponível grava 0)
   categorias_atencao       String[]        @default([]) // base da contagem semanal (RF11)
 
-  venda         Venda        @relation(fields: [venda_id], references: [id], onDelete: Cascade)
-  item_cardapio ItemCardapio @relation(fields: [item_cardapio_id], references: [id])
+  venda             Venda                 @relation(fields: [venda_id], references: [id], onDelete: Cascade)
+  item_cardapio     ItemCardapio          @relation(fields: [item_cardapio_id], references: [id])
+  registros_sintoma RegistroSintomaItem[]
 
   @@id([venda_id, item_cardapio_id])
 }
 
+// D2: notificações na plataforma (sino + /notificacoes), uma por evento e destinatário.
 model Notificacao {
-  id               Int      @id @default(autoincrement())
+  id               Int             @id @default(autoincrement())
   destinatario_id  Int
-  aluno_id         Int
-  categoria_codigo String
-  periodo          DateTime @db.Date // segunda-feira da semana
-  enviada_em       DateTime @default(now())
+  tipo             TipoNotificacao
+  mensagem         String
+  link             String? // tela do assunto
+  criada_em        DateTime        @default(now())
+  lida_em          DateTime?
+  // só no LIMITE_SEMANAL: não repetir o aviso do RF11 na mesma semana
+  aluno_id         Int?
+  categoria_codigo String?
+  periodo          DateTime?       @db.Date // segunda-feira da semana
 
-  destinatario Usuario            @relation(fields: [destinatario_id], references: [id])
-  aluno        Aluno              @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
-  categoria    CategoriaRestricao @relation(fields: [categoria_codigo], references: [codigo])
+  destinatario Usuario             @relation(fields: [destinatario_id], references: [id])
+  aluno        Aluno?              @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  categoria    CategoriaRestricao? @relation(fields: [categoria_codigo], references: [codigo], onDelete: Restrict)
+
+  @@index([destinatario_id, lida_em])
 }
 
 model Sintoma {
@@ -406,9 +435,24 @@ model RegistroSintoma {
   data_hora      DateTime
   observacao     String?  @db.VarChar(100) // só para o sintoma "outro"
   registrado_em  DateTime @default(now()) // quando foi gravado; limite do que um pedido autorizado libera (RF20)
+  // D3: o que o aluno comeu antes (itens da cantina e/ou alimento de fora); só registro, sem cálculo nem alerta (§4.8)
+  alimento_externo String? @db.VarChar(100)
 
-  aluno   Aluno   @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
-  sintoma Sintoma @relation(fields: [sintoma_codigo], references: [codigo])
+  aluno   Aluno                 @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  sintoma Sintoma               @relation(fields: [sintoma_codigo], references: [codigo])
+  itens   RegistroSintomaItem[]
+}
+
+// D3: itens das próprias compras indicados no registro do sintoma.
+model RegistroSintomaItem {
+  registro_id      Int
+  venda_id         Int
+  item_cardapio_id Int
+
+  registro   RegistroSintoma @relation(fields: [registro_id], references: [id], onDelete: Cascade)
+  item_venda ItemVenda       @relation(fields: [venda_id, item_cardapio_id], references: [venda_id, item_cardapio_id], onDelete: Cascade)
+
+  @@id([registro_id, venda_id, item_cardapio_id])
 }
 
 // RF20: o responsável pede os registros de sintomas; a coordenação decide sem ver o conteúdo.
@@ -421,7 +465,20 @@ model SolicitacaoRegistros {
   decidida_por   Int?
   decidida_em    DateTime?
 
-  responsavel Usuario  @relation("RegistrosSolicitados", fields: [responsavel_id], references: [id])
-  decisor     Usuario? @relation("RegistrosDecididos", fields: [decidida_por], references: [id], onDelete: Restrict)
-  aluno       Aluno    @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  responsavel Usuario           @relation("RegistrosSolicitados", fields: [responsavel_id], references: [id])
+  decisor     Usuario?          @relation("RegistrosDecididos", fields: [decidida_por], references: [id], onDelete: Restrict)
+  aluno       Aluno             @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  acessos     AcessoRegistros[]
+}
+
+// D4 (DF-03): cada vez que o responsável abre ou baixa os registros liberados ("envio" do RF20).
+model AcessoRegistros {
+  id             Int                 @id @default(autoincrement())
+  solicitacao_id Int
+  tipo           TipoAcessoRegistros
+  acessado_em    DateTime            @default(now())
+
+  solicitacao SolicitacaoRegistros @relation(fields: [solicitacao_id], references: [id], onDelete: Cascade)
+
+  @@index([solicitacao_id])
 }
