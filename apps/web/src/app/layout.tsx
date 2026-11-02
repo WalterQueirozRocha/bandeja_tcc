@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { Cabecalho } from "@/components/cabecalho";
 import { COOKIE_SESSAO, verificarToken } from "@/lib/acesso";
 import { COOKIE_TEMA, lerTema } from "@/lib/navegacao";
+import { naoLidas } from "@/services/notificacoes";
 import "./globals.css";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
@@ -19,11 +20,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const jar = await cookies();
   const sessao = await verificarToken(jar.get(COOKIE_SESSAO)?.value);
   const tema = lerTema(jar.get(COOKIE_TEMA)?.value);
+  const naoLidasInicial = sessao ? await naoLidas(sessao) : 0;
 
   return (
     <html lang="pt-BR" data-tema={tema} className={`${inter.variable} ${jakarta.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
-        <Cabecalho papel={sessao?.papel ?? null} tema={tema} />
+        <Cabecalho papel={sessao?.papel ?? null} tema={tema} naoLidas={naoLidasInicial} />
         <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col">{children}</div>
       </body>
     </html>

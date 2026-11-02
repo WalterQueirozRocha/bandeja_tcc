@@ -3,6 +3,9 @@ import type { Papel } from "@bandeja/dados";
 export const COOKIE_TEMA = "bandeja_tema";
 export type Tema = "claro" | "escuro";
 
+// D2: avisa o sino do cabeçalho para buscar de novo o número de não lidas.
+export const EVENTO_NOTIFICACOES = "bandeja:notificacoes";
+
 export const lerTema = (valor: string | undefined): Tema | undefined =>
   valor === "claro" || valor === "escuro" ? valor : undefined;
 
