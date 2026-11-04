@@ -4,22 +4,53 @@ import { AcoesRegistro, SeloDesabilitado } from "@/components/acao";
 import { Alerta } from "@/components/alerta";
 import { Indicador, PAINEL } from "@/components/indicador";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
-import { CATEGORIA_CARBOIDRATO, GRUPO_ALIMENTAR, LISTA_IG, MODO_PREPARO, ORIGEM_INGREDIENTE, PRESENCA } from "@/lib/rotulos";
+import { CATEGORIA_CARBOIDRATO, GRUPO_ALIMENTAR, LISTA_IG, MODO_PREPARO, ORIGEM_INGREDIENTE, PAPEL, PRESENCA } from "@/lib/rotulos";
 import { listarCategorias } from "@/repositories/ingredientes";
-import { detalharIngrediente } from "@/services/ingredientes";
+import { alteracoesDoIngrediente, COMPOSICAO, detalharIngrediente } from "@/services/ingredientes";
 import { EdicaoTaco, EditorMarcadores, FormaCrua, FormularioIg, FormularioIngrediente } from "../secoes";
 
 const num = (n: number | null) => (n === null ? "—" : n.toLocaleString("pt-BR", { maximumFractionDigits: 1 }));
 
-// Detalhe do ingrediente para todos; o operador edita dados, marcadores, IG e a forma crua (M2–M4).
+const CAMPOS: Record<string, string> = {
+  nome: "Nome",
+  grupo_alimentar: "Grupo",
+  categoria_carboidrato: "Carboidrato principal",
+  energia_kcal: "Energia (kcal)",
+  proteina_g: "Proteína (g)",
+  lipideos_g: "Lipídeos (g)",
+  carboidrato_g: "Carboidrato (g)",
+  fibra_g: "Fibra (g)",
+  cinzas_g: "Cinzas (g)",
+  umidade_g: "Umidade (g)",
+  rds_percentual: "RDS (%)",
+  fonte: "Fonte",
+};
+
+function valorDoCampo(campo: string, valor: unknown) {
+  if (valor === null || valor === undefined) return "—";
+  if (typeof valor === "number") return num(valor);
+  const texto = String(valor);
+  if (campo === "grupo_alimentar") return GRUPO_ALIMENTAR[texto] ?? texto;
+  if (campo === "categoria_carboidrato") return CATEGORIA_CARBOIDRATO[texto] ?? texto;
+  return texto;
+}
+
+type CampoAlterado = { campo: string; antes: unknown; depois: unknown; fonte?: string };
+
+// Detalhe do ingrediente para todos. Operador e coordenação editam os dados, com registro (04/11);
+// marcadores, IG e a forma crua continuam com o operador (M2–M4).
 export default async function Ingrediente({ params }: PageProps<"/ingredientes/[id]">) {
   const sessao = await exigirSessaoNaPagina();
   const id = Number((await params).id);
   const i = Number.isInteger(id) && id > 0 ? await detalharIngrediente(id) : null;
   if (!i) notFound();
   const operador = sessao.papel === "OPERADOR";
+  const editor = operador || sessao.papel === "COORDENACAO";
   const taco = i.origem === "TACO";
-  const categorias = operador ? (await listarCategorias()).map((c) => ({ codigo: c.codigo, nome: c.nome })) : [];
+  const mapeado = i.origem !== "ROTULO"; // TACO e outra tabela: marcação conferida em dupla (D6)
+  const complementos = (i.complementos ?? {}) as Record<string, string>;
+  const categorias = editor ? (await listarCategorias()).map((c) => ({ codigo: c.codigo, nome: c.nome })) : [];
+  const alteracoes = editor ? await alteracoesDoIngrediente(id) : [];
 
   return (
     <main className="flex flex-col gap-4 p-4">
@@ -40,7 +71,7 @@ export default async function Ingrediente({ params }: PageProps<"/ingredientes/[
         {taco && i.energia_kcal === null && (
           <Alerta estado="AVISO" role="note" data-testid="sem-composicao">
             A TACO não analisou a composição deste alimento (campos com &quot;*&quot; na tabela). Nos cálculos, os valores
-            ausentes contam como 0: a equipe deve escolher outra fonte, como a TBCA.
+            ausentes contam como 0: operador ou coordenação podem preencher os campos com outra fonte, como a TBCA.
           </Alerta>
         )}
         <dl className={`${PAINEL} grid-cols-2 sm:grid-cols-4`}>
@@ -53,6 +84,15 @@ export default async function Ingrediente({ params }: PageProps<"/ingredientes/[
           <Indicador rotulo="Umidade" valor={`${num(i.umidade_g)} g`} />
           <Indicador rotulo="RDS" valor={i.rds_percentual === null ? "padrão" : `${num(i.rds_percentual)} %`} />
         </dl>
+        {i.fonte && <p className="text-sm">Fonte da composição: {i.fonte}</p>}
+        {Object.keys(complementos).length > 0 && (
+          <p className="text-sm" data-testid="complementos">
+            Preenchido fora da TACO:{" "}
+            {Object.entries(complementos)
+              .map(([campo, fonte]) => `${CAMPOS[campo] ?? campo} (${fonte})`)
+              .join(", ")}
+          </p>
+        )}
         <p className="text-sm text-secondary">
           Modos de preparo disponíveis na ficha:{" "}
           {i.modos_disponiveis.length ? i.modos_disponiveis.map((m) => MODO_PREPARO[m]).join(", ") : "nenhum (é uma forma preparada: use o cru)"}
@@ -80,7 +120,7 @@ export default async function Ingrediente({ params }: PageProps<"/ingredientes/[
         {operador ? (
           <EditorMarcadores
             id={id}
-            taco={taco}
+            taco={mapeado}
             categorias={categorias}
             inicial={i.marcadores.map((m) => ({ categoria_codigo: m.categoria_codigo, presenca: m.presenca }))}
           />
@@ -95,7 +135,7 @@ export default async function Ingrediente({ params }: PageProps<"/ingredientes/[
             ))}
           </ul>
         )}
-        {taco &&
+        {mapeado &&
           (i.marcacao_conferida_em ? (
             <p className="text-xs text-secondary" data-testid="marcacao-conferida">
               Marcação conferida por {i.marcacao_conferida_por_1} e {i.marcacao_conferida_por_2} em{" "}
@@ -120,15 +160,22 @@ export default async function Ingrediente({ params }: PageProps<"/ingredientes/[
         {operador && <FormularioIg id={id} inicial={i.valor_ig} />}
       </section>
 
-      {operador && (
+      {editor && (
         <section className="cartao flex flex-col gap-3">
           <h2>Editar dados</h2>
           {taco ? (
-            <EdicaoTaco id={id} categoria={i.categoria_carboidrato} rds={i.rds_percentual} />
+            <EdicaoTaco
+              id={id}
+              categoria={i.categoria_carboidrato}
+              rds={i.rds_percentual}
+              livres={COMPOSICAO.filter((c) => i[c] === null || c in complementos).map((c) => ({ campo: c, valor: i[c], fonte: complementos[c] }))}
+            />
           ) : (
             <FormularioIngrediente
               id={id}
               categorias={categorias}
+              origem={i.origem}
+              fonte={i.fonte}
               inicial={{
                 nome: i.nome,
                 grupo_alimentar: i.grupo_alimentar,
@@ -143,6 +190,36 @@ export default async function Ingrediente({ params }: PageProps<"/ingredientes/[
                 rds_percentual: i.rds_percentual,
               }}
             />
+          )}
+        </section>
+      )}
+
+      {editor && (
+        <section className="cartao flex flex-col gap-3" data-testid="historico-alteracoes">
+          <h2>Histórico de alterações</h2>
+          {alteracoes.length === 0 ? (
+            <p className="text-sm text-secondary">Nenhuma alteração registrada{taco ? " (os dados vieram da importação da TACO)" : ""}.</p>
+          ) : (
+            <ol className="flex flex-col gap-3 text-sm">
+              {alteracoes.map((a) => (
+                <li key={a.id} className="border-b border-borda pb-2 last:border-0">
+                  <p>
+                    <strong>{a.acao === "CRIACAO" ? "Cadastro" : "Edição"}</strong> por {a.usuario.nome} ({PAPEL[a.usuario.papel]}) em{" "}
+                    {a.criado_em.toLocaleString("pt-BR", { timeZone: "America/Bahia", dateStyle: "short", timeStyle: "short" })}
+                  </p>
+                  {a.motivo && <p className="text-secondary">Motivo: {a.motivo}</p>}
+                  <ul className="mt-1 flex flex-col gap-0.5 tabular-nums">
+                    {(a.campos as CampoAlterado[]).map((c) => (
+                      <li key={c.campo}>
+                        {CAMPOS[c.campo] ?? c.campo}: {a.acao === "EDICAO" && `${valorDoCampo(c.campo, c.antes)} → `}
+                        {valorDoCampo(c.campo, c.depois)}
+                        {c.fonte && ` (fonte: ${c.fonte})`}
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ol>
           )}
         </section>
       )}

@@ -73,7 +73,7 @@ export const PERIODO: Record<string, string> = { MANHA: "Manhã", TARDE: "Tarde"
 
 export const PRESENCA: Record<string, string> = { CONTEM: "Contém", PODE_CONTER: "Pode conter" };
 
-export const ORIGEM_INGREDIENTE: Record<string, string> = { TACO: "TACO", ROTULO: "Rótulo" };
+export const ORIGEM_INGREDIENTE: Record<string, string> = { TACO: "TACO", ROTULO: "Rótulo", OUTRA_TABELA: "Outra tabela" };
 
 export const LISTA_IG: Record<string, string> = { LISTA_1: "Lista 1", LISTA_2: "Lista 2" };
 

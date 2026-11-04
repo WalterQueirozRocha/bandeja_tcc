@@ -9,6 +9,7 @@ const TAMANHO = 50;
 export default async function Ingredientes({ searchParams }: PageProps<"/ingredientes">) {
   const sessao = await exigirSessaoNaPagina();
   const operador = sessao.papel === "OPERADOR";
+  const editor = operador || sessao.papel === "COORDENACAO"; // cadastram alimentos (04/11)
 
   const params = await searchParams;
   const busca = typeof params.busca === "string" ? params.busca.trim().slice(0, 100) : "";
@@ -21,9 +22,9 @@ export default async function Ingredientes({ searchParams }: PageProps<"/ingredi
     <main className="flex flex-col gap-4 p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1>Ingredientes</h1>
-        {operador && (
+        {editor && (
           <Link href="/ingredientes/novo" className="btn-primario hover:no-underline">
-            Novo industrializado
+            Novo alimento
           </Link>
         )}
       </div>
@@ -60,10 +61,10 @@ export default async function Ingredientes({ searchParams }: PageProps<"/ingredi
                 <td className="p-3 text-secondary">{ORIGEM_INGREDIENTE[i.origem]}</td>
                 <td className="p-3">
                   <span className="flex flex-wrap gap-1">
-                    {i.origem === "TACO" && !i.marcacao_conferida_em && (
+                    {i.origem !== "ROTULO" && !i.marcacao_conferida_em && (
                       <span className="rounded-md border border-borda px-1.5 py-0.5 text-xs font-semibold text-secondary">Pendente</span>
                     )}
-                    {i.origem === "TACO" && i.marcacao_conferida_em && i.marcadores.length === 0 && (
+                    {i.origem !== "ROTULO" && i.marcacao_conferida_em && i.marcadores.length === 0 && (
                       <span className="rounded-md border border-borda px-1.5 py-0.5 text-xs font-semibold text-secondary">Sem alergênico</span>
                     )}
                     {i.marcadores.map((m) => (

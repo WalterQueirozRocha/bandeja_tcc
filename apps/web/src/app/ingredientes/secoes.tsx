@@ -28,6 +28,15 @@ export type DadosRotulo = {
 const numeroOuNulo = (v: string) => (v.trim() === "" ? null : Number(v.replace(",", ".")));
 const texto = (v: number | null | undefined) => (v === null || v === undefined ? "" : String(v));
 
+function CampoTexto({ rotulo, valor, onChange, dica }: { rotulo: string; valor: string; onChange: (v: string) => void; dica?: string }) {
+  return (
+    <label className="flex flex-col gap-1 text-sm font-medium">
+      {rotulo}
+      <input value={valor} onChange={(e) => onChange(e.target.value)} required maxLength={300} placeholder={dica} className="campo" />
+    </label>
+  );
+}
+
 function Selecao({ rotulo, valor, onChange, itens }: { rotulo: string; valor: string; onChange: (v: string) => void; itens: { valor: string; rotulo: string }[] }) {
   return (
     <label className="flex flex-col gap-1 text-sm font-medium">
@@ -85,28 +94,55 @@ function ListaMarcadores({ lista, setLista, categorias }: { lista: Marcador[]; s
   );
 }
 
-// RF01: industrializado pelo rótulo (cadastro, com marcadores) ou edição dos dados (M4).
-export function FormularioIngrediente({ id, inicial, categorias }: { id?: number; inicial?: DadosRotulo; categorias: Categoria[] }) {
+const ORIGENS_NOVAS = [
+  { valor: "ROTULO", rotulo: "Rótulo (industrializado)" },
+  { valor: "OUTRA_TABELA", rotulo: "Outra tabela (ex.: TBCA)" },
+];
+
+// RF01: cadastro pelo rótulo ou de outra tabela (com marcadores) ou edição dos dados com motivo (M4, 04/11).
+export function FormularioIngrediente({
+  id,
+  inicial,
+  categorias,
+  origem: origemAtual,
+  fonte: fonteAtual,
+}: {
+  id?: number;
+  inicial?: DadosRotulo;
+  categorias: Categoria[];
+  origem?: string;
+  fonte?: string | null;
+}) {
   const router = useRouter();
   const { erro, ocupado, executar } = useAcao();
   const [dados, setDados] = useState<DadosRotulo>(inicial ?? { nome: "", grupo_alimentar: "OUTROS_INDUSTRIALIZADOS", categoria_carboidrato: "AMIDO" });
+  const [origem, setOrigem] = useState(origemAtual ?? "ROTULO");
+  const [fonte, setFonte] = useState(fonteAtual ?? "");
+  const [motivo, setMotivo] = useState("");
   const [marcadores, setMarcadores] = useState<Marcador[]>([]);
   const [aviso, setAviso] = useState("");
+  const outraTabela = origem === "OUTRA_TABELA";
 
   async function salvar(e: React.FormEvent) {
     e.preventDefault();
     if (id) {
-      if (await executar(`/api/ingredientes/${id}`, "PUT", dados)) setAviso("Dados salvos.");
+      if (await executar(`/api/ingredientes/${id}`, "PUT", { ...dados, ...(outraTabela && { fonte }), motivo })) {
+        setAviso("Dados salvos.");
+        setMotivo("");
+        router.refresh(); // atualiza o histórico de alterações
+      }
       return;
     }
-    const r = await executar<{ id: number }>("/api/ingredientes", "POST", { ...dados, marcadores });
+    const r = await executar<{ id: number }>("/api/ingredientes", "POST", { ...dados, origem, ...(outraTabela && { fonte }), marcadores });
     if (r) router.push(`/ingredientes/${r.id}`);
   }
 
   return (
     <form onSubmit={salvar} className="flex flex-col gap-3">
+      {!id && <Selecao rotulo="Origem dos dados" valor={origem} onChange={setOrigem} itens={ORIGENS_NOVAS} />}
+      {outraTabela && <CampoTexto rotulo="Fonte da composição" valor={fonte} onChange={setFonte} dica="Ex.: TBCA 7.2, código C0001" />}
       <label className="flex flex-col gap-1 text-sm font-medium">
-        Nome (como no rótulo)
+        {outraTabela ? "Nome (como na tabela de origem)" : "Nome (como no rótulo)"}
         <input value={dados.nome} onChange={(e) => setDados({ ...dados, nome: e.target.value })} required maxLength={200} className="campo" />
       </label>
       <div className="grid gap-2 sm:grid-cols-2">
@@ -119,7 +155,7 @@ export function FormularioIngrediente({ id, inicial, categorias }: { id?: number
         />
       </div>
       <fieldset className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        <legend className="mb-1 text-sm font-semibold">Por 100 g (vazio = não informado no rótulo)</legend>
+        <legend className="mb-1 text-sm font-semibold">Por 100 g (vazio = não informado {outraTabela ? "na tabela" : "no rótulo"})</legend>
         {NUTRIENTES.map(([campo, rotulo]) => (
           <label key={campo} className="flex flex-col gap-1 text-sm">
             {rotulo}
@@ -133,10 +169,14 @@ export function FormularioIngrediente({ id, inicial, categorias }: { id?: number
       </fieldset>
       {!id && (
         <fieldset className="flex flex-col gap-2">
-          <legend className="mb-1 text-sm font-semibold">Alergênicos e restrições do rótulo</legend>
+          <legend className="mb-1 text-sm font-semibold">{outraTabela ? "Alergênicos e restrições" : "Alergênicos e restrições do rótulo"}</legend>
+          {outraTabela && (
+            <p className="text-sm text-secondary">Como na TACO, a marcação fica pendente até a conferência dupla, e a ficha técnica só aceita o alimento depois dela.</p>
+          )}
           <ListaMarcadores lista={marcadores} setLista={setMarcadores} categorias={categorias} />
         </fieldset>
       )}
+      {id && <CampoTexto rotulo="Motivo da alteração" valor={motivo} onChange={setMotivo} dica="Ex.: correção conforme o rótulo novo" />}
       <div className="flex flex-wrap items-center gap-2">
         <button type="submit" disabled={ocupado} className="btn-primario">
           {id ? "Salvar dados" : "Cadastrar ingrediente"}
@@ -148,37 +188,78 @@ export function FormularioIngrediente({ id, inicial, categorias }: { id?: number
   );
 }
 
-// M4 na TACO: só a categoria de carboidrato e o RDS.
-export function EdicaoTaco({ id, categoria, rds }: { id: number; categoria: string; rds: number | null }) {
+export type CampoLivre = { campo: string; valor: number | null; fonte?: string };
+
+// M4 na TACO: a categoria de carboidrato, o RDS e, desde 04/11, os campos que a TACO não analisou (com a fonte).
+export function EdicaoTaco({ id, categoria, rds, livres }: { id: number; categoria: string; rds: number | null; livres: CampoLivre[] }) {
+  const router = useRouter();
   const { erro, ocupado, executar } = useAcao();
   const [dados, setDados] = useState({ categoria_carboidrato: categoria, rds: texto(rds) });
+  const [valores, setValores] = useState<Record<string, string>>(Object.fromEntries(livres.map((l) => [l.campo, texto(l.valor)])));
+  const [fonte, setFonte] = useState("");
+  const [motivo, setMotivo] = useState("");
   const [aviso, setAviso] = useState("");
+  // Só vão os campos não analisados que mudaram; a fonte acompanha esses campos.
+  const mudados = livres.filter((l) => numeroOuNulo(valores[l.campo]) !== l.valor);
+
+  async function salvar(e: React.FormEvent) {
+    e.preventDefault();
+    const complemento = Object.fromEntries(mudados.map((l) => [l.campo, numeroOuNulo(valores[l.campo])]));
+    const ok = await executar(`/api/ingredientes/${id}`, "PUT", {
+      categoria_carboidrato: dados.categoria_carboidrato,
+      rds_percentual: numeroOuNulo(dados.rds),
+      ...complemento,
+      ...(mudados.length && { fonte }),
+      motivo,
+    });
+    setAviso(ok ? "Salvo." : "");
+    if (ok) {
+      setMotivo("");
+      router.refresh();
+    }
+  }
+
   return (
-    <div className="flex flex-col gap-3">
-      <div className="grid gap-2 sm:grid-cols-[1fr_8rem_auto] sm:items-end">
+    <form onSubmit={salvar} className="flex flex-col gap-3">
+      <div className="grid gap-2 sm:grid-cols-[1fr_8rem]">
         <Selecao rotulo="Carboidrato principal (Rytz)" valor={dados.categoria_carboidrato} onChange={(v) => setDados({ ...dados, categoria_carboidrato: v })} itens={opcoes(CATEGORIA_CARBOIDRATO)} />
         <label className="flex flex-col gap-1 text-sm font-medium">
           RDS (%)
           <input inputMode="decimal" value={dados.rds} onChange={(e) => setDados({ ...dados, rds: e.target.value })} className="campo tabular-nums" />
         </label>
-        <button
-          type="button"
-          disabled={ocupado}
-          onClick={async () => {
-            const ok = await executar(`/api/ingredientes/${id}`, "PUT", { categoria_carboidrato: dados.categoria_carboidrato, rds_percentual: numeroOuNulo(dados.rds) });
-            setAviso(ok ? "Salvo." : "");
-          }}
-          className="btn-primario"
-        >
+      </div>
+      {livres.length > 0 && (
+        <fieldset className="flex flex-col gap-2">
+          <legend className="mb-1 text-sm font-semibold">Campos que a TACO não analisou (por 100 g)</legend>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {livres.map((l) => (
+              <label key={l.campo} className="flex flex-col gap-1 text-sm">
+                {NUTRIENTES.find(([c]) => c === l.campo)?.[1]}
+                <input
+                  inputMode="decimal"
+                  value={valores[l.campo]}
+                  onChange={(e) => setValores({ ...valores, [l.campo]: e.target.value })}
+                  className="campo tabular-nums"
+                />
+                {l.fonte && <span className="text-xs text-secondary">Fonte: {l.fonte}</span>}
+              </label>
+            ))}
+          </div>
+          {mudados.length > 0 && <CampoTexto rotulo="Fonte dos valores preenchidos" valor={fonte} onChange={setFonte} dica="Ex.: TBCA 7.2, código C0001" />}
+        </fieldset>
+      )}
+      <CampoTexto rotulo="Motivo da alteração" valor={motivo} onChange={setMotivo} dica="Ex.: composição ausente na TACO" />
+      <div className="flex flex-wrap items-center gap-2">
+        <button type="submit" disabled={ocupado} className="btn-primario">
           Salvar
         </button>
+        {aviso && <span role="status" className="text-sm">{aviso}</span>}
       </div>
       <p className="text-xs text-secondary">
-        Reimportar a TACO mantém estes dois campos, exceto se o alimento estiver no <code>carboidratos.csv</code>: aí vale a planilha.
+        Reimportar a TACO mantém estes campos; a categoria e o RDS só mudam se o alimento estiver no <code>carboidratos.csv</code>.
       </p>
-      {aviso && <span role="status" className="text-sm">{aviso}</span>}
       <MensagemErro erro={erro} />
-    </div>
+    </form>
   );
 }
 
