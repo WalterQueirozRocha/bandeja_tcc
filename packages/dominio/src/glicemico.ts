@@ -75,7 +75,7 @@ export function igFao(componentes: ComponenteGlicemico[]): Estimativa {
   if (semIg.length) return { ig: null, hipoteses: [], motivo: `sem IG pareado: ${semIg.join(", ")}` };
   const hipoteses = comCarboidrato
     .filter((c) => c.ig!.lista === "LISTA_2")
-    .map((c) => `${c.nome}: IG da lista 2 de Atkinson et al. (2021), método fora do padrão ISO`);
+    .map((c) => `${c.nome}: IG medido fora do padrão ISO (lista 2 de Atkinson et al., 2021, ou estudo brasileiro)`);
   const soma = comCarboidrato.reduce((s, c) => s + c.carboidrato_disponivel_g, 0);
   const ponderado = comCarboidrato.reduce((s, c) => s + c.carboidrato_disponivel_g * c.ig!.valor, 0);
   return { ig: ponderado / soma, hipoteses };
