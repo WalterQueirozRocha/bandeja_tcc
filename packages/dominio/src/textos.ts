@@ -17,6 +17,7 @@ export const textos = {
   registrosSolicitados: (responsavel: string, aluno: string) => `Novo pedido de registros de sintomas: ${responsavel} para ${aluno}.`,
   registrosDecididos: (aluno: string, autorizado: boolean) =>
     `Seu pedido dos registros de sintomas de ${aluno} foi ${autorizado ? "autorizado" : "recusado"}.`,
+  senhaSolicitada: (nome: string, email: string) => `${nome} (${email}) esqueceu a senha e pediu uma nova. Redefina e avise a pessoa.`,
   avisoSintomas:
     "Este registro não é um diagnóstico. Se você sentir falta de ar, aperto na garganta, inchaço na boca ou tontura, avise agora um adulto da escola.",
 };

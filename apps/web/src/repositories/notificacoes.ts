@@ -10,6 +10,10 @@ export function criarNotificacoes(db: Db, notificacoes: NovaNotificacao[]) {
   return db.notificacao.createMany({ data: notificacoes });
 }
 
+export async function existeNaoLida(db: Db, tipo: NovaNotificacao["tipo"], link: string) {
+  return (await db.notificacao.count({ where: { tipo, link, lida_em: null } })) > 0;
+}
+
 export async function idsAtivosDoPapel(db: Db, papel: Papel) {
   return (await db.usuario.findMany({ where: { papel, ativo: true }, select: { id: true } })).map((u) => u.id);
 }

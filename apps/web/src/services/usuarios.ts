@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import { textos } from "@bandeja/dominio";
 import type { EdicaoUsuario, NovoUsuario } from "@/lib/validacao";
 import {
   apagarUsuario,
@@ -12,6 +13,7 @@ import {
   mudarAtivoUsuario,
   usuarioEmUso,
 } from "@/repositories/usuarios";
+import { criarNotificacoes, emTransacao, existeNaoLida, idsAtivosDoPapel } from "@/repositories/notificacoes";
 import { ErroNegocio } from "./erros";
 
 // B1-M: a coordenação cria e mantém as contas. O papel não muda depois de criado.
@@ -84,4 +86,18 @@ export async function vincularResponsavel(aluno_id: number, responsavel_id: numb
 
 export async function desvincularResponsavel(aluno_id: number, responsavel_id: number) {
   if ((await apagarVinculo(aluno_id, responsavel_id)).count === 0) throw new ErroNegocio("Vínculo não encontrado", 404);
+}
+
+// Esqueci a senha (03/11), sem e-mail: a coordenação ativa é notificada e redefine em /usuarios/[id].
+// Quem chama responde sempre igual; conta inexistente ou desabilitada não gera nada, e não repete aviso não lido.
+export async function pedirNovaSenha(email: string) {
+  const usuario = await buscarUsuarioPorEmail(email);
+  if (!usuario?.ativo) return;
+  const link = `/usuarios/${usuario.id}`;
+  await emTransacao(async (tx) => {
+    if (await existeNaoLida(tx, "SENHA_SOLICITADA", link)) return;
+    const coordenacao = (await idsAtivosDoPapel(tx, "COORDENACAO")).filter((id) => id !== usuario.id);
+    const mensagem = textos.senhaSolicitada(usuario.nome, usuario.email);
+    await criarNotificacoes(tx, coordenacao.map((destinatario_id) => ({ destinatario_id, tipo: "SENHA_SOLICITADA", mensagem, link })));
+  });
 }

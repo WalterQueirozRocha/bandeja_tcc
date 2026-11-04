@@ -18,6 +18,8 @@ export const login = z.object({
   senha: z.string().min(1),
 });
 
+export const esqueciSenha = z.object({ email: z.email() });
+
 // B2: `?inativos=true` lista também os desabilitados (só para quem pode habilitar).
 const inativos = z.stringbool().optional();
 
