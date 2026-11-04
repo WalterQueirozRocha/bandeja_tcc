@@ -20,6 +20,7 @@ enum TipoCategoria {
 enum OrigemIngrediente {
   TACO
   ROTULO
+  OUTRA_TABELA // ex.: TBCA; fonte obrigatória (04/11)
 }
 
 // Grupos da TACO 4ª ed. — conferir na publicação durante o I1
@@ -150,6 +151,11 @@ enum TipoAcessoRegistros {
   PDF
 }
 
+enum AcaoIngrediente {
+  CRIACAO
+  EDICAO
+}
+
 // ---------- Cadastro nutricional e cardápio (Fig. 4) ----------
 
 model CategoriaRestricao {
@@ -165,36 +171,57 @@ model CategoriaRestricao {
 }
 
 model Ingrediente {
-  id                    Int                  @id @default(autoincrement())
-  nome                  String
-  grupo_alimentar       GrupoAlimentar
-  origem                OrigemIngrediente
-  codigo_taco           Int?                 @unique
+  id                       Int                  @id @default(autoincrement())
+  nome                     String
+  grupo_alimentar          GrupoAlimentar
+  origem                   OrigemIngrediente
+  codigo_taco              Int?                 @unique
   // por 100 g; nulo = não analisado na TACO ("NA" ou "*")
-  energia_kcal          Float?
-  proteina_g            Float?
-  lipideos_g            Float?
-  carboidrato_g         Float?
-  fibra_g               Float?
-  cinzas_g              Float?
-  umidade_g             Float?
-  categoria_carboidrato CategoriaCarboidrato
-  rds_percentual        Float?
+  energia_kcal             Float?
+  proteina_g               Float?
+  lipideos_g               Float?
+  carboidrato_g            Float?
+  fibra_g                  Float?
+  cinzas_g                 Float?
+  umidade_g                Float?
+  categoria_carboidrato    CategoriaCarboidrato
+  rds_percentual           Float?
   // forma preparada da TACO aponta para a crua (P1)
-  forma_crua_id         Int?
-  modo_preparo          ModoPreparo?
+  forma_crua_id            Int?
+  modo_preparo             ModoPreparo?
   // desabilitado: some das consultas, mas continua nos registros
-  ativo                 Boolean              @default(true)
+  ativo                    Boolean              @default(true)
   // D6: conferência dupla do conjunto de marcadores, inclusive "sem alergênico" (só TACO)
   marcacao_conferida_por_1 String?
   marcacao_conferida_por_2 String?
   marcacao_conferida_em    DateTime?
+  // OUTRA_TABELA: de onde vem a composição (04/11)
+  fonte                    String?
+  // TACO: campos não analisados preenchidos com outra fonte, { campo: fonte } (04/11)
+  complementos             Json?
 
-  forma_crua        Ingrediente?          @relation("FormaPreparada", fields: [forma_crua_id], references: [id])
-  formas_preparadas Ingrediente[]         @relation("FormaPreparada")
+  forma_crua        Ingrediente?           @relation("FormaPreparada", fields: [forma_crua_id], references: [id])
+  formas_preparadas Ingrediente[]          @relation("FormaPreparada")
   marcadores        MarcadorIngrediente[]
   valor_ig          ValorIG?
   itens_preparacao  ItemPreparacao[]
+  alteracoes        AlteracaoIngrediente[]
+}
+
+// Registro de criação e edição dos dados do alimento (04/11).
+model AlteracaoIngrediente {
+  id             Int             @id @default(autoincrement())
+  ingrediente_id Int
+  usuario_id     Int
+  acao           AcaoIngrediente
+  campos         Json // [{ campo, antes, depois }]
+  motivo         String? // obrigatório na edição (validado na aplicação)
+  criado_em      DateTime        @default(now())
+
+  ingrediente Ingrediente @relation(fields: [ingrediente_id], references: [id], onDelete: Cascade)
+  usuario     Usuario     @relation(fields: [usuario_id], references: [id])
+
+  @@index([ingrediente_id, criado_em])
 }
 
 model MarcadorIngrediente {
@@ -302,15 +329,16 @@ model Usuario {
   senha_hash String
   ativo      Boolean @default(true)
 
-  aluno                 Aluno?                 @relation("UsuarioAluno")
-  consentimentos        Aluno[]                @relation("Consentimento")
-  vinculos              VinculoResponsavel[]
-  restricoes_declaradas RestricaoDeclarada[]
-  bloqueios_solicitados SolicitacaoBloqueio[]
-  vendas_registradas    Venda[]
-  notificacoes          Notificacao[]
-  registros_solicitados SolicitacaoRegistros[] @relation("RegistrosSolicitados")
-  registros_decididos   SolicitacaoRegistros[] @relation("RegistrosDecididos")
+  aluno                  Aluno?                 @relation("UsuarioAluno")
+  consentimentos         Aluno[]                @relation("Consentimento")
+  vinculos               VinculoResponsavel[]
+  restricoes_declaradas  RestricaoDeclarada[]
+  bloqueios_solicitados  SolicitacaoBloqueio[]
+  vendas_registradas     Venda[]
+  notificacoes           Notificacao[]
+  registros_solicitados  SolicitacaoRegistros[] @relation("RegistrosSolicitados")
+  registros_decididos    SolicitacaoRegistros[] @relation("RegistrosDecididos")
+  alteracoes_ingrediente AlteracaoIngrediente[]
 }
 
 model Aluno {
@@ -430,14 +458,14 @@ model Sintoma {
 }
 
 model RegistroSintoma {
-  id             Int      @id @default(autoincrement())
-  aluno_id       Int
-  sintoma_codigo String
-  data_hora      DateTime
-  observacao     String?  @db.VarChar(100) // só para o sintoma "outro"
-  registrado_em  DateTime @default(now()) // quando foi gravado; limite do que um pedido autorizado libera (RF20)
+  id               Int      @id @default(autoincrement())
+  aluno_id         Int
+  sintoma_codigo   String
+  data_hora        DateTime
+  observacao       String?  @db.VarChar(100) // só para o sintoma "outro"
+  registrado_em    DateTime @default(now()) // quando foi gravado; limite do que um pedido autorizado libera (RF20)
   // D3: o que o aluno comeu antes (itens da cantina e/ou alimento de fora); só registro, sem cálculo nem alerta (§4.8)
-  alimento_externo String? @db.VarChar(100)
+  alimento_externo String?  @db.VarChar(100)
 
   aluno   Aluno                 @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
   sintoma Sintoma               @relation(fields: [sintoma_codigo], references: [codigo])

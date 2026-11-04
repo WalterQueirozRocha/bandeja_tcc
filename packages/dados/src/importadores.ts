@@ -51,9 +51,11 @@ export async function importarTaco() {
       const exc = excecoes.get(a.codigo_taco);
       const dados = { ...a, origem: "TACO" as const };
       // FC-09: alimento já importado mantém a categoria e o RDS editados na tela; só a planilha de exceções os troca.
+      // 04/11: campo não analisado (nulo) não apaga o complemento preenchido com outra fonte.
+      const analisados = Object.fromEntries(Object.entries(dados).filter(([, v]) => v !== null));
       return prisma.ingrediente.upsert({
         where: { codigo_taco: a.codigo_taco },
-        update: { ...dados, ...(exc && { categoria_carboidrato: exc.categoria, rds_percentual: exc.rds }) },
+        update: { ...analisados, ...(exc && { categoria_carboidrato: exc.categoria, rds_percentual: exc.rds }) },
         create: { ...dados, categoria_carboidrato: exc?.categoria ?? categoriaCarboidratoPadrao(a), rds_percentual: exc?.rds ?? null },
       });
     }),
