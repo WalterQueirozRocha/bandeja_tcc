@@ -70,7 +70,7 @@ const listaMarcadores = z.array(marcador).refine(semRepetir, "categoria repetida
 
 const por100g = z.number().min(0).nullable().optional();
 
-export const ingredienteRotulo = z.object({
+const dadosIngrediente = z.object({
   nome: z.string().trim().min(1).max(200),
   grupo_alimentar: z.enum(GrupoAlimentar),
   categoria_carboidrato: z.enum(CategoriaCarboidrato),
@@ -82,8 +82,21 @@ export const ingredienteRotulo = z.object({
   cinzas_g: por100g,
   umidade_g: por100g,
   rds_percentual: z.number().min(0).max(100).nullable().optional(),
-  marcadores: listaMarcadores.default([]),
 });
+
+const fonte = z.string().trim().min(1).max(300);
+
+// Cadastro pelo rótulo ou de outra tabela (ex.: TBCA), que exige a fonte (04/11).
+export const novoIngrediente = dadosIngrediente
+  .extend({
+    origem: z.enum(["ROTULO", "OUTRA_TABELA"]).default("ROTULO"),
+    fonte: fonte.optional(),
+    marcadores: listaMarcadores.default([]),
+  })
+  .refine((i) => (i.origem === "OUTRA_TABELA") === (i.fonte !== undefined), {
+    message: "a fonte é obrigatória para alimento de outra tabela e só vale para ele",
+    path: ["fonte"],
+  });
 
 // D6: na TACO a conferência dupla vale para o conjunto (lista vazia = conferido, sem alergênico).
 export const substituicaoMarcadores = z.object({
@@ -92,11 +105,12 @@ export const substituicaoMarcadores = z.object({
   conferido_por_2: conferente.optional(),
 });
 
-// M4: edição parcial; no ingrediente da TACO só valem categoria_carboidrato e rds_percentual.
-export const edicaoIngrediente = ingredienteRotulo
-  .omit({ marcadores: true })
+// M4: edição parcial, sempre com o motivo (registro de alterações, 04/11). Na TACO valem a categoria, o RDS
+// e os campos não analisados, com a fonte; em outra tabela, a fonte também pode mudar.
+export const edicaoIngrediente = dadosIngrediente
   .partial()
-  .refine((dados) => Object.keys(dados).length > 0, "nada a alterar");
+  .extend({ fonte: fonte.optional(), motivo: z.string().trim().min(1).max(500) })
+  .refine((dados) => Object.keys(dados).some((k) => k !== "motivo"), "nada a alterar");
 
 // Criação manual com as mesmas regras das planilhas (M1–M3). CRU sempre usa fator 1.
 const modoCozido = z.enum(ModoPreparo).exclude(["CRU"]);
@@ -251,7 +265,7 @@ export type SintomaEntrada = z.infer<typeof registroSintoma>;
 export type VendaEntrada = z.infer<typeof venda>;
 export type CardapioEntrada = z.infer<typeof cardapio>;
 export type PerfilEntrada = z.infer<typeof perfilSaude>;
-export type IngredienteRotulo = z.infer<typeof ingredienteRotulo>;
+export type NovoIngrediente = z.infer<typeof novoIngrediente>;
 export type MarcadorEntrada = z.infer<typeof marcador>;
 export type SubstituicaoMarcadores = z.infer<typeof substituicaoMarcadores>;
 

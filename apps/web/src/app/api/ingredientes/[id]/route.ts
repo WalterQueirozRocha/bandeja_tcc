@@ -5,16 +5,16 @@ import { detalharIngrediente, editarIngrediente, excluirIngrediente } from "@/se
 
 const naoEncontrado = () => Response.json({ erro: "Ingrediente não encontrado" }, { status: 404 });
 
-// M4: edição parcial. Só o operador.
+// M4: edição parcial com motivo. Operador e coordenação (04/11), com registro.
 export async function PUT(req: Request, ctx: RouteContext<"/api/ingredientes/[id]">) {
-  const sessao = await exigirPerfil(req, ["OPERADOR"]);
+  const sessao = await exigirPerfil(req, ["OPERADOR", "COORDENACAO"]);
   if (sessao instanceof Response) return sessao;
   const dados = await lerCorpo(req, edicaoIngrediente);
   if (dados instanceof Response) return dados;
   const id = await lerId(ctx);
   if (!id) return naoEncontrado();
   try {
-    return Response.json(await editarIngrediente(id, dados));
+    return Response.json(await editarIngrediente(id, dados, sessao.id));
   } catch (e) {
     return respostaDeErro(e);
   }

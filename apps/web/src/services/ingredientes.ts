@@ -1,18 +1,20 @@
 import { faltaMarcadorGluten } from "@bandeja/dominio";
 import type { ModoPreparo, OrigemMarcador } from "@bandeja/dados";
-import type { EdicaoIngrediente, FormaCrua, IngredienteRotulo, MarcadorEntrada, SubstituicaoMarcadores, ValorIgEntrada } from "@/lib/validacao";
+import type { EdicaoIngrediente, FormaCrua, MarcadorEntrada, NovoIngrediente, SubstituicaoMarcadores, ValorIgEntrada } from "@/lib/validacao";
 import {
   apagarIg,
   apagarIngrediente,
   atualizarIngrediente,
   buscarIngrediente,
   codigosCategorias,
-  criarIngredienteRotulo,
+  criarIngrediente,
   ligarFormaCrua,
+  listarAlteracoes,
   mudarAtivoIngrediente,
   salvarIg,
   substituirMarcadores,
   usadoEmPreparacao,
+  type CampoAlterado,
   type Conferencia,
   type NovoMarcador,
 } from "@/repositories/ingredientes";
@@ -34,22 +36,63 @@ async function exigirIngrediente(id: number) {
   return ingrediente;
 }
 
-// M4: no rótulo edita tudo; na TACO só a categoria de carboidrato e o RDS (o resto vem da tabela).
-// Reimportar a TACO mantém esses dois campos, exceto quando o alimento está no carboidratos.csv (FC-09).
+// M4: no rótulo e em outra tabela edita tudo; na TACO a categoria de carboidrato, o RDS e, desde 04/11, os campos
+// que a TACO não analisou (com a fonte). Reimportar a TACO mantém tudo isso, salvo linha no carboidratos.csv (FC-09).
 const SO_TACO = ["categoria_carboidrato", "rds_percentual"];
+export const COMPOSICAO = ["energia_kcal", "proteina_g", "lipideos_g", "carboidrato_g", "fibra_g", "cinzas_g", "umidade_g"] as const;
+type Complementos = Record<string, string>;
 
-export async function editarIngrediente(id: number, dados: EdicaoIngrediente) {
+export async function editarIngrediente(id: number, { motivo, fonte, ...dados }: EdicaoIngrediente, usuario_id: number) {
   const ingrediente = await exigirIngrediente(id);
-  const proibidos = Object.keys(dados).filter((k) => !SO_TACO.includes(k));
-  if (ingrediente.origem === "TACO" && proibidos.length) {
-    throw new ErroNegocio(`Ingrediente da TACO: só categoria_carboidrato e rds_percentual podem ser editados (recebido: ${proibidos.join(", ")})`);
+  const atual = ingrediente as unknown as Record<string, unknown>;
+  const taco = ingrediente.origem === "TACO";
+  const complementos: Complementos = { ...((ingrediente.complementos ?? {}) as Complementos) };
+  const preenchidos = taco ? COMPOSICAO.filter((c) => c in dados) : [];
+
+  if (taco) {
+    const livres: string[] = COMPOSICAO.filter((c) => atual[c] === null || c in complementos);
+    const proibidos = Object.keys(dados).filter((k) => !SO_TACO.includes(k) && !livres.includes(k));
+    if (proibidos.length) {
+      throw new ErroNegocio(`Ingrediente da TACO: só categoria_carboidrato, rds_percentual e os campos não analisados podem ser editados (recebido: ${proibidos.join(", ")})`);
+    }
+    const comValor = preenchidos.some((c) => dados[c] !== null);
+    if (comValor && !fonte) throw new ErroNegocio("Informe a fonte dos campos preenchidos fora da TACO");
+    if (!comValor && fonte) throw new ErroNegocio("A fonte vale só para os campos que a TACO não analisou");
+  } else if (fonte !== undefined && ingrediente.origem !== "OUTRA_TABELA") {
+    throw new ErroNegocio("A fonte vale só para alimento de outra tabela ou para completar a TACO");
   }
   // FC-11: o fator de cocção vem do grupo; trocar o grupo mudaria (ou quebraria) as preparações cozidas que usam o ingrediente.
   const mudouGrupo = dados.grupo_alimentar !== undefined && dados.grupo_alimentar !== ingrediente.grupo_alimentar;
   if (mudouGrupo && (await usadoEmPreparacao(id, { not: "CRU" }))) {
     throw new ErroNegocio(`${ingrediente.nome} está em preparação com modo de preparo além do cru, e o fator depende do grupo: troque o modo nessas preparações antes de mudar o grupo`);
   }
-  return atualizarIngrediente(id, dados);
+
+  const campos: CampoAlterado[] = [];
+  for (const [campo, depois] of Object.entries(dados)) {
+    const complemento = preenchidos.includes(campo as (typeof COMPOSICAO)[number]) && depois !== null ? fonte : undefined;
+    if (atual[campo] !== depois || (complemento && complementos[campo] !== complemento)) {
+      campos.push({ campo, antes: atual[campo], depois, ...(complemento && { fonte: complemento }) });
+    }
+  }
+  if (ingrediente.origem === "OUTRA_TABELA" && fonte !== undefined && fonte !== ingrediente.fonte) {
+    campos.push({ campo: "fonte", antes: ingrediente.fonte, depois: fonte });
+  }
+  if (!campos.length) throw new ErroNegocio("Nenhum valor mudou");
+
+  // Campo apagado (nulo) volta a ser "não analisado" e sai dos complementos.
+  for (const c of preenchidos) {
+    if (dados[c] === null) delete complementos[c];
+    else complementos[c] = fonte!;
+  }
+  return atualizarIngrediente(
+    id,
+    { ...dados, ...(ingrediente.origem === "OUTRA_TABELA" && fonte !== undefined && { fonte }), ...(preenchidos.length && { complementos }) },
+    { usuario_id, campos, motivo },
+  );
+}
+
+export function alteracoesDoIngrediente(id: number) {
+  return listarAlteracoes(id);
 }
 
 // FC-12: o modo pode depender só da forma preparada (FRITO sempre; os outros sem fator do grupo, 03/11);
@@ -113,16 +156,21 @@ async function prepararMarcadores(entrada: MarcadorEntrada[], origem: OrigemMarc
   }));
 }
 
-// D6 / RF01: a marcação da TACO só vale conferida por duas pessoas diferentes.
+// D6 / RF01: a marcação mapeada pela equipe (TACO e outra tabela) só vale conferida por duas pessoas diferentes.
 function exigirConferenciaDupla({ conferido_por_1: a, conferido_por_2: b }: SubstituicaoMarcadores): Conferencia {
   if (!a || !b || a.toLowerCase() === b.toLowerCase()) {
-    throw new ErroNegocio("Marcação da TACO exige conferência dupla por duas pessoas diferentes");
+    throw new ErroNegocio("Marcação da TACO ou de outra tabela exige conferência dupla por duas pessoas diferentes");
   }
   return { conferido_por_1: a, conferido_por_2: b };
 }
 
-export async function cadastrarPorRotulo({ marcadores, ...dados }: IngredienteRotulo) {
-  return criarIngredienteRotulo(dados, await prepararMarcadores(marcadores, "ROTULO"));
+// Rótulo: marcadores lidos na embalagem. Outra tabela (04/11): mapeados pela equipe, ficam pendentes até a conferência dupla.
+export async function cadastrarIngrediente({ marcadores, origem, fonte, ...dados }: NovoIngrediente, usuario_id: number) {
+  const campos = Object.entries({ ...dados, fonte })
+    .filter(([, valor]) => valor !== undefined && valor !== null)
+    .map(([campo, depois]) => ({ campo, antes: null, depois }));
+  const origemMarcador = origem === "OUTRA_TABELA" ? "MAPEAMENTO" : "ROTULO";
+  return criarIngrediente({ ...dados, origem, fonte }, await prepararMarcadores(marcadores, origemMarcador), usuario_id, campos);
 }
 
 // B2: ingrediente da TACO nunca é apagado (a reimportação o recriaria); só desabilitado.
@@ -142,11 +190,11 @@ export async function habilitarIngrediente(id: number) {
   return mudarAtivoIngrediente(id, true);
 }
 
-// A origem segue a do ingrediente: TACO → MAPEAMENTO (com a conferência do conjunto), rótulo → ROTULO.
+// A origem segue a do ingrediente: TACO e outra tabela → MAPEAMENTO (com a conferência do conjunto), rótulo → ROTULO.
 export async function editarMarcadores(id: number, dados: SubstituicaoMarcadores) {
   const ingrediente = await buscarIngrediente(id);
   if (!ingrediente) throw new ErroNegocio("Ingrediente não encontrado", 404);
-  if (ingrediente.origem !== "TACO") return substituirMarcadores(id, await prepararMarcadores(dados.marcadores, "ROTULO"));
+  if (ingrediente.origem === "ROTULO") return substituirMarcadores(id, await prepararMarcadores(dados.marcadores, "ROTULO"));
   const conferencia = exigirConferenciaDupla(dados);
   return substituirMarcadores(id, await prepararMarcadores(dados.marcadores, "MAPEAMENTO", conferencia), conferencia);
 }

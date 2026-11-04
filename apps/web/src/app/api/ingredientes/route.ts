@@ -1,8 +1,8 @@
 import { exigirPerfil } from "@/lib/acesso";
-import { buscaIngredientes, ingredienteRotulo, lerConsulta, lerCorpo } from "@/lib/validacao";
+import { buscaIngredientes, lerConsulta, novoIngrediente, lerCorpo } from "@/lib/validacao";
 import { listarIngredientes } from "@/repositories/ingredientes";
 import { respostaDeErro } from "@/services/erros";
-import { cadastrarPorRotulo } from "@/services/ingredientes";
+import { cadastrarIngrediente } from "@/services/ingredientes";
 
 // Quadro 9: os quatro perfis consultam.
 export async function GET(req: Request) {
@@ -13,14 +13,14 @@ export async function GET(req: Request) {
   return Response.json(await listarIngredientes({ ...filtro, inativos: sessao.papel === "OPERADOR" && filtro.inativos }));
 }
 
-// Cadastro de industrializado pelo rótulo: só o operador.
+// Cadastro pelo rótulo ou de outra tabela: operador e coordenação (04/11), com registro.
 export async function POST(req: Request) {
-  const sessao = await exigirPerfil(req, ["OPERADOR"]);
+  const sessao = await exigirPerfil(req, ["OPERADOR", "COORDENACAO"]);
   if (sessao instanceof Response) return sessao;
-  const dados = await lerCorpo(req, ingredienteRotulo);
+  const dados = await lerCorpo(req, novoIngrediente);
   if (dados instanceof Response) return dados;
   try {
-    return Response.json(await cadastrarPorRotulo(dados), { status: 201 });
+    return Response.json(await cadastrarIngrediente(dados, sessao.id), { status: 201 });
   } catch (e) {
     return respostaDeErro(e);
   }

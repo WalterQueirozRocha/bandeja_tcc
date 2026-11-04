@@ -67,18 +67,46 @@ export function buscarIngrediente(id: number) {
   });
 }
 
-export function criarIngredienteRotulo(
-  dados: Omit<Prisma.IngredienteCreateInput, "origem" | "marcadores">,
+export type CampoAlterado = { campo: string; antes: unknown; depois: unknown; fonte?: string };
+
+// A criação já grava o registro com os valores iniciais (04/11).
+export function criarIngrediente(
+  dados: Omit<Prisma.IngredienteCreateInput, "marcadores" | "alteracoes">,
   marcadores: NovoMarcador[],
+  usuario_id: number,
+  campos: CampoAlterado[],
 ) {
   return prisma.ingrediente.create({
-    data: { ...dados, origem: "ROTULO", marcadores: { create: marcadores } },
+    data: {
+      ...dados,
+      marcadores: { create: marcadores },
+      alteracoes: { create: { usuario_id, acao: "CRIACAO", campos: campos as Prisma.InputJsonValue } },
+    },
     include: { marcadores: true },
   });
 }
 
-export function atualizarIngrediente(id: number, dados: Prisma.IngredienteUpdateInput) {
-  return prisma.ingrediente.update({ where: { id }, data: dados });
+// Edição e registro na mesma transação: não há alteração sem registro.
+export async function atualizarIngrediente(
+  id: number,
+  dados: Prisma.IngredienteUpdateInput,
+  registro: { usuario_id: number; campos: CampoAlterado[]; motivo: string },
+) {
+  const [ingrediente] = await prisma.$transaction([
+    prisma.ingrediente.update({ where: { id }, data: dados }),
+    prisma.alteracaoIngrediente.create({
+      data: { ingrediente_id: id, usuario_id: registro.usuario_id, acao: "EDICAO", campos: registro.campos as Prisma.InputJsonValue, motivo: registro.motivo },
+    }),
+  ]);
+  return ingrediente;
+}
+
+export function listarAlteracoes(ingrediente_id: number) {
+  return prisma.alteracaoIngrediente.findMany({
+    where: { ingrediente_id },
+    orderBy: { criado_em: "desc" },
+    include: { usuario: { select: { nome: true, papel: true } } },
+  });
 }
 
 export type DadosIg = Omit<Prisma.ValorIGUncheckedCreateInput, "id" | "ingrediente_id">;
