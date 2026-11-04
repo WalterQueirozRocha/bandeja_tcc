@@ -1,9 +1,9 @@
 import { comporPreparacao, type ItemComposicao } from "./composicao";
 import { ROTULO_ESTIMATIVA } from "./textos";
 
-// Carboidrato disponível (Eq. 3.2): a TACO inclui a fibra no carboidrato.
-export function carboidratoDisponivel(carboidrato_g: number, fibra_g: number): number {
-  return Math.max(0, carboidrato_g - fibra_g);
+// Carboidrato disponível (Eq. 3.2): a TACO inclui a fibra no carboidrato. Fibra não analisada (nula) conta como 0.
+export function carboidratoDisponivel(carboidrato_g: number, fibra_g: number | null): number {
+  return Math.max(0, carboidrato_g - (fibra_g ?? 0));
 }
 
 export type CategoriaCarboidrato =

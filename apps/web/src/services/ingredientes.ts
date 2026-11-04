@@ -52,10 +52,11 @@ export async function editarIngrediente(id: number, dados: EdicaoIngrediente) {
   return atualizarIngrediente(id, dados);
 }
 
-// FC-12: FRITO exige a forma frita da TACO (v3 §4.4); ela não sai enquanto uma preparação usa a forma crua frita.
-async function conferirFormaFritaLivre(forma: { nome: string; forma_crua_id: number | null; modo_preparo: ModoPreparo | null }) {
-  if (forma.modo_preparo === "FRITO" && forma.forma_crua_id !== null && (await usadoEmPreparacao(forma.forma_crua_id, "FRITO"))) {
-    throw new ErroNegocio(`${forma.nome} é a forma frita usada por preparações no modo FRITO: troque o modo nessas preparações antes`);
+// FC-12: o modo pode depender só da forma preparada (FRITO sempre; os outros sem fator do grupo, 03/11);
+// ela não sai enquanto uma preparação usa o cru nesse modo.
+async function conferirFormaLivre(forma: { nome: string; forma_crua_id: number | null; modo_preparo: ModoPreparo | null }) {
+  if (forma.modo_preparo && forma.forma_crua_id !== null && (await usadoEmPreparacao(forma.forma_crua_id, forma.modo_preparo))) {
+    throw new ErroNegocio(`${forma.nome} é a forma preparada usada por preparações no modo ${forma.modo_preparo}: troque o modo nessas preparações antes`);
   }
 }
 
@@ -73,7 +74,7 @@ export async function removerIg(id: number) {
 // M3 (= formas-preparadas.csv): liga a forma preparada da TACO à sua forma crua.
 export async function definirFormaCrua(id: number, { forma_crua_id, modo_preparo }: FormaCrua) {
   const [forma, crua] = [await exigirIngrediente(id), await buscarIngrediente(forma_crua_id)];
-  if (forma.forma_crua_id !== forma_crua_id || forma.modo_preparo !== modo_preparo) await conferirFormaFritaLivre(forma);
+  if (forma.forma_crua_id !== forma_crua_id || forma.modo_preparo !== modo_preparo) await conferirFormaLivre(forma);
   const erros: string[] = [];
   if (!crua) erros.push("Forma crua não encontrada");
   else {
@@ -91,7 +92,7 @@ export async function definirFormaCrua(id: number, { forma_crua_id, modo_preparo
 export async function removerFormaCrua(id: number) {
   const forma = await exigirIngrediente(id);
   if (forma.forma_crua_id === null) throw new ErroNegocio("Ingrediente sem forma crua ligada", 404);
-  await conferirFormaFritaLivre(forma);
+  await conferirFormaLivre(forma);
   return ligarFormaCrua(id, null, null);
 }
 

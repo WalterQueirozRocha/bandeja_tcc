@@ -15,22 +15,29 @@ export type Nutrientes = Record<Nutriente, number>;
 
 export type Modo = "CRU" | "COZIDO" | "ASSADO" | "GRELHADO" | "FRITO";
 
-// P2: CRU sempre (fator 1); outros modos só com fator publicado para o grupo; FRITO exige também a forma frita da TACO.
+const PREPAROS = ["COZIDO", "ASSADO", "GRELHADO", "FRITO"] as const;
+
+// Quadro 13, nº 5 (03/11): CRU sempre. Com formas preparadas na TACO, só os modos delas (com ou sem fator);
+// sem nenhuma, os modos com fator publicado para o grupo. FRITO sempre exige a forma frita.
 export function modosDisponiveis(ingrediente: {
   fatores: Partial<Record<Modo, number>>;
   formasPreparadas: Partial<Record<Modo, unknown>>;
 }): Modo[] {
-  const modos: Modo[] = ["CRU"];
-  for (const m of ["COZIDO", "ASSADO", "GRELHADO"] as const) if (ingrediente.fatores[m] !== undefined) modos.push(m);
-  if (ingrediente.fatores.FRITO !== undefined && ingrediente.formasPreparadas.FRITO !== undefined) modos.push("FRITO");
-  return modos;
+  const temForma = PREPAROS.some((m) => ingrediente.formasPreparadas[m] !== undefined);
+  return [
+    "CRU",
+    ...PREPAROS.filter((m) =>
+      temForma ? ingrediente.formasPreparadas[m] !== undefined : m !== "FRITO" && ingrediente.fatores[m] !== undefined,
+    ),
+  ];
 }
 
 export type ItemComposicao = {
   nome: string;
   quantidade_crua_g: number;
   modo: Modo;
-  fator_coccao: number;
+  // null: forma preparada sem fator publicado para o grupo; o peso final fica igual ao cru.
+  fator_coccao: number | null;
   composicao: Composicao;
   // true: `composicao` é da forma preparada na TACO; false: é a crua e o fator só muda o peso.
   forma_preparada: boolean;
@@ -56,13 +63,18 @@ export function comporPreparacao(itens: ItemComposicao[], porcao_g: number): Res
   let peso_final_g = 0;
 
   const calculados = itens.map((item) => {
-    const peso = item.quantidade_crua_g * item.fator_coccao;
+    const peso = item.quantidade_crua_g * (item.fator_coccao ?? 1);
     // Com forma preparada, a composição vale para o peso já preparado; sem ela, para o peso cru.
     const base = item.forma_preparada ? peso : item.quantidade_crua_g;
     const nutrientes = zerado();
     for (const n of NUTRIENTES) {
       const c = item.composicao[n];
-      if (c === null) hipoteses.push(`${n} ausente em ${item.nome}: tratado como 0`);
+      if (c === null)
+        hipoteses.push(
+          n === "fibra_g"
+            ? `fibra não analisada em ${item.nome}: tratada como 0 (carboidrato disponível = carboidrato total)`
+            : `${n} ausente em ${item.nome}: tratado como 0`,
+        );
       nutrientes[n] = (base * (c ?? 0)) / 100;
       total[n] += nutrientes[n];
     }
@@ -70,9 +82,11 @@ export function comporPreparacao(itens: ItemComposicao[], porcao_g: number): Res
     hipoteses.push(
       item.modo === "CRU"
         ? `${item.nome}: composição da TACO/rótulo como está`
-        : item.forma_preparada
-          ? `${item.nome} (${item.modo}): composição da forma preparada na TACO; fator de cocção ${item.fator_coccao}`
-          : `${item.nome} (${item.modo}): composição crua; fator de cocção ${item.fator_coccao} só no peso (Domene, 2018)`,
+        : item.fator_coccao === null
+          ? `${item.nome} (${item.modo}): composição da forma preparada na TACO; sem fator de cocção publicado para o grupo, peso final = peso cru`
+          : item.forma_preparada
+            ? `${item.nome} (${item.modo}): composição da forma preparada na TACO; fator de cocção ${item.fator_coccao}`
+            : `${item.nome} (${item.modo}): composição crua; fator de cocção ${item.fator_coccao} só no peso (Domene, 2018)`,
     );
     return { nome: item.nome, peso_final_g: peso, nutrientes };
   });

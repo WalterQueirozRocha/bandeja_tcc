@@ -32,6 +32,7 @@ function fatoresDoGrupo(grupo: GrupoAlimentar, fatores: Fator[]) {
 }
 
 // Decisão 2 do I2: a forma preparada da TACO (com forma crua ligada) não entra direto na ficha.
+// Modos do cru: os das formas preparadas na TACO; sem nenhuma, os com fator do grupo (03/11).
 export function modosDoIngrediente(
   ingrediente: { grupo_alimentar: GrupoAlimentar; forma_crua_id: number | null; formas_preparadas: { modo_preparo: ModoPreparo | null }[] },
   fatores: Fator[],
@@ -47,7 +48,8 @@ export function modosDoIngrediente(
 function paraDominio(ingrediente: IngredienteCalculo, quantidade_crua_g: number, modo: ModoPreparo, fatores: Fator[]) {
   const forma = modo === "CRU" ? undefined : ingrediente.formas_preparadas.find((f) => f.modo_preparo === modo);
   const fonte = forma ?? ingrediente;
-  const fator = modo === "CRU" ? 1 : fatoresDoGrupo(ingrediente.grupo_alimentar, fatores)[modo];
+  // Forma preparada sem fator do grupo: fator nulo (peso final = peso cru, com hipótese).
+  const fator = modo === "CRU" ? 1 : (fatoresDoGrupo(ingrediente.grupo_alimentar, fatores)[modo] ?? (forma ? null : undefined));
   if (fator === undefined) throw new ErroNegocio(`${ingrediente.nome}: sem fator de cocção para ${modo}`);
   // IG pareado para a forma preparada, se houver; senão o do próprio ingrediente.
   const valorIg = forma?.valor_ig ?? ingrediente.valor_ig;
