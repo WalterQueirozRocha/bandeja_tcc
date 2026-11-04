@@ -67,7 +67,8 @@ export function igRytz(componentes: ComponenteGlicemico[], b: Coeficientes = COE
   return denominador > 0 ? { ig: numerador / denominador, hipoteses } : { ig: null, hipoteses, motivo: "preparação sem macronutrientes" };
 }
 
-// Eq. 2.4: média dos IG ponderada pelo carboidrato disponível; só com todos os ingredientes com carboidrato pareados.
+// Eq. 2.4: média dos IG ponderada pelo carboidrato disponível; só com todos os ingredientes com carboidrato pareados
+// (ou com IG 0 pelo limiar de Louie et al., 2015, aplicado em estimarCargaGlicemica).
 export function igFao(componentes: ComponenteGlicemico[]): Estimativa {
   const comCarboidrato = componentes.filter((c) => c.carboidrato_disponivel_g > 0);
   if (comCarboidrato.length === 0) return { ig: null, hipoteses: [], motivo: "preparação sem carboidrato disponível" };
@@ -90,11 +91,18 @@ export const cgRefeicaoSeCalculavel = (cargas: (number | null)[]) =>
 
 export type MetaGlicemica = Pick<ComponenteGlicemico, "categoria_carboidrato" | "rds_percentual" | "ig">;
 
+// Louie et al. (2015), passo 1: sem IG e com menos de 2,5 g de carboidrato disponível por 100 g → IG 0 (só na FAO).
+export const LIMIAR_IG_ZERO_G = 2.5;
+
 // RF04: sempre informa os gramas de carboidrato disponível da porção; CG de cada modelo, sem faixas.
 export function estimarCargaGlicemica(itens: (ItemComposicao & MetaGlicemica)[], porcao_g: number) {
   const composicao = comporPreparacao(itens, porcao_g);
+  const igZero: string[] = [];
   const componentes: ComponenteGlicemico[] = itens.map((item, i) => {
     const n = composicao.itens[i]!.nutrientes;
+    const por100g = carboidratoDisponivel(item.composicao.carboidrato_g ?? 0, item.composicao.fibra_g);
+    const baixo = item.ig === null && por100g > 0 && por100g < LIMIAR_IG_ZERO_G;
+    if (baixo) igZero.push(`${item.nome}: menos de ${LIMIAR_IG_ZERO_G} g de carboidrato disponível por 100 g; IG 0 na FAO (Louie et al., 2015)`);
     return {
       nome: item.nome,
       carboidrato_disponivel_g: carboidratoDisponivel(n.carboidrato_g, n.fibra_g),
@@ -104,7 +112,7 @@ export function estimarCargaGlicemica(itens: (ItemComposicao & MetaGlicemica)[],
       lipideos_g: n.lipideos_g,
       fibra_g: n.fibra_g,
       cinzas_g: n.cinzas_g,
-      ig: item.ig,
+      ig: baixo ? { valor: 0, lista: "LISTA_1" } : item.ig,
     };
   });
   const fracaoPorcao = composicao.peso_final_g > 0 ? porcao_g / composicao.peso_final_g : 0;
@@ -121,6 +129,6 @@ export function estimarCargaGlicemica(itens: (ItemComposicao & MetaGlicemica)[],
     rytz: modelo(rytz),
     fao: modelo(fao),
     motivo_fao: fao.motivo ?? null,
-    hipoteses: [...composicao.hipoteses, ...rytz.hipoteses, ...fao.hipoteses],
+    hipoteses: [...composicao.hipoteses, ...rytz.hipoteses, ...(fao.ig === null ? [] : igZero), ...fao.hipoteses],
   };
 }
