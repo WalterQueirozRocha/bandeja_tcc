@@ -1,1 +1,9 @@
 grupo_alimentar;modo_preparo;fator_coccao;referencia
+CEREAIS;COZIDO;2,64;Silva et al. (2012) VII CONNEPI Tab. 1: mediana de arroz branco, integral e parboilizado, cuscuz, espaguete comum e integral
+LEGUMINOSAS;COZIDO;2,22;Silva et al. (2012) VII CONNEPI Tab. 1: mediana de feijão-de-corda, feijão preto, grão-de-bico e lentilha
+VERDURAS_HORTALICAS;COZIDO;0,99;Silva et al. (2012) VII CONNEPI Tab. 2: mediana das 13 hortaliças cozidas
+CARNES;GRELHADO;0,71;Silva et al. (2012) VII CONNEPI Tab. 3: mediana de carne bovina, coxa, peito, sobrecoxa e bisteca suína grelhados
+CARNES;COZIDO;0,72;Silva et al. (2012) VII CONNEPI Tab. 3: mediana de carne bovina ensopada e moída cozida, coxa, peito e sobrecoxa cozidos
+CARNES;FRITO;0,76;Silva et al. (2012) VII CONNEPI Tab. 3: mediana de coxa, peito, sobrecoxa e bisteca suína fritos
+PESCADOS_FRUTOS_MAR;COZIDO;0,69;Silva et al. (2012) VII CONNEPI Tab. 3: filé de merluza cozido
+PESCADOS_FRUTOS_MAR;FRITO;0,44;Silva et al. (2012) VII CONNEPI Tab. 3: filé de merluza frito
