@@ -1,1 +1,974 @@
 codigo_taco;nome;categoria;presenca;conferido_por_1;conferido_por_2
+1;Arroz, integral, cozido;;;PENDENTE 1;PENDENTE 2
+2;Arroz, integral, cru;;;PENDENTE 1;PENDENTE 2
+3;Arroz, tipo 1, cozido;;;PENDENTE 1;PENDENTE 2
+4;Arroz, tipo 1, cru;;;PENDENTE 1;PENDENTE 2
+5;Arroz, tipo 2, cozido;;;PENDENTE 1;PENDENTE 2
+6;Arroz, tipo 2, cru;;;PENDENTE 1;PENDENTE 2
+7;Aveia, flocos, crua;AVEIA;CONTEM;PENDENTE 1;PENDENTE 2
+7;Aveia, flocos, crua;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+8;Biscoito, doce, maisena;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+8;Biscoito, doce, maisena;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+8;Biscoito, doce, maisena;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+8;Biscoito, doce, maisena;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+8;Biscoito, doce, maisena;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+8;Biscoito, doce, maisena;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+9;Biscoito, doce, recheado com chocolate;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+9;Biscoito, doce, recheado com chocolate;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+9;Biscoito, doce, recheado com chocolate;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+9;Biscoito, doce, recheado com chocolate;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+9;Biscoito, doce, recheado com chocolate;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+9;Biscoito, doce, recheado com chocolate;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+10;Biscoito, doce, recheado com morango;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+10;Biscoito, doce, recheado com morango;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+10;Biscoito, doce, recheado com morango;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+10;Biscoito, doce, recheado com morango;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+10;Biscoito, doce, recheado com morango;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+10;Biscoito, doce, recheado com morango;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+11;Biscoito, doce, wafer, recheado de chocolate;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+11;Biscoito, doce, wafer, recheado de chocolate;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+11;Biscoito, doce, wafer, recheado de chocolate;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+11;Biscoito, doce, wafer, recheado de chocolate;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+11;Biscoito, doce, wafer, recheado de chocolate;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+11;Biscoito, doce, wafer, recheado de chocolate;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+12;Biscoito, doce, wafer, recheado de morango;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+12;Biscoito, doce, wafer, recheado de morango;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+12;Biscoito, doce, wafer, recheado de morango;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+12;Biscoito, doce, wafer, recheado de morango;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+12;Biscoito, doce, wafer, recheado de morango;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+12;Biscoito, doce, wafer, recheado de morango;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+13;Biscoito, salgado, cream cracker;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+13;Biscoito, salgado, cream cracker;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+13;Biscoito, salgado, cream cracker;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+13;Biscoito, salgado, cream cracker;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+13;Biscoito, salgado, cream cracker;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+13;Biscoito, salgado, cream cracker;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+14;Bolo, mistura para;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+14;Bolo, mistura para;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+14;Bolo, mistura para;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+14;Bolo, mistura para;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+14;Bolo, mistura para;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+14;Bolo, mistura para;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+15;Bolo, pronto, aipim;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+15;Bolo, pronto, aipim;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+15;Bolo, pronto, aipim;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+15;Bolo, pronto, aipim;TRIGO;PODE_CONTER;PENDENTE 1;PENDENTE 2
+15;Bolo, pronto, aipim;GLUTEN;PODE_CONTER;PENDENTE 1;PENDENTE 2
+16;Bolo, pronto, chocolate;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+16;Bolo, pronto, chocolate;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+16;Bolo, pronto, chocolate;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+16;Bolo, pronto, chocolate;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+16;Bolo, pronto, chocolate;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+16;Bolo, pronto, chocolate;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+17;Bolo, pronto, coco;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+17;Bolo, pronto, coco;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+17;Bolo, pronto, coco;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+17;Bolo, pronto, coco;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+17;Bolo, pronto, coco;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+17;Bolo, pronto, coco;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+18;Bolo, pronto, milho;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+18;Bolo, pronto, milho;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+18;Bolo, pronto, milho;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+18;Bolo, pronto, milho;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+18;Bolo, pronto, milho;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+18;Bolo, pronto, milho;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+19;Canjica, branca, crua;;;PENDENTE 1;PENDENTE 2
+20;Canjica, com leite integral;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+20;Canjica, com leite integral;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+21;Cereais, milho, flocos, com sal;CEVADA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+21;Cereais, milho, flocos, com sal;GLUTEN;PODE_CONTER;PENDENTE 1;PENDENTE 2
+22;Cereais, milho, flocos, sem sal;CEVADA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+22;Cereais, milho, flocos, sem sal;GLUTEN;PODE_CONTER;PENDENTE 1;PENDENTE 2
+23;Cereais, mingau, milho, infantil;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+23;Cereais, mingau, milho, infantil;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+24;Cereais, mistura para vitamina, trigo, cevada e aveia;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+24;Cereais, mistura para vitamina, trigo, cevada e aveia;CEVADA;CONTEM;PENDENTE 1;PENDENTE 2
+24;Cereais, mistura para vitamina, trigo, cevada e aveia;AVEIA;CONTEM;PENDENTE 1;PENDENTE 2
+24;Cereais, mistura para vitamina, trigo, cevada e aveia;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+24;Cereais, mistura para vitamina, trigo, cevada e aveia;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+24;Cereais, mistura para vitamina, trigo, cevada e aveia;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+25;Cereal matinal, milho;CEVADA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+25;Cereal matinal, milho;GLUTEN;PODE_CONTER;PENDENTE 1;PENDENTE 2
+26;Cereal matinal, milho, açúcar;CEVADA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+26;Cereal matinal, milho, açúcar;GLUTEN;PODE_CONTER;PENDENTE 1;PENDENTE 2
+27;Creme de arroz, pó;;;PENDENTE 1;PENDENTE 2
+28;Creme de milho, pó;;;PENDENTE 1;PENDENTE 2
+29;Curau, milho verde;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+29;Curau, milho verde;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+30;Curau, milho verde, mistura para;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+30;Curau, milho verde, mistura para;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+31;Farinha, de arroz, enriquecida;;;PENDENTE 1;PENDENTE 2
+32;Farinha, de centeio, integral;CENTEIO;CONTEM;PENDENTE 1;PENDENTE 2
+32;Farinha, de centeio, integral;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+33;Farinha, de milho, amarela;;;PENDENTE 1;PENDENTE 2
+34;Farinha, de rosca;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+34;Farinha, de rosca;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+35;Farinha, de trigo;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+35;Farinha, de trigo;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+36;Farinha, láctea, de cereais;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+36;Farinha, láctea, de cereais;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+36;Farinha, láctea, de cereais;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+36;Farinha, láctea, de cereais;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+37;Lasanha, massa fresca, cozida;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+37;Lasanha, massa fresca, cozida;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+37;Lasanha, massa fresca, cozida;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+38;Lasanha, massa fresca, crua;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+38;Lasanha, massa fresca, crua;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+38;Lasanha, massa fresca, crua;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+39;Macarrão, instantâneo;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+39;Macarrão, instantâneo;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+39;Macarrão, instantâneo;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+39;Macarrão, instantâneo;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+40;Macarrão, trigo, cru;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+40;Macarrão, trigo, cru;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+40;Macarrão, trigo, cru;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+41;Macarrão, trigo, cru, com ovos;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+41;Macarrão, trigo, cru, com ovos;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+41;Macarrão, trigo, cru, com ovos;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+42;Milho, amido, cru;;;PENDENTE 1;PENDENTE 2
+43;Milho, fubá, cru;;;PENDENTE 1;PENDENTE 2
+44;Milho, verde, cru;;;PENDENTE 1;PENDENTE 2
+45;Milho, verde, enlatado, drenado;;;PENDENTE 1;PENDENTE 2
+46;Mingau tradicional, pó;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+46;Mingau tradicional, pó;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+47;Pamonha, barra para cozimento, pré-cozida;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+47;Pamonha, barra para cozimento, pré-cozida;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+48;Pão, aveia, forma;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+48;Pão, aveia, forma;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+48;Pão, aveia, forma;AVEIA;CONTEM;PENDENTE 1;PENDENTE 2
+48;Pão, aveia, forma;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+48;Pão, aveia, forma;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+48;Pão, aveia, forma;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+49;Pão, de soja;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+49;Pão, de soja;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+49;Pão, de soja;SOJA;CONTEM;PENDENTE 1;PENDENTE 2
+50;Pão, glúten, forma;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+50;Pão, glúten, forma;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+51;Pão, milho, forma;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+51;Pão, milho, forma;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+52;Pão, trigo, forma, integral;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+52;Pão, trigo, forma, integral;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+52;Pão, trigo, forma, integral;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+52;Pão, trigo, forma, integral;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+52;Pão, trigo, forma, integral;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+53;Pão, trigo, francês;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+53;Pão, trigo, francês;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+54;Pão, trigo, sovado;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+54;Pão, trigo, sovado;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+54;Pão, trigo, sovado;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+54;Pão, trigo, sovado;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+54;Pão, trigo, sovado;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+55;Pastel, de carne, cru;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+55;Pastel, de carne, cru;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+55;Pastel, de carne, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+55;Pastel, de carne, cru;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+56;Pastel, de carne, frito;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+56;Pastel, de carne, frito;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+56;Pastel, de carne, frito;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+56;Pastel, de carne, frito;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+57;Pastel, de queijo, cru;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+57;Pastel, de queijo, cru;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+57;Pastel, de queijo, cru;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+57;Pastel, de queijo, cru;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+57;Pastel, de queijo, cru;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+58;Pastel, de queijo, frito;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+58;Pastel, de queijo, frito;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+58;Pastel, de queijo, frito;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+58;Pastel, de queijo, frito;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+58;Pastel, de queijo, frito;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+59;Pastel, massa, crua;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+59;Pastel, massa, crua;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+59;Pastel, massa, crua;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+60;Pastel, massa, frita;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+60;Pastel, massa, frita;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+60;Pastel, massa, frita;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+61;Pipoca, com óleo de soja, sem sal;SOJA;CONTEM;PENDENTE 1;PENDENTE 2
+62;Polenta, pré-cozida;;;PENDENTE 1;PENDENTE 2
+63;Torrada, pão francês;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+63;Torrada, pão francês;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+64;Abóbora, cabotian, cozida;;;PENDENTE 1;PENDENTE 2
+65;Abóbora, cabotian, crua;;;PENDENTE 1;PENDENTE 2
+66;Abóbora, menina brasileira, crua;;;PENDENTE 1;PENDENTE 2
+67;Abóbora, moranga, crua;;;PENDENTE 1;PENDENTE 2
+68;Abóbora, moranga, refogada;;;PENDENTE 1;PENDENTE 2
+69;Abóbora, pescoço, crua;;;PENDENTE 1;PENDENTE 2
+70;Abobrinha, italiana, cozida;;;PENDENTE 1;PENDENTE 2
+71;Abobrinha, italiana, crua;;;PENDENTE 1;PENDENTE 2
+72;Abobrinha, italiana, refogada;;;PENDENTE 1;PENDENTE 2
+73;Abobrinha, paulista, crua;;;PENDENTE 1;PENDENTE 2
+74;Acelga, crua;;;PENDENTE 1;PENDENTE 2
+75;Agrião, cru;;;PENDENTE 1;PENDENTE 2
+76;Aipo, cru;;;PENDENTE 1;PENDENTE 2
+77;Alface, americana, crua;;;PENDENTE 1;PENDENTE 2
+78;Alface, crespa, crua;;;PENDENTE 1;PENDENTE 2
+79;Alface, lisa, crua;;;PENDENTE 1;PENDENTE 2
+80;Alface, roxa, crua;;;PENDENTE 1;PENDENTE 2
+81;Alfavaca, crua;;;PENDENTE 1;PENDENTE 2
+82;Alho, cru;;;PENDENTE 1;PENDENTE 2
+83;Alho-poró, cru;;;PENDENTE 1;PENDENTE 2
+84;Almeirão, cru;;;PENDENTE 1;PENDENTE 2
+85;Almeirão, refogado;;;PENDENTE 1;PENDENTE 2
+86;Batata, baroa, cozida;;;PENDENTE 1;PENDENTE 2
+87;Batata, baroa, crua;;;PENDENTE 1;PENDENTE 2
+88;Batata, doce, cozida;;;PENDENTE 1;PENDENTE 2
+89;Batata, doce, crua;;;PENDENTE 1;PENDENTE 2
+90;Batata, frita, tipo chips, industrializada;;;PENDENTE 1;PENDENTE 2
+91;Batata, inglesa, cozida;;;PENDENTE 1;PENDENTE 2
+92;Batata, inglesa, crua;;;PENDENTE 1;PENDENTE 2
+93;Batata, inglesa, frita;;;PENDENTE 1;PENDENTE 2
+94;Batata, inglesa, sauté;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+94;Batata, inglesa, sauté;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+95;Berinjela, cozida;;;PENDENTE 1;PENDENTE 2
+96;Berinjela, crua;;;PENDENTE 1;PENDENTE 2
+97;Beterraba, cozida;;;PENDENTE 1;PENDENTE 2
+98;Beterraba, crua;;;PENDENTE 1;PENDENTE 2
+99;Biscoito, polvilho doce;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+99;Biscoito, polvilho doce;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+99;Biscoito, polvilho doce;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+100;Brócolis, cozido;;;PENDENTE 1;PENDENTE 2
+101;Brócolis, cru;;;PENDENTE 1;PENDENTE 2
+102;Cará, cozido;;;PENDENTE 1;PENDENTE 2
+103;Cará, cru;;;PENDENTE 1;PENDENTE 2
+104;Caruru, cru;;;PENDENTE 1;PENDENTE 2
+105;Catalonha, crua;;;PENDENTE 1;PENDENTE 2
+106;Catalonha, refogada;;;PENDENTE 1;PENDENTE 2
+107;Cebola, crua;;;PENDENTE 1;PENDENTE 2
+108;Cebolinha, crua;;;PENDENTE 1;PENDENTE 2
+109;Cenoura, cozida;;;PENDENTE 1;PENDENTE 2
+110;Cenoura, crua;;;PENDENTE 1;PENDENTE 2
+111;Chicória, crua;;;PENDENTE 1;PENDENTE 2
+112;Chuchu, cozido;;;PENDENTE 1;PENDENTE 2
+113;Chuchu, cru;;;PENDENTE 1;PENDENTE 2
+114;Coentro, folhas desidratadas;;;PENDENTE 1;PENDENTE 2
+115;Couve, manteiga, crua;;;PENDENTE 1;PENDENTE 2
+116;Couve, manteiga, refogada;;;PENDENTE 1;PENDENTE 2
+117;Couve-flor, crua;;;PENDENTE 1;PENDENTE 2
+118;Couve-flor, cozida;;;PENDENTE 1;PENDENTE 2
+119;Espinafre, Nova Zelândia, cru;;;PENDENTE 1;PENDENTE 2
+120;Espinafre, Nova Zelândia, refogado;;;PENDENTE 1;PENDENTE 2
+121;Farinha, de mandioca, crua;;;PENDENTE 1;PENDENTE 2
+122;Farinha, de mandioca, torrada;;;PENDENTE 1;PENDENTE 2
+123;Farinha, de puba;;;PENDENTE 1;PENDENTE 2
+124;Fécula, de mandioca;;;PENDENTE 1;PENDENTE 2
+125;Feijão, broto, cru;;;PENDENTE 1;PENDENTE 2
+126;Inhame, cru;;;PENDENTE 1;PENDENTE 2
+127;Jiló, cru;;;PENDENTE 1;PENDENTE 2
+128;Jurubeba, crua;;;PENDENTE 1;PENDENTE 2
+129;Mandioca, cozida;;;PENDENTE 1;PENDENTE 2
+130;Mandioca, crua;;;PENDENTE 1;PENDENTE 2
+131;Mandioca, farofa, temperada;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+131;Mandioca, farofa, temperada;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+131;Mandioca, farofa, temperada;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+132;Mandioca, frita;;;PENDENTE 1;PENDENTE 2
+133;Manjericão, cru;;;PENDENTE 1;PENDENTE 2
+134;Maxixe, cru;;;PENDENTE 1;PENDENTE 2
+135;Mostarda, folha, crua;;;PENDENTE 1;PENDENTE 2
+136;Nhoque, batata, cozido;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+136;Nhoque, batata, cozido;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+136;Nhoque, batata, cozido;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+137;Nabo, cru;;;PENDENTE 1;PENDENTE 2
+138;Palmito, juçara, em conserva;;;PENDENTE 1;PENDENTE 2
+139;Palmito, pupunha, em conserva;;;PENDENTE 1;PENDENTE 2
+140;Pão, de queijo, assado;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+140;Pão, de queijo, assado;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+140;Pão, de queijo, assado;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+141;Pão, de queijo, cru;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+141;Pão, de queijo, cru;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+141;Pão, de queijo, cru;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+142;Pepino, cru;;;PENDENTE 1;PENDENTE 2
+143;Pimentão, amarelo, cru;;;PENDENTE 1;PENDENTE 2
+144;Pimentão, verde, cru;;;PENDENTE 1;PENDENTE 2
+145;Pimentão, vermelho, cru;;;PENDENTE 1;PENDENTE 2
+146;Polvilho, doce;;;PENDENTE 1;PENDENTE 2
+147;Quiabo, cru;;;PENDENTE 1;PENDENTE 2
+148;Rabanete, cru;;;PENDENTE 1;PENDENTE 2
+149;Repolho, branco, cru;;;PENDENTE 1;PENDENTE 2
+150;Repolho, roxo, cru;;;PENDENTE 1;PENDENTE 2
+151;Repolho, roxo, refogado;;;PENDENTE 1;PENDENTE 2
+152;Rúcula, crua;;;PENDENTE 1;PENDENTE 2
+153;Salsa, crua;;;PENDENTE 1;PENDENTE 2
+154;Seleta de legumes, enlatada;;;PENDENTE 1;PENDENTE 2
+155;Serralha, crua;;;PENDENTE 1;PENDENTE 2
+156;Taioba, crua;;;PENDENTE 1;PENDENTE 2
+157;Tomate, com semente, cru;;;PENDENTE 1;PENDENTE 2
+158;Tomate, extrato;;;PENDENTE 1;PENDENTE 2
+159;Tomate, molho industrializado;;;PENDENTE 1;PENDENTE 2
+160;Tomate, purê;;;PENDENTE 1;PENDENTE 2
+161;Tomate, salada;;;PENDENTE 1;PENDENTE 2
+162;Vagem, crua;;;PENDENTE 1;PENDENTE 2
+163;Abacate, cru;;;PENDENTE 1;PENDENTE 2
+164;Abacaxi, cru;;;PENDENTE 1;PENDENTE 2
+165;Abacaxi, polpa, congelada;;;PENDENTE 1;PENDENTE 2
+166;Abiu, cru;;;PENDENTE 1;PENDENTE 2
+167;Açaí, polpa, com xarope de guaraná e glucose;;;PENDENTE 1;PENDENTE 2
+168;Açaí, polpa, congelada;;;PENDENTE 1;PENDENTE 2
+169;Acerola, crua;;;PENDENTE 1;PENDENTE 2
+170;Acerola, polpa, congelada;;;PENDENTE 1;PENDENTE 2
+171;Ameixa, calda, enlatada;;;PENDENTE 1;PENDENTE 2
+172;Ameixa, crua;;;PENDENTE 1;PENDENTE 2
+173;Ameixa, em calda, enlatada, drenada;;;PENDENTE 1;PENDENTE 2
+174;Atemóia, crua;;;PENDENTE 1;PENDENTE 2
+175;Banana, da terra, crua;;;PENDENTE 1;PENDENTE 2
+176;Banana, doce em barra;;;PENDENTE 1;PENDENTE 2
+177;Banana, figo, crua;;;PENDENTE 1;PENDENTE 2
+178;Banana, maçã, crua;;;PENDENTE 1;PENDENTE 2
+179;Banana, nanica, crua;;;PENDENTE 1;PENDENTE 2
+180;Banana, ouro, crua;;;PENDENTE 1;PENDENTE 2
+181;Banana, pacova, crua;;;PENDENTE 1;PENDENTE 2
+182;Banana, prata, crua;;;PENDENTE 1;PENDENTE 2
+183;Cacau, cru;;;PENDENTE 1;PENDENTE 2
+184;Cajá-Manga, cru;;;PENDENTE 1;PENDENTE 2
+185;Cajá, polpa, congelada;;;PENDENTE 1;PENDENTE 2
+186;Caju, cru;;;PENDENTE 1;PENDENTE 2
+187;Caju, polpa, congelada;;;PENDENTE 1;PENDENTE 2
+188;Caju, suco concentrado, envasado;;;PENDENTE 1;PENDENTE 2
+189;Caqui, chocolate, cru;;;PENDENTE 1;PENDENTE 2
+190;Carambola, crua;;;PENDENTE 1;PENDENTE 2
+191;Ciriguela, crua;;;PENDENTE 1;PENDENTE 2
+192;Cupuaçu, cru;;;PENDENTE 1;PENDENTE 2
+193;Cupuaçu, polpa, congelada;;;PENDENTE 1;PENDENTE 2
+194;Figo, cru;;;PENDENTE 1;PENDENTE 2
+195;Figo, enlatado, em calda;;;PENDENTE 1;PENDENTE 2
+196;Fruta-pão, crua;;;PENDENTE 1;PENDENTE 2
+197;Goiaba, branca, com casca, crua;;;PENDENTE 1;PENDENTE 2
+198;Goiaba, doce em pasta;;;PENDENTE 1;PENDENTE 2
+199;Goiaba, doce, cascão;;;PENDENTE 1;PENDENTE 2
+200;Goiaba, vermelha, com casca, crua;;;PENDENTE 1;PENDENTE 2
+201;Graviola, crua;;;PENDENTE 1;PENDENTE 2
+202;Graviola, polpa, congelada;;;PENDENTE 1;PENDENTE 2
+203;Jabuticaba, crua;;;PENDENTE 1;PENDENTE 2
+204;Jaca, crua;;;PENDENTE 1;PENDENTE 2
+205;Jambo, cru;;;PENDENTE 1;PENDENTE 2
+206;Jamelão, cru;;;PENDENTE 1;PENDENTE 2
+207;Kiwi, cru;;;PENDENTE 1;PENDENTE 2
+208;Laranja, baía, crua;;;PENDENTE 1;PENDENTE 2
+209;Laranja, baía, suco;;;PENDENTE 1;PENDENTE 2
+210;Laranja, da terra, crua;;;PENDENTE 1;PENDENTE 2
+211;Laranja, da terra, suco;;;PENDENTE 1;PENDENTE 2
+212;Laranja, lima, crua;;;PENDENTE 1;PENDENTE 2
+213;Laranja, lima, suco;;;PENDENTE 1;PENDENTE 2
+214;Laranja, pêra, crua;;;PENDENTE 1;PENDENTE 2
+215;Laranja, pêra, suco;;;PENDENTE 1;PENDENTE 2
+216;Laranja, valência, crua;;;PENDENTE 1;PENDENTE 2
+217;Laranja, valência, suco;;;PENDENTE 1;PENDENTE 2
+218;Limão, cravo, suco;;;PENDENTE 1;PENDENTE 2
+219;Limão, galego, suco;;;PENDENTE 1;PENDENTE 2
+220;Limão, tahiti, cru;;;PENDENTE 1;PENDENTE 2
+221;Maçã, Argentina, com casca, crua;;;PENDENTE 1;PENDENTE 2
+222;Maçã, Fuji, com casca, crua;;;PENDENTE 1;PENDENTE 2
+223;Macaúba, crua;;;PENDENTE 1;PENDENTE 2
+224;Mamão, doce em calda, drenado;;;PENDENTE 1;PENDENTE 2
+225;Mamão, Formosa, cru;;;PENDENTE 1;PENDENTE 2
+226;Mamão, Papaia, cru;;;PENDENTE 1;PENDENTE 2
+227;Mamão verde, doce em calda, drenado;;;PENDENTE 1;PENDENTE 2
+228;Manga, Haden, crua;;;PENDENTE 1;PENDENTE 2
+229;Manga, Palmer, crua;;;PENDENTE 1;PENDENTE 2
+230;Manga, polpa, congelada;;;PENDENTE 1;PENDENTE 2
+231;Manga, Tommy Atkins, crua;;;PENDENTE 1;PENDENTE 2
+232;Maracujá, cru;;;PENDENTE 1;PENDENTE 2
+233;Maracujá, polpa, congelada;;;PENDENTE 1;PENDENTE 2
+234;Maracujá, suco concentrado, envasado;;;PENDENTE 1;PENDENTE 2
+235;Melancia, crua;;;PENDENTE 1;PENDENTE 2
+236;Melão, cru;;;PENDENTE 1;PENDENTE 2
+237;Mexerica, Murcote, crua;;;PENDENTE 1;PENDENTE 2
+238;Mexerica, Rio, crua;;;PENDENTE 1;PENDENTE 2
+239;Morango, cru;;;PENDENTE 1;PENDENTE 2
+240;Nêspera, crua;;;PENDENTE 1;PENDENTE 2
+241;Pequi, cru;;;PENDENTE 1;PENDENTE 2
+242;Pêra, Park, crua;;;PENDENTE 1;PENDENTE 2
+243;Pêra, Williams, crua;;;PENDENTE 1;PENDENTE 2
+244;Pêssego, Aurora, cru;;;PENDENTE 1;PENDENTE 2
+245;Pêssego, enlatado, em calda;;;PENDENTE 1;PENDENTE 2
+246;Pinha, crua;;;PENDENTE 1;PENDENTE 2
+247;Pitanga, crua;;;PENDENTE 1;PENDENTE 2
+248;Pitanga, polpa, congelada;;;PENDENTE 1;PENDENTE 2
+249;Romã, crua;;;PENDENTE 1;PENDENTE 2
+250;Tamarindo, cru;;;PENDENTE 1;PENDENTE 2
+251;Tangerina, Poncã, crua;;;PENDENTE 1;PENDENTE 2
+252;Tangerina, Poncã, suco;;;PENDENTE 1;PENDENTE 2
+253;Tucumã, cru;;;PENDENTE 1;PENDENTE 2
+254;Umbu, cru;;;PENDENTE 1;PENDENTE 2
+255;Umbu, polpa, congelada;;;PENDENTE 1;PENDENTE 2
+256;Uva, Itália, crua;;;PENDENTE 1;PENDENTE 2
+257;Uva, Rubi, crua;;;PENDENTE 1;PENDENTE 2
+258;Uva, suco concentrado, envasado;;;PENDENTE 1;PENDENTE 2
+259;Azeite, de dendê;;;PENDENTE 1;PENDENTE 2
+260;Azeite, de oliva, extra virgem;;;PENDENTE 1;PENDENTE 2
+261;Manteiga, com sal;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+261;Manteiga, com sal;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+262;Manteiga, sem sal;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+262;Manteiga, sem sal;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+263;Margarina, com óleo hidrogenado, com sal (65% de lipídeos);LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+263;Margarina, com óleo hidrogenado, com sal (65% de lipídeos);LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+263;Margarina, com óleo hidrogenado, com sal (65% de lipídeos);SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+264;Margarina, com óleo hidrogenado, sem sal (80% de lipídeos);LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+264;Margarina, com óleo hidrogenado, sem sal (80% de lipídeos);LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+264;Margarina, com óleo hidrogenado, sem sal (80% de lipídeos);SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+265;Margarina, com óleo interesterificado, com sal (65%de lipídeos);LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+265;Margarina, com óleo interesterificado, com sal (65%de lipídeos);LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+265;Margarina, com óleo interesterificado, com sal (65%de lipídeos);SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+266;Margarina, com óleo interesterificado, sem sal (65% de lipídeos);LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+266;Margarina, com óleo interesterificado, sem sal (65% de lipídeos);LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+266;Margarina, com óleo interesterificado, sem sal (65% de lipídeos);SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+267;Óleo, de babaçu;;;PENDENTE 1;PENDENTE 2
+268;Óleo, de canola;;;PENDENTE 1;PENDENTE 2
+269;Óleo, de girassol;;;PENDENTE 1;PENDENTE 2
+270;Óleo, de milho;;;PENDENTE 1;PENDENTE 2
+271;Óleo, de pequi;;;PENDENTE 1;PENDENTE 2
+272;Óleo, de soja;SOJA;CONTEM;PENDENTE 1;PENDENTE 2
+273;Abadejo, filé, congelado, assado;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+273;Abadejo, filé, congelado, assado;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+274;Abadejo, filé, congelado,cozido;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+274;Abadejo, filé, congelado,cozido;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+275;Abadejo, filé, congelado, cru;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+275;Abadejo, filé, congelado, cru;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+276;Abadejo, filé, congelado, grelhado;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+276;Abadejo, filé, congelado, grelhado;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+277;Atum, conserva em óleo;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+277;Atum, conserva em óleo;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+277;Atum, conserva em óleo;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+278;Atum, fresco, cru;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+278;Atum, fresco, cru;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+279;Bacalhau, salgado, cru;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+279;Bacalhau, salgado, cru;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+280;Bacalhau, salgado, refogado;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+280;Bacalhau, salgado, refogado;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+281;Cação, posta, com farinha de trigo, frita;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+281;Cação, posta, com farinha de trigo, frita;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+281;Cação, posta, com farinha de trigo, frita;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+281;Cação, posta, com farinha de trigo, frita;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+282;Cação, posta, cozida;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+282;Cação, posta, cozida;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+283;Cação, posta, crua;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+283;Cação, posta, crua;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+284;Camarão, Rio Grande, grande, cozido;CRUSTACEOS;CONTEM;PENDENTE 1;PENDENTE 2
+284;Camarão, Rio Grande, grande, cozido;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+285;Camarão, Rio Grande, grande, cru;CRUSTACEOS;CONTEM;PENDENTE 1;PENDENTE 2
+285;Camarão, Rio Grande, grande, cru;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+286;Camarão, Sete Barbas, sem cabeça, com casca, frito;CRUSTACEOS;CONTEM;PENDENTE 1;PENDENTE 2
+286;Camarão, Sete Barbas, sem cabeça, com casca, frito;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+287;Caranguejo, cozido;CRUSTACEOS;CONTEM;PENDENTE 1;PENDENTE 2
+287;Caranguejo, cozido;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+288;Corimba, cru;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+288;Corimba, cru;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+289;Corimbatá, assado;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+289;Corimbatá, assado;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+290;Corimbatá, cozido;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+290;Corimbatá, cozido;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+291;Corvina de água doce, crua;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+291;Corvina de água doce, crua;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+292;Corvina do mar, crua;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+292;Corvina do mar, crua;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+293;Corvina grande, assada;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+293;Corvina grande, assada;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+294;Corvina grande, cozida;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+294;Corvina grande, cozida;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+295;Dourada de água doce, fresca;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+295;Dourada de água doce, fresca;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+296;Lambari, congelado, cru;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+296;Lambari, congelado, cru;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+297;Lambari, congelado, frito;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+297;Lambari, congelado, frito;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+298;Lambari, fresco, cru;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+298;Lambari, fresco, cru;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+299;Manjuba, com farinha de trigo, frita;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+299;Manjuba, com farinha de trigo, frita;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+299;Manjuba, com farinha de trigo, frita;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+299;Manjuba, com farinha de trigo, frita;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+300;Manjuba, frita;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+300;Manjuba, frita;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+301;Merluza, filé, assado;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+301;Merluza, filé, assado;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+302;Merluza, filé, cru;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+302;Merluza, filé, cru;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+303;Merluza, filé, frito;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+303;Merluza, filé, frito;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+304;Pescada, branca, crua;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+304;Pescada, branca, crua;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+305;Pescada, branca, frita;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+305;Pescada, branca, frita;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+306;Pescada, filé, com farinha de trigo, frito;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+306;Pescada, filé, com farinha de trigo, frito;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+306;Pescada, filé, com farinha de trigo, frito;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+306;Pescada, filé, com farinha de trigo, frito;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+307;Pescada, filé, cru;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+307;Pescada, filé, cru;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+308;Pescada, filé, frito;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+308;Pescada, filé, frito;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+309;Pescada, filé, molho escabeche;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+309;Pescada, filé, molho escabeche;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+310;Pescadinha, crua;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+310;Pescadinha, crua;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+311;Pintado, assado;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+311;Pintado, assado;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+312;Pintado, cru;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+312;Pintado, cru;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+313;Pintado, grelhado;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+313;Pintado, grelhado;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+314;Porquinho, cru;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+314;Porquinho, cru;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+315;Salmão, filé, com pele, fresco,  grelhado;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+315;Salmão, filé, com pele, fresco,  grelhado;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+316;Salmão, sem pele, fresco, cru;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+316;Salmão, sem pele, fresco, cru;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+317;Salmão, sem pele, fresco, grelhado;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+317;Salmão, sem pele, fresco, grelhado;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+318;Sardinha, assada;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+318;Sardinha, assada;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+319;Sardinha, conserva em óleo;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+319;Sardinha, conserva em óleo;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+319;Sardinha, conserva em óleo;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+320;Sardinha, frita;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+320;Sardinha, frita;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+321;Sardinha, inteira, crua;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+321;Sardinha, inteira, crua;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+322;Tucunaré, filé, congelado, cru;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+322;Tucunaré, filé, congelado, cru;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+323;Apresuntado;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+323;Apresuntado;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+323;Apresuntado;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+323;Apresuntado;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+324;Caldo de carne, tablete;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+324;Caldo de carne, tablete;TRIGO;PODE_CONTER;PENDENTE 1;PENDENTE 2
+324;Caldo de carne, tablete;GLUTEN;PODE_CONTER;PENDENTE 1;PENDENTE 2
+324;Caldo de carne, tablete;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+324;Caldo de carne, tablete;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+324;Caldo de carne, tablete;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+325;Caldo de galinha, tablete;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+325;Caldo de galinha, tablete;TRIGO;PODE_CONTER;PENDENTE 1;PENDENTE 2
+325;Caldo de galinha, tablete;GLUTEN;PODE_CONTER;PENDENTE 1;PENDENTE 2
+325;Caldo de galinha, tablete;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+325;Caldo de galinha, tablete;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+325;Caldo de galinha, tablete;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+326;Carne, bovina, acém, moído, cozido;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+327;Carne, bovina, acém, moído, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+328;Carne, bovina, acém, sem gordura, cozido;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+329;Carne, bovina, acém, sem gordura, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+330;Carne, bovina, almôndegas, cruas;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+330;Carne, bovina, almôndegas, cruas;TRIGO;PODE_CONTER;PENDENTE 1;PENDENTE 2
+330;Carne, bovina, almôndegas, cruas;GLUTEN;PODE_CONTER;PENDENTE 1;PENDENTE 2
+330;Carne, bovina, almôndegas, cruas;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+331;Carne, bovina, almôndegas, fritas;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+331;Carne, bovina, almôndegas, fritas;TRIGO;PODE_CONTER;PENDENTE 1;PENDENTE 2
+331;Carne, bovina, almôndegas, fritas;GLUTEN;PODE_CONTER;PENDENTE 1;PENDENTE 2
+331;Carne, bovina, almôndegas, fritas;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+332;Carne, bovina, bucho, cozido;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+333;Carne, bovina, bucho, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+334;Carne, bovina, capa de contra-filé, com gordura, crua;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+335;Carne, bovina, capa de contra-filé, com gordura, grelhada;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+336;Carne, bovina, capa de contra-filé, sem gordura, crua;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+337;Carne, bovina, capa de contra-filé, sem gordura, grelhada;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+338;Carne, bovina, charque, cozido;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+339;Carne, bovina, charque, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+340;Carne, bovina, contra-filé, à milanesa;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+340;Carne, bovina, contra-filé, à milanesa;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+340;Carne, bovina, contra-filé, à milanesa;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+340;Carne, bovina, contra-filé, à milanesa;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+341;Carne, bovina, contra-filé de costela, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+342;Carne, bovina, contra-filé de costela, grelhado;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+343;Carne, bovina, contra-filé, com gordura, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+344;Carne, bovina, contra-filé, com gordura, grelhado;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+345;Carne, bovina, contra-filé, sem gordura, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+346;Carne, bovina, contra-filé, sem gordura, grelhado;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+347;Carne, bovina, costela, assada;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+348;Carne, bovina, costela, crua;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+349;Carne, bovina, coxão duro, sem gordura, cozido;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+350;Carne, bovina, coxão duro, sem gordura, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+351;Carne, bovina, coxão mole, sem gordura, cozido;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+352;Carne, bovina, coxão mole, sem gordura, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+353;Carne, bovina, cupim, assado;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+354;Carne, bovina, cupim, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+355;Carne, bovina, fígado, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+356;Carne, bovina, fígado, grelhado;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+357;Carne, bovina, filé mingnon, sem gordura, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+358;Carne, bovina, filé mingnon, sem gordura, grelhado;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+359;Carne, bovina, flanco, sem gordura, cozido;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+360;Carne, bovina, flanco, sem gordura, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+361;Carne, bovina, fraldinha, com gordura, cozida;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+362;Carne, bovina, fraldinha, com gordura, crua;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+363;Carne, bovina, lagarto, cozido;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+364;Carne, bovina, lagarto, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+365;Carne, bovina, língua, cozida;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+366;Carne, bovina, língua, crua;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+367;Carne, bovina, maminha, crua;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+368;Carne, bovina, maminha, grelhada;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+369;Carne, bovina, miolo de alcatra, sem gordura, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+370;Carne, bovina, miolo de alcatra, sem gordura, grelhado;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+371;Carne, bovina, músculo, sem gordura, cozido;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+372;Carne, bovina, músculo, sem gordura, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+373;Carne, bovina, paleta, com gordura, crua;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+374;Carne, bovina, paleta, sem gordura, cozida;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+375;Carne, bovina, paleta, sem gordura, crua;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+376;Carne, bovina, patinho, sem gordura, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+377;Carne, bovina, patinho, sem gordura, grelhado;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+378;Carne, bovina, peito, sem gordura, cozido;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+379;Carne, bovina, peito, sem gordura, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+380;Carne, bovina, picanha, com gordura, crua;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+381;Carne, bovina, picanha, com gordura, grelhada;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+382;Carne, bovina, picanha, sem gordura, crua;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+383;Carne, bovina, picanha, sem gordura, grelhada;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+384;Carne, bovina, seca, cozida;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+385;Carne, bovina, seca, crua;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+386;Coxinha de frango, frita;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+386;Coxinha de frango, frita;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+386;Coxinha de frango, frita;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+386;Coxinha de frango, frita;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+386;Coxinha de frango, frita;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+386;Coxinha de frango, frita;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+387;Croquete, de carne, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+387;Croquete, de carne, cru;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+387;Croquete, de carne, cru;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+387;Croquete, de carne, cru;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+388;Croquete, de carne, frito;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+388;Croquete, de carne, frito;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+388;Croquete, de carne, frito;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+388;Croquete, de carne, frito;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+389;Empada de frango, pré-cozida, assada;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+389;Empada de frango, pré-cozida, assada;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+389;Empada de frango, pré-cozida, assada;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+389;Empada de frango, pré-cozida, assada;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+389;Empada de frango, pré-cozida, assada;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+389;Empada de frango, pré-cozida, assada;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+390;Empada, de frango, pré-cozida;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+390;Empada, de frango, pré-cozida;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+390;Empada, de frango, pré-cozida;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+390;Empada, de frango, pré-cozida;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+390;Empada, de frango, pré-cozida;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+390;Empada, de frango, pré-cozida;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+391;Frango, asa, com pele, crua;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+392;Frango, caipira, inteiro, com pele, cozido;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+393;Frango, caipira, inteiro, sem pele, cozido;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+394;Frango, coração, cru;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+395;Frango, coração, grelhado;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+396;Frango, coxa, com pele, assada;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+397;Frango, coxa, com pele, crua;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+398;Frango, coxa, sem pele, cozida;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+399;Frango, coxa, sem pele, crua;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+400;Frango, fígado, cru;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+401;Frango, filé, à milanesa;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+401;Frango, filé, à milanesa;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+401;Frango, filé, à milanesa;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+401;Frango, filé, à milanesa;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+402;Frango, inteiro, com pele, cru;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+403;Frango, inteiro, sem pele, assado;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+404;Frango, inteiro, sem pele, cozido;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+405;Frango, inteiro, sem pele, cru;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+406;Frango, peito, com pele, assado;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+407;Frango, peito, com pele, cru;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+408;Frango, peito, sem pele, cozido;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+409;Frango, peito, sem pele, cru;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+410;Frango, peito, sem pele, grelhado;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+411;Frango, sobrecoxa, com pele, assada;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+412;Frango, sobrecoxa, com pele, crua;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+413;Frango, sobrecoxa, sem pele, assada;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+414;Frango, sobrecoxa, sem pele, crua;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+415;Hambúrguer, bovino, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+415;Hambúrguer, bovino, cru;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+416;Hambúrguer, bovino, frito;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+416;Hambúrguer, bovino, frito;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+417;Hambúrguer, bovino, grelhado;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+417;Hambúrguer, bovino, grelhado;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+418;Lingüiça, frango, crua;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+418;Lingüiça, frango, crua;SUINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+419;Lingüiça, frango, frita;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+419;Lingüiça, frango, frita;SUINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+420;Lingüiça, frango, grelhada;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+420;Lingüiça, frango, grelhada;SUINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+421;Lingüiça, porco, crua;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+422;Lingüiça, porco, frita;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+423;Lingüiça, porco, grelhada;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+424;Mortadela;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+424;Mortadela;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+424;Mortadela;AVES;PODE_CONTER;PENDENTE 1;PENDENTE 2
+424;Mortadela;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+424;Mortadela;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+424;Mortadela;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+425;Peru, congelado, assado;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+426;Peru, congelado, cru;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+427;Porco, bisteca, crua;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+428;Porco, bisteca, frita;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+429;Porco, bisteca, grelhada;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+430;Porco, costela, assada;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+431;Porco, costela, crua;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+432;Porco, lombo, assado;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+433;Porco, lombo, cru;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+434;Porco, orelha, salgada, crua;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+435;Porco, pernil, assado;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+436;Porco, pernil, cru;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+437;Porco, rabo, salgado, cru;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+438;Presunto, com capa de gordura;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+439;Presunto, sem capa de gordura;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+440;Quibe, assado;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+440;Quibe, assado;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+440;Quibe, assado;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+441;Quibe, cru;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+441;Quibe, cru;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+441;Quibe, cru;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+442;Quibe, frito;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+442;Quibe, frito;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+442;Quibe, frito;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+443;Salame;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+443;Salame;BOVINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+443;Salame;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+443;Salame;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+444;Toucinho, cru;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+445;Toucinho, frito;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+446;Bebida láctea, pêssego;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+446;Bebida láctea, pêssego;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+447;Creme de Leite;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+447;Creme de Leite;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+448;Iogurte, natural;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+448;Iogurte, natural;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+449;Iogurte, natural, desnatado;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+449;Iogurte, natural, desnatado;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+450;Iogurte, sabor abacaxi;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+450;Iogurte, sabor abacaxi;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+451;Iogurte, sabor morango;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+451;Iogurte, sabor morango;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+452;Iogurte, sabor pêssego;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+452;Iogurte, sabor pêssego;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+453;Leite, condensado;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+453;Leite, condensado;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+454;Leite, de cabra;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+454;Leite, de cabra;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+455;Leite, de vaca, achocolatado;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+455;Leite, de vaca, achocolatado;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+455;Leite, de vaca, achocolatado;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+456;Leite, de vaca, desnatado, pó;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+456;Leite, de vaca, desnatado, pó;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+457;Leite, de vaca, desnatado, UHT;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+457;Leite, de vaca, desnatado, UHT;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+458;Leite, de vaca, integral;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+458;Leite, de vaca, integral;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+459;Leite, de vaca, integral, pó;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+459;Leite, de vaca, integral, pó;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+460;Leite, fermentado;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+460;Leite, fermentado;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+461;Queijo, minas, frescal;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+461;Queijo, minas, frescal;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+462;Queijo, minas, meia cura;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+462;Queijo, minas, meia cura;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+463;Queijo, mozarela;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+463;Queijo, mozarela;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+464;Queijo, parmesão;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+464;Queijo, parmesão;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+465;Queijo, pasteurizado;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+465;Queijo, pasteurizado;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+466;Queijo, petit suisse, morango;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+466;Queijo, petit suisse, morango;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+467;Queijo, prato;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+467;Queijo, prato;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+468;Queijo, requeijão, cremoso;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+468;Queijo, requeijão, cremoso;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+469;Queijo, ricota;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+469;Queijo, ricota;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+470;Bebida isotônica, sabores variados;;;PENDENTE 1;PENDENTE 2
+471;Café, infusão 10%;;;PENDENTE 1;PENDENTE 2
+472;Cana, aguardente 1;;;PENDENTE 1;PENDENTE 2
+473;Cana, caldo de;;;PENDENTE 1;PENDENTE 2
+474;Cerveja, pilsen 2;CEVADA;CONTEM;PENDENTE 1;PENDENTE 2
+474;Cerveja, pilsen 2;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+474;Cerveja, pilsen 2;TRIGO;PODE_CONTER;PENDENTE 1;PENDENTE 2
+475;Chá, erva-doce, infusão 5%;;;PENDENTE 1;PENDENTE 2
+476;Chá, mate, infusão 5%;;;PENDENTE 1;PENDENTE 2
+477;Chá, preto, infusão 5%;;;PENDENTE 1;PENDENTE 2
+478;Coco, água de;;;PENDENTE 1;PENDENTE 2
+479;Refrigerante, tipo água tônica;;;PENDENTE 1;PENDENTE 2
+480;Refrigerante, tipo cola;;;PENDENTE 1;PENDENTE 2
+481;Refrigerante, tipo guaraná;;;PENDENTE 1;PENDENTE 2
+482;Refrigerante, tipo laranja;;;PENDENTE 1;PENDENTE 2
+483;Refrigerante, tipo limão;;;PENDENTE 1;PENDENTE 2
+484;Omelete, de queijo;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+484;Omelete, de queijo;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+484;Omelete, de queijo;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+485;Ovo, de codorna, inteiro, cru;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+486;Ovo, de galinha, clara, cozida/10minutos;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+487;Ovo, de galinha, gema, cozida/10minutos;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+488;Ovo, de galinha, inteiro, cozido/10minutos;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+489;Ovo, de galinha, inteiro, cru;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+490;Ovo, de galinha, inteiro, frito;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+491;Achocolatado, pó;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+491;Achocolatado, pó;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+491;Achocolatado, pó;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+492;Açúcar, cristal;;;PENDENTE 1;PENDENTE 2
+493;Açúcar, mascavo;;;PENDENTE 1;PENDENTE 2
+494;Açúcar, refinado;;;PENDENTE 1;PENDENTE 2
+495;Chocolate, ao leite;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+495;Chocolate, ao leite;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+495;Chocolate, ao leite;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+496;Chocolate, ao leite, com castanha do Pará;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+496;Chocolate, ao leite, com castanha do Pará;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+496;Chocolate, ao leite, com castanha do Pará;CASTANHA_PARA;CONTEM;PENDENTE 1;PENDENTE 2
+496;Chocolate, ao leite, com castanha do Pará;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+497;Chocolate, ao leite, dietético;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+497;Chocolate, ao leite, dietético;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+497;Chocolate, ao leite, dietético;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+498;Chocolate, meio amargo;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+498;Chocolate, meio amargo;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+498;Chocolate, meio amargo;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+499;Cocada branca;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+499;Cocada branca;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+500;Doce, de abóbora, cremoso;;;PENDENTE 1;PENDENTE 2
+501;Doce, de leite, cremoso;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+501;Doce, de leite, cremoso;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+502;Geléia, mocotó, natural;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+503;Glicose de milho;;;PENDENTE 1;PENDENTE 2
+504;Maria mole;BOVINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+504;Maria mole;SUINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+504;Maria mole;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+505;Maria mole, coco queimado;BOVINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+505;Maria mole, coco queimado;SUINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+505;Maria mole, coco queimado;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+506;Marmelada;;;PENDENTE 1;PENDENTE 2
+507;Mel, de abelha;;;PENDENTE 1;PENDENTE 2
+508;Melado;;;PENDENTE 1;PENDENTE 2
+509;Quindim;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+510;Rapadura;;;PENDENTE 1;PENDENTE 2
+511;Café, pó, torrado;;;PENDENTE 1;PENDENTE 2
+512;Capuccino, pó;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+512;Capuccino, pó;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+512;Capuccino, pó;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+513;Fermento em pó, químico;;;PENDENTE 1;PENDENTE 2
+514;Fermento, biológico, levedura, tablete;;;PENDENTE 1;PENDENTE 2
+515;Gelatina, sabores variados, pó;BOVINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+515;Gelatina, sabores variados, pó;SUINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+516;Sal, dietético;;;PENDENTE 1;PENDENTE 2
+517;Sal, grosso;;;PENDENTE 1;PENDENTE 2
+518;Shoyu;SOJA;CONTEM;PENDENTE 1;PENDENTE 2
+518;Shoyu;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+518;Shoyu;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+519;Tempero a base de sal;;;PENDENTE 1;PENDENTE 2
+520;Azeitona, preta, conserva;;;PENDENTE 1;PENDENTE 2
+521;Azeitona, verde, conserva;;;PENDENTE 1;PENDENTE 2
+522;Chantilly, spray, com gordura vegetal;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+522;Chantilly, spray, com gordura vegetal;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+522;Chantilly, spray, com gordura vegetal;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+523;Leite, de coco;;;PENDENTE 1;PENDENTE 2
+524;Maionese, tradicional com ovos;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+524;Maionese, tradicional com ovos;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+525;Acarajé;CRUSTACEOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+525;Acarajé;PESCADOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+526;Arroz carreteiro;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+526;Arroz carreteiro;SUINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+527;Baião de dois, arroz e feijão-de-corda;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+527;Baião de dois, arroz e feijão-de-corda;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+527;Baião de dois, arroz e feijão-de-corda;BOVINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+527;Baião de dois, arroz e feijão-de-corda;SUINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+528;Barreado;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+528;Barreado;SUINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+529;Bife à cavalo, com contra filé;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+529;Bife à cavalo, com contra filé;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+530;Bolinho de arroz;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+530;Bolinho de arroz;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+530;Bolinho de arroz;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+530;Bolinho de arroz;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+530;Bolinho de arroz;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+531;Camarão à baiana;CRUSTACEOS;CONTEM;PENDENTE 1;PENDENTE 2
+531;Camarão à baiana;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+532;Charuto, de repolho;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+532;Charuto, de repolho;SUINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+533;Cuscuz, de milho, cozido com sal;;;PENDENTE 1;PENDENTE 2
+534;Cuscuz, paulista;PEIXES;CONTEM;PENDENTE 1;PENDENTE 2
+534;Cuscuz, paulista;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+534;Cuscuz, paulista;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+534;Cuscuz, paulista;CRUSTACEOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+534;Cuscuz, paulista;AVES;PODE_CONTER;PENDENTE 1;PENDENTE 2
+535;Cuxá, molho;CRUSTACEOS;CONTEM;PENDENTE 1;PENDENTE 2
+535;Cuxá, molho;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+536;Dobradinha;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+536;Dobradinha;SUINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+537;Estrogonofe de carne;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+537;Estrogonofe de carne;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+537;Estrogonofe de carne;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+538;Estrogonofe de frango;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+538;Estrogonofe de frango;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+538;Estrogonofe de frango;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+539;Feijão tropeiro mineiro;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+539;Feijão tropeiro mineiro;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+539;Feijão tropeiro mineiro;BOVINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+540;L;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+540;L;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+541;Frango, com açafrão;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+542;Macarrão, molho bolognesa;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+542;Macarrão, molho bolognesa;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+542;Macarrão, molho bolognesa;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+542;Macarrão, molho bolognesa;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+542;Macarrão, molho bolognesa;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+542;Macarrão, molho bolognesa;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+543;Maniçoba;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+543;Maniçoba;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+544;Quibebe;BOVINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+545;Salada, de legumes, com maionese;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+545;Salada, de legumes, com maionese;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+546;Salada, de legumes, cozida no vapor;;;PENDENTE 1;PENDENTE 2
+547;Salpicão, de frango;AVES;CONTEM;PENDENTE 1;PENDENTE 2
+547;Salpicão, de frango;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+547;Salpicão, de frango;LEITE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+547;Salpicão, de frango;LACTOSE;PODE_CONTER;PENDENTE 1;PENDENTE 2
+547;Salpicão, de frango;SOJA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+548;Sarapatel;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+549;Tabule;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+549;Tabule;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+550;Tacacá;CRUSTACEOS;CONTEM;PENDENTE 1;PENDENTE 2
+550;Tacacá;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+551;Tapioca, com manteiga;LEITE;CONTEM;PENDENTE 1;PENDENTE 2
+551;Tapioca, com manteiga;LACTOSE;CONTEM;PENDENTE 1;PENDENTE 2
+552;Tucupi, com pimenta-de-cheiro;;;PENDENTE 1;PENDENTE 2
+553;Vaca atolada;BOVINA;CONTEM;PENDENTE 1;PENDENTE 2
+554;Vatapá;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+554;Vatapá;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+554;Vatapá;CRUSTACEOS;CONTEM;PENDENTE 1;PENDENTE 2
+554;Vatapá;PESCADOS;CONTEM;PENDENTE 1;PENDENTE 2
+554;Vatapá;AMENDOIM;CONTEM;PENDENTE 1;PENDENTE 2
+554;Vatapá;CASTANHA_CAJU;CONTEM;PENDENTE 1;PENDENTE 2
+554;Vatapá;PEIXES;PODE_CONTER;PENDENTE 1;PENDENTE 2
+555;Virado à paulista;SUINA;CONTEM;PENDENTE 1;PENDENTE 2
+555;Virado à paulista;OVOS;CONTEM;PENDENTE 1;PENDENTE 2
+555;Virado à paulista;BOVINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+556;Yakisoba;TRIGO;CONTEM;PENDENTE 1;PENDENTE 2
+556;Yakisoba;GLUTEN;CONTEM;PENDENTE 1;PENDENTE 2
+556;Yakisoba;SOJA;CONTEM;PENDENTE 1;PENDENTE 2
+556;Yakisoba;AVES;PODE_CONTER;PENDENTE 1;PENDENTE 2
+556;Yakisoba;BOVINA;PODE_CONTER;PENDENTE 1;PENDENTE 2
+556;Yakisoba;OVOS;PODE_CONTER;PENDENTE 1;PENDENTE 2
+557;Amendoim, grão, cru;AMENDOIM;CONTEM;PENDENTE 1;PENDENTE 2
+558;Amendoim, torrado, salgado;AMENDOIM;CONTEM;PENDENTE 1;PENDENTE 2
+559;Ervilha, em vagem;;;PENDENTE 1;PENDENTE 2
+560;Ervilha, enlatada, drenada;;;PENDENTE 1;PENDENTE 2
+561;Feijão, carioca, cozido;;;PENDENTE 1;PENDENTE 2
+562;Feijão, carioca, cru;;;PENDENTE 1;PENDENTE 2
+563;Feijão, fradinho, cozido;;;PENDENTE 1;PENDENTE 2
+564;Feijão, fradinho, cru;;;PENDENTE 1;PENDENTE 2
+565;Feijão, jalo, cozido;;;PENDENTE 1;PENDENTE 2
+566;Feijão, jalo, cru;;;PENDENTE 1;PENDENTE 2
+567;Feijão, preto, cozido;;;PENDENTE 1;PENDENTE 2
+568;Feijão, preto, cru;;;PENDENTE 1;PENDENTE 2
+569;Feijão, rajado, cozido;;;PENDENTE 1;PENDENTE 2
+570;Feijão, rajado, cru;;;PENDENTE 1;PENDENTE 2
+571;Feijão, rosinha, cozido;;;PENDENTE 1;PENDENTE 2
+572;Feijão, rosinha, cru;;;PENDENTE 1;PENDENTE 2
+573;Feijão, roxo, cozido;;;PENDENTE 1;PENDENTE 2
+574;Feijão, roxo, cru;;;PENDENTE 1;PENDENTE 2
+575;Grão-de-bico, cru;;;PENDENTE 1;PENDENTE 2
+576;Guandu, cru;;;PENDENTE 1;PENDENTE 2
+577;Lentilha, cozida;;;PENDENTE 1;PENDENTE 2
+578;Lentilha, crua;;;PENDENTE 1;PENDENTE 2
+579;Paçoca, amendoim;AMENDOIM;CONTEM;PENDENTE 1;PENDENTE 2
+580;Pé-de-moleque, amendoim;AMENDOIM;CONTEM;PENDENTE 1;PENDENTE 2
+581;Soja, farinha;SOJA;CONTEM;PENDENTE 1;PENDENTE 2
+582;Soja, extrato solúvel, natural, fluido;SOJA;CONTEM;PENDENTE 1;PENDENTE 2
+583;Soja, extrato solúvel, pó;SOJA;CONTEM;PENDENTE 1;PENDENTE 2
+584;Soja, queijo (tofu);SOJA;CONTEM;PENDENTE 1;PENDENTE 2
+585;Tremoço, cru;;;PENDENTE 1;PENDENTE 2
+586;Tremoço, em conserva;;;PENDENTE 1;PENDENTE 2
+587;Amêndoa, torrada, salgada;AMENDOA;CONTEM;PENDENTE 1;PENDENTE 2
+588;Castanha-de-caju, torrada, salgada;CASTANHA_CAJU;CONTEM;PENDENTE 1;PENDENTE 2
+589;Castanha-do-Brasil, crua;CASTANHA_PARA;CONTEM;PENDENTE 1;PENDENTE 2
+590;Coco, cru;;;PENDENTE 1;PENDENTE 2
+591;Coco,  verde, cru;;;PENDENTE 1;PENDENTE 2
+592;Farinha, de mesocarpo de babaçu, crua;;;PENDENTE 1;PENDENTE 2
+593;Gergelim, semente;;;PENDENTE 1;PENDENTE 2
+594;Linhaça, semente;;;PENDENTE 1;PENDENTE 2
+595;Pinhão, cozido;;;PENDENTE 1;PENDENTE 2
+596;Pupunha, cozida;;;PENDENTE 1;PENDENTE 2
+597;Noz, crua;NOZES;CONTEM;PENDENTE 1;PENDENTE 2
