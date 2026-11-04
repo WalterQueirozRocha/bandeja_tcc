@@ -37,6 +37,12 @@ export default async function Ingrediente({ params }: PageProps<"/ingredientes/[
 
       <section className="cartao flex flex-col gap-3">
         <h2>Composição por 100 g</h2>
+        {taco && i.energia_kcal === null && (
+          <Alerta estado="AVISO" role="note" data-testid="sem-composicao">
+            A TACO não analisou a composição deste alimento (campos com &quot;*&quot; na tabela). Nos cálculos, os valores
+            ausentes contam como 0: a equipe deve escolher outra fonte, como a TBCA.
+          </Alerta>
+        )}
         <dl className={`${PAINEL} grid-cols-2 sm:grid-cols-4`}>
           <Indicador rotulo="Energia" valor={`${num(i.energia_kcal)} kcal`} />
           <Indicador rotulo="Carboidrato" valor={`${num(i.carboidrato_g)} g`} destaque />
