@@ -416,6 +416,7 @@ model ItemVenda {
   compatibilidade          Compatibilidade
   // valores no momento da venda: editar a preparação ou o cardápio não muda o passado
   preco                    Decimal         @db.Decimal(10, 2)
+  quantidade               Int             @default(1) // unidades do mesmo item na venda
   carboidrato_disponivel_g Float?
   cg                       Float? // Rytz; nulo = não calculável
   cg_fao                   Float? // FAO/OMS; nulo = não calculável (sem carboidrato disponível grava 0)
