@@ -75,27 +75,6 @@ export function FormularioSintoma({ alunoId, grupos }: { alunoId: number; grupos
 
   return (
     <form action={registrar} className="flex flex-col gap-4">
-      <div className="grid gap-4 md:grid-cols-2">
-        {grupos.map((g) => (
-          <div key={g.grupo} className="cartao">
-            <fieldset className="flex flex-col gap-2">
-              <legend className="mb-2 font-heading font-bold">{NOME_GRUPO[g.grupo]}</legend>
-              {g.sintomas.map((s) => (
-                <label
-                  key={s.codigo}
-                  className="flex cursor-pointer items-center gap-2 rounded-lg border border-borda p-2 has-checked:border-brand-royal has-checked:ring-1 has-checked:ring-brand-royal"
-                >
-                  <input type="radio" name="sintoma" value={s.codigo} checked={sintoma === s.codigo} onChange={() => setSintoma(s.codigo)} />
-                  {s.descricao}
-                </label>
-              ))}
-            </fieldset>
-          </div>
-        ))}
-      </div>
-      {sintoma === "OUTRO" && (
-        <input name="observacao" maxLength={100} aria-label="Observação" placeholder="Descreva em poucas palavras (opcional)" className="campo" />
-      )}
       <label className="flex flex-col gap-1 text-sm font-medium">
         Data e hora
         <input type="datetime-local" name="data_hora" value={dataHora} onChange={(e) => setDataHora(e.target.value)} required className="campo" />
@@ -130,6 +109,27 @@ export function FormularioSintoma({ alunoId, grupos }: { alunoId: number; grupos
           className="campo"
         />
       </fieldset>
+      <div className="grid gap-4 md:grid-cols-2">
+        {grupos.map((g) => (
+          <div key={g.grupo} className="cartao">
+            <fieldset className="flex flex-col gap-2">
+              <legend className="mb-2 font-heading font-bold">{NOME_GRUPO[g.grupo]}</legend>
+              {g.sintomas.map((s) => (
+                <label
+                  key={s.codigo}
+                  className="flex cursor-pointer items-center gap-2 rounded-lg border border-borda p-2 has-checked:border-brand-royal has-checked:ring-1 has-checked:ring-brand-royal"
+                >
+                  <input type="radio" name="sintoma" value={s.codigo} checked={sintoma === s.codigo} onChange={() => setSintoma(s.codigo)} />
+                  {s.descricao}
+                </label>
+              ))}
+            </fieldset>
+          </div>
+        ))}
+      </div>
+      {sintoma === "OUTRO" && (
+        <input name="observacao" maxLength={100} aria-label="Observação" placeholder="Descreva em poucas palavras (opcional)" className="campo" />
+      )}
       <button type="submit" disabled={!sintoma || !indicouAlimento} className="btn-primario">
         Registrar
       </button>
