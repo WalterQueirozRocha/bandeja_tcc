@@ -51,12 +51,13 @@ export default async function Historico({ searchParams }: PageProps<"/historico"
           <li key={v.venda_id} className="cartao flex flex-col gap-3">
             <div>
               <p className="text-sm text-secondary tabular-nums">
-                {new Date(v.data_hora).toLocaleString("pt-BR", { timeZone: "America/Bahia" })}
+                {new Date(v.data_hora).toLocaleString("pt-BR", { timeZone: "America/Bahia" })} · {v.total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
               </p>
               <p className="font-semibold">
                 {v.itens.map((i, n) => (
                   <span key={n}>
                     {n > 0 && ", "}
+                    {i.quantidade > 1 && `${i.quantidade}× `}
                     <Link href={`/preparacoes/${i.preparacao_id}#fontes`}>{i.nome}</Link>
                   </span>
                 ))}

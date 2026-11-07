@@ -23,15 +23,16 @@ import { resumirPreparacoes } from "./preparacoes";
 export async function registrarVenda(operador_id: number, dados: VendaEntrada) {
   const aluno = await alunoComResponsaveis(dados.aluno_id);
   if (!aluno) throw new ErroNegocio("Aluno não encontrado", 404);
-  const itensCardapio = await buscarItensCardapio(dados.itens);
-  const faltando = dados.itens.filter((id) => !itensCardapio.some((i) => i.id === id));
+  const ids = dados.itens.map((i) => i.item_cardapio_id);
+  const itensCardapio = await buscarItensCardapio(ids);
+  const faltando = ids.filter((id) => !itensCardapio.some((i) => i.id === id));
   if (faltando.length) throw new ErroNegocio(`Itens do cardápio inexistentes: ${faltando.join(", ")}`);
 
   const [resumos, perfil] = await Promise.all([
     resumirPreparacoes([...new Set(itensCardapio.map((i) => i.preparacao_id))]),
     perfilCompatibilidade(aluno.id),
   ]);
-  const itens = dados.itens.map((id) => {
+  const itens = dados.itens.map(({ item_cardapio_id: id, quantidade }) => {
     const item = itensCardapio.find((i) => i.id === id)!;
     const prep = resumos.get(item.preparacao_id)!;
     const { resultado, alertas } = avaliar(
@@ -47,6 +48,7 @@ export async function registrarVenda(operador_id: number, dados: VendaEntrada) {
       // B4: valores do momento da venda.
       valores: {
         preco: item.preco,
+        quantidade,
         carboidrato_disponivel_g: prep.carga_glicemica.carboidrato_disponivel_g,
         cg: prep.carga_glicemica.rytz?.cg ?? null,
         // FC-01: sem carboidrato disponível a CG é 0, e não "não calculável" (não tira a refeição do cálculo).
@@ -63,9 +65,11 @@ export async function registrarVenda(operador_id: number, dados: VendaEntrada) {
   );
   const resposta = (resultado: ResultadoVenda | "CONFIRMACAO_NECESSARIA") => ({
     resultado,
-    itens: itens.map(({ item_cardapio_id, nome, compatibilidade, alertas }) => ({
+    total: totalDaVenda(itens.map((i) => i.valores)),
+    itens: itens.map(({ item_cardapio_id, nome, compatibilidade, alertas, valores }) => ({
       item_cardapio_id,
       nome,
+      quantidade: valores.quantidade,
       compatibilidade,
       alertas: alertas.map((a) => a.texto),
       ...(compatibilidade !== "COMPATIVEL" && { alternativas: alternativas.get(item_cardapio_id) ?? [] }),
@@ -90,6 +94,10 @@ export async function registrarVenda(operador_id: number, dados: VendaEntrada) {
       : [];
   return { gravada: true, venda_id: venda.id, ...resposta(resultado), contagem };
 }
+
+// Soma em centavos para não acumular erro de ponto flutuante.
+const totalDaVenda = (itens: { preco: { toString(): string }; quantidade: number }[]) =>
+  itens.reduce((s, i) => s + Math.round(Number(i.preco) * 100) * i.quantidade, 0) / 100;
 
 // RF16 no balcão: as alternativas vêm do cardápio de cada item com restrição (só quando há algum).
 async function alternativasNoBalcao(
@@ -152,20 +160,23 @@ export async function lerHistorico(aluno_id: number, de?: string, ate?: string) 
     ate ? inicioDoDiaNaBahia(ate, 1) : undefined,
   );
   // B4: preço, carboidrato e CG gravados na venda (vendas anteriores à migração não têm carboidrato nem CG).
+  // Carboidrato e CG são por unidade: o item conta quantidade × o valor gravado.
   return vendas.map((v) => {
     const itens = v.itens.map((i) => ({
       preparacao_id: i.item_cardapio.preparacao.id,
       nome: i.item_cardapio.preparacao.nome,
       preco: Number(i.preco),
+      quantidade: i.quantidade,
       compatibilidade: i.compatibilidade,
-      carboidrato_disponivel_g: i.carboidrato_disponivel_g ?? 0,
-      cg: i.cg,
-      cg_fao: i.cg_fao,
+      carboidrato_disponivel_g: (i.carboidrato_disponivel_g ?? 0) * i.quantidade,
+      cg: i.cg === null ? null : i.cg * i.quantidade,
+      cg_fao: i.cg_fao === null ? null : i.cg_fao * i.quantidade,
     }));
     return {
       venda_id: v.id,
       data_hora: v.data_hora,
       itens,
+      total: totalDaVenda(itens),
       carboidrato_disponivel_g: itens.reduce((s, i) => s + i.carboidrato_disponivel_g, 0),
       cg_refeicao: cgRefeicao(itens.flatMap((i) => (i.cg === null ? [] : [i.cg]))),
       // FC-01 / RF04: a refeição também pela FAO/OMS; vendas anteriores à coluna ficam "não calculável".

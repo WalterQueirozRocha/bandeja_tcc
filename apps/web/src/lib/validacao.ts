@@ -206,10 +206,10 @@ export const perfilSaude = z.object({
 export const venda = z.object({
   aluno_id: z.number().int().positive(),
   itens: z
-    .array(z.number().int().positive())
+    .array(z.object({ item_cardapio_id: z.number().int().positive(), quantidade: z.number().int().min(1).max(20).default(1) }))
     .min(1)
     .max(100)
-    .refine((itens) => unicos(itens), "item repetido"),
+    .refine((itens) => unicos(itens.map((i) => i.item_cardapio_id)), "item repetido"),
   decisao: z.enum(["CONCLUIR", "ENCERRAR"]).optional(),
 });
 

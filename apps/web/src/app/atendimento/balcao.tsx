@@ -7,6 +7,7 @@ type Item = { id: number; nome: string; preco: number };
 type Aluno = { id: number; nome: string; serie: string };
 type Resposta = {
   resultado: "CONCLUIDA" | "BLOQUEADA" | "CANCELADA_PELO_OPERADOR" | "CONFIRMACAO_NECESSARIA";
+  total: number;
   itens: { nome: string; compatibilidade: string; alertas: string[]; alternativas?: { nome: string }[] }[];
   erro?: string;
 };
@@ -20,13 +21,16 @@ const TITULO = {
 
 const ESTADO = { CONCLUIDA: "COMPATIVEL", BLOQUEADA: "BLOQUEADO", CONFIRMACAO_NECESSARIA: "ATENCAO" } as const;
 
+const reais = (n: number) => `R$ ${n.toFixed(2).replace(".", ",")}`;
+
 const opcao = "flex cursor-pointer items-center gap-3 rounded-lg border border-borda bg-surface-card p-3 has-checked:border-brand-royal has-checked:ring-1 has-checked:ring-brand-royal";
 
 export function Balcao({ itens }: { itens: Item[] }) {
   const [busca, setBusca] = useState("");
   const [alunos, setAlunos] = useState<Aluno[]>([]);
   const [aluno, setAluno] = useState<Aluno | null>(null);
-  const [marcados, setMarcados] = useState<number[]>([]);
+  // id do item → quantidade
+  const [marcados, setMarcados] = useState<Record<number, number>>({});
   const [resposta, setResposta] = useState<Resposta | null>(null);
 
   async function buscarAlunos() {
@@ -38,13 +42,25 @@ export function Balcao({ itens }: { itens: Item[] }) {
     const res = await fetch("/api/vendas", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ aluno_id: aluno!.id, itens: marcados, decisao }),
+      body: JSON.stringify({
+        aluno_id: aluno!.id,
+        itens: Object.entries(marcados).map(([id, quantidade]) => ({ item_cardapio_id: Number(id), quantidade })),
+        decisao,
+      }),
     });
     const corpo: Resposta = await res.json();
     setResposta(corpo);
-    if (corpo.resultado && corpo.resultado !== "CONFIRMACAO_NECESSARIA") setMarcados([]);
+    if (corpo.resultado && corpo.resultado !== "CONFIRMACAO_NECESSARIA") setMarcados({});
   }
 
+  const marcar = (id: number, quantidade: number | null) =>
+    setMarcados((m) => {
+      const novo = { ...m };
+      if (quantidade === null) delete novo[id];
+      else novo[id] = quantidade;
+      return novo;
+    });
+  const total = itens.reduce((s, i) => s + Math.round(i.preco * 100) * (marcados[i.id] ?? 0), 0) / 100;
   const alertas = resposta?.itens?.flatMap((i) => i.alertas) ?? [];
   const alternativas = [...new Set(resposta?.itens?.flatMap((i) => i.alternativas?.map((a) => a.nome) ?? []) ?? [])];
   const estado = resposta && !resposta.erro && resposta.resultado !== "CANCELADA_PELO_OPERADOR" ? ESTADO[resposta.resultado] : null;
@@ -84,15 +100,30 @@ export function Balcao({ itens }: { itens: Item[] }) {
             <label key={i.id} className={opcao}>
               <input
                 type="checkbox"
-                checked={marcados.includes(i.id)}
-                onChange={(e) => setMarcados(e.target.checked ? [...marcados, i.id] : marcados.filter((m) => m !== i.id))}
+                checked={i.id in marcados}
+                onChange={(e) => marcar(i.id, e.target.checked ? 1 : null)}
               />
               <span className="flex-1">{i.nome}</span>
-              <span className="text-secondary tabular-nums">R$ {i.preco.toFixed(2).replace(".", ",")}</span>
+              {i.id in marcados && (
+                <input
+                  type="number"
+                  min={1}
+                  max={20}
+                  value={marcados[i.id]}
+                  onChange={(e) => marcar(i.id, Math.min(20, Math.max(1, Math.trunc(Number(e.target.value)) || 1)))}
+                  aria-label={`Quantidade de ${i.nome}`}
+                  className="campo w-16 text-center"
+                />
+              )}
+              <span className="text-secondary tabular-nums">{reais(i.preco)}</span>
             </label>
           ))}
         </fieldset>
-        <button type="button" disabled={!aluno || marcados.length === 0} onClick={() => vender()} className="btn-primario">
+        <p className="flex justify-between font-semibold" data-testid="total-venda">
+          <span>Total</span>
+          <span className="tabular-nums">{reais(total)}</span>
+        </p>
+        <button type="button" disabled={!aluno || Object.keys(marcados).length === 0} onClick={() => vender()} className="btn-primario">
           Registrar venda
         </button>
       </section>
@@ -104,7 +135,10 @@ export function Balcao({ itens }: { itens: Item[] }) {
           ) : !estado ? (
             <p className="cartao font-semibold">{TITULO[resposta.resultado]}</p>
           ) : (
-            <Alerta estado={estado} titulo={TITULO[resposta.resultado]}>
+            <Alerta
+              estado={estado}
+              titulo={resposta.resultado === "CONCLUIDA" ? `${TITULO.CONCLUIDA} · ${reais(resposta.total)}` : TITULO[resposta.resultado]}
+            >
               {alertas.map((a) => (
                 <p key={a} className="font-semibold">
                   {a}
