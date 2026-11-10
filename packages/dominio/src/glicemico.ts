@@ -93,6 +93,8 @@ export type MetaGlicemica = Pick<ComponenteGlicemico, "categoria_carboidrato" | 
 
 // Louie et al. (2015), passo 1: sem IG e com menos de 2,5 g de carboidrato disponível por 100 g → IG 0 (só na FAO).
 export const LIMIAR_IG_ZERO_G = 2.5;
+// D09-4 (09/11): parte máxima do carboidrato disponível da preparação para o ingrediente sem IG entrar com IG 0 na FAO.
+export const LIMIAR_CONTRIBUICAO_IG_ZERO = 0.05;
 
 // RF04: sempre informa os gramas de carboidrato disponível da porção; CG de cada modelo, sem faixas.
 export function estimarCargaGlicemica(itens: (ItemComposicao & MetaGlicemica)[], porcao_g: number) {
@@ -115,6 +117,14 @@ export function estimarCargaGlicemica(itens: (ItemComposicao & MetaGlicemica)[],
       ig: baixo ? { valor: 0, lista: "LISTA_1" } : item.ig,
     };
   });
+  // D09-4: sem IG e com menos de 5% do carboidrato disponível da preparação → IG 0 na FAO (regra própria, no espírito de Louie et al., 2015).
+  const totalDisponivel = componentes.reduce((s, c) => s + c.carboidrato_disponivel_g, 0);
+  for (const c of componentes) {
+    const parte = totalDisponivel > 0 ? c.carboidrato_disponivel_g / totalDisponivel : 0;
+    if (c.ig !== null || parte === 0 || parte >= LIMIAR_CONTRIBUICAO_IG_ZERO) continue;
+    c.ig = { valor: 0, lista: "LISTA_1" };
+    igZero.push(`${c.nome}: ${(parte * 100).toFixed(1)}% do carboidrato disponível da preparação (abaixo de ${LIMIAR_CONTRIBUICAO_IG_ZERO * 100}%); IG 0 na FAO`);
+  }
   const fracaoPorcao = composicao.peso_final_g > 0 ? porcao_g / composicao.peso_final_g : 0;
   const carboidrato_disponivel_g =
     componentes.reduce((s, c) => s + c.carboidrato_disponivel_g, 0) * fracaoPorcao;
