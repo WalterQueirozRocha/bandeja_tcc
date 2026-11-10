@@ -125,7 +125,7 @@ export const fator = z.object({
 // IG na escala do pão é convertido para a da glicose (÷ 1,4), como no importador.
 export const valorIg = z
   .object({
-    ig: z.number().positive().max(200),
+    ig: z.number().min(0).max(200),
     escala: z.enum(["GLICOSE", "PAO"]).default("GLICOSE"),
     lista: z.enum(ListaIG),
     item_correspondente: z.string().trim().min(1).max(200),
@@ -136,7 +136,9 @@ export const valorIg = z
   .refine((v) => v.conferido_por_1.toLowerCase() !== v.conferido_por_2.toLowerCase(), {
     message: "a conferência deve ser feita por outra pessoa",
     path: ["conferido_por_2"],
-  });
+  })
+  // IG 0 só como estimativa (passo 6 de Louie et al., 2015), como no importador.
+  .refine((v) => v.ig > 0 || v.lista === "ESTIMADO", { message: "IG deve ser positivo (0 só na lista ESTIMADO)", path: ["ig"] });
 
 export const formaCrua = z.object({ forma_crua_id: z.number().int().positive(), modo_preparo: modoCozido });
 

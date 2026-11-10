@@ -32,7 +32,7 @@ export type ComponenteGlicemico = {
   lipideos_g: number;
   fibra_g: number;
   cinzas_g: number;
-  ig: { valor: number; lista: "LISTA_1" | "LISTA_2" } | null;
+  ig: { valor: number; lista: "LISTA_1" | "LISTA_2" | "ESTIMADO" } | null;
 };
 
 type Estimativa = { ig: number | null; hipoteses: string[]; motivo?: string };
@@ -74,9 +74,13 @@ export function igFao(componentes: ComponenteGlicemico[]): Estimativa {
   if (comCarboidrato.length === 0) return { ig: null, hipoteses: [], motivo: "preparação sem carboidrato disponível" };
   const semIg = comCarboidrato.filter((c) => c.ig === null).map((c) => c.nome);
   if (semIg.length) return { ig: null, hipoteses: [], motivo: `sem IG pareado: ${semIg.join(", ")}` };
-  const hipoteses = comCarboidrato
-    .filter((c) => c.ig!.lista === "LISTA_2")
-    .map((c) => `${c.nome}: IG medido fora do padrão ISO (lista 2 de Atkinson et al., 2021, ou estudo brasileiro)`);
+  const hipoteses = comCarboidrato.flatMap((c) =>
+    c.ig!.lista === "LISTA_2"
+      ? [`${c.nome}: IG medido fora do padrão ISO (lista 2 de Atkinson et al., 2021, ou estudo brasileiro)`]
+      : c.ig!.lista === "ESTIMADO"
+        ? [`${c.nome}: IG estimado (Louie et al., 2015), sem medição publicada`]
+        : [],
+  );
   const soma = comCarboidrato.reduce((s, c) => s + c.carboidrato_disponivel_g, 0);
   const ponderado = comCarboidrato.reduce((s, c) => s + c.carboidrato_disponivel_g * c.ig!.valor, 0);
   return { ig: ponderado / soma, hipoteses };

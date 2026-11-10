@@ -75,7 +75,7 @@ export const PRESENCA: Record<string, string> = { CONTEM: "Contém", PODE_CONTER
 
 export const ORIGEM_INGREDIENTE: Record<string, string> = { TACO: "TACO", ROTULO: "Rótulo", OUTRA_TABELA: "Outra tabela" };
 
-export const LISTA_IG: Record<string, string> = { LISTA_1: "Lista 1", LISTA_2: "Lista 2" };
+export const LISTA_IG: Record<string, string> = { LISTA_1: "Lista 1", LISTA_2: "Lista 2", ESTIMADO: "Estimado (Louie et al., 2015)" };
 
 export const opcoes = (rotulos: Record<string, string>) => Object.entries(rotulos).map(([valor, rotulo]) => ({ valor, rotulo }));
 

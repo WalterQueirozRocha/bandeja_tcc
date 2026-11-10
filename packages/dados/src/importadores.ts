@@ -229,7 +229,8 @@ export async function importarIg() {
     else {
       try {
         const ig = numero(l.ig ?? "");
-        if (ig <= 0) throw new Error("ig deve ser positivo");
+        // IG 0 só como estimativa (passo 6 de Louie et al., 2015: não é fonte importante de carboidrato).
+        if (ig < 0 || (ig === 0 && l.lista !== "ESTIMADO")) throw new Error("ig deve ser positivo (0 só na lista ESTIMADO)");
         vistos.add(ingrediente_id);
         return [{
           ingrediente_id,

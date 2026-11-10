@@ -80,6 +80,7 @@ enum OrigemMarcador {
 enum ListaIG {
   LISTA_1
   LISTA_2
+  ESTIMADO // sem medição: passos 4–6 de Louie et al. (2015)
 }
 
 enum Periodo {
