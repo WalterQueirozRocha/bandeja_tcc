@@ -17,6 +17,9 @@ export function lerLinhas(caminho: string | URL): string[][] {
 // Primeira linha = cabeçalho. `linha` é o número da linha no arquivo (para mensagens de erro).
 export function lerTabela(caminho: string | URL): (Record<string, string> & { linha: string })[] {
   const [cabecalho = [], ...linhas] = lerLinhas(caminho);
+  // Coluna a mais = ';' dentro de um campo: recusa em vez de deslocar os valores. A menos é aceita (o Excel corta vazios).
+  const tortas = linhas.flatMap((celulas, i) => (celulas.length > cabecalho.length ? [i + 2] : []));
+  if (tortas.length) throw new Error(`${String(caminho)}: linhas com colunas a mais (';' dentro de um campo?): ${tortas.join(", ")}`);
   return linhas.map((celulas, i) => ({
     ...Object.fromEntries(cabecalho.map((nome, j) => [nome, celulas[j] ?? ""])),
     linha: String(i + 2),
