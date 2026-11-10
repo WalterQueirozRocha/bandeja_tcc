@@ -118,10 +118,14 @@ export async function salvarPreparacao(dados: DadosPreparacaoEntrada, id?: numbe
   if (invalidas.length) erros.push(`Categorias inexistentes: ${invalidas.join(", ")}`);
   if (erros.length) throw new ErroNegocio(erros.join("; "));
 
-  const salvar = {
-    ...dados,
-    peso_final_calculado: comporPreparacao(itens, dados.porcao_g).peso_final_g,
-  };
+  const peso_final_calculado = comporPreparacao(itens, dados.porcao_g).peso_final_g;
+  // Revisão 09/11: a porção não pode passar do peso final da receita (tolerância de 0,5 g para arredondamento).
+  if (itens.length > 0 && dados.porcao_g > peso_final_calculado + 0.5) {
+    throw new ErroNegocio(
+      `Porção de ${dados.porcao_g} g maior que o peso final da receita (${peso_final_calculado.toFixed(1)} g): revise as quantidades ou a porção`,
+    );
+  }
+  const salvar = { ...dados, peso_final_calculado };
   return id === undefined ? criarPreparacao(salvar) : atualizarPreparacao(id, salvar);
 }
 
