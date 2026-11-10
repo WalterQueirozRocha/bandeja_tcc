@@ -73,7 +73,7 @@ export function buscarIngredientesCalculo(ids: number[]) {
 }
 
 export function listarFatores() {
-  return prisma.fatorPreparo.findMany({ select: { grupo_alimentar: true, modo_preparo: true, fator_coccao: true } });
+  return prisma.fatorPreparo.findMany({ select: { grupo_alimentar: true, modo_preparo: true, fator_coccao: true, referencia: true } });
 }
 
 export async function nomesCategorias() {

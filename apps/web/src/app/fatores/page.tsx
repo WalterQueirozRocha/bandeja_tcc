@@ -2,7 +2,7 @@ import { exigirSessaoNaPagina } from "@/lib/acesso";
 import { listarFatoresCompletos } from "@/repositories/fatores";
 import { LinhaFator, NovoFator } from "./formulario";
 
-// M1: fatores de cocção (Domene, 2018). Sem fator, o modo não é oferecido na ficha técnica (P2).
+// M1: fatores de cocção (valores de Silva et al., 2012; a referência de cada fator vem do cadastro). Sem fator, o modo não é oferecido na ficha técnica (P2).
 export default async function Fatores() {
   const sessao = await exigirSessaoNaPagina();
   if (sessao.papel !== "OPERADOR") return <main className="p-4">Acesso negado.</main>;

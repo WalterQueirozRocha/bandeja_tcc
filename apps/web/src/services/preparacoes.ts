@@ -25,7 +25,7 @@ import {
 import { ErroNegocio } from "./erros";
 import { apagarOuDesabilitar } from "./exclusao";
 
-type Fator = { grupo_alimentar: GrupoAlimentar; modo_preparo: ModoPreparo; fator_coccao: number };
+type Fator = { grupo_alimentar: GrupoAlimentar; modo_preparo: ModoPreparo; fator_coccao: number; referencia?: string };
 
 function fatoresDoGrupo(grupo: GrupoAlimentar, fatores: Fator[]) {
   return Object.fromEntries(fatores.filter((f) => f.grupo_alimentar === grupo).map((f) => [f.modo_preparo, f.fator_coccao]));
@@ -44,6 +44,10 @@ export function modosDoIngrediente(
   });
 }
 
+function referenciaDoFator(grupo: GrupoAlimentar, modo: ModoPreparo, fatores: Fator[]) {
+  return fatores.find((f) => f.grupo_alimentar === grupo && f.modo_preparo === modo)?.referencia ?? null;
+}
+
 // Converte o item da ficha para o formato do domínio, usando a forma preparada da TACO quando existe.
 function paraDominio(ingrediente: IngredienteCalculo, quantidade_crua_g: number, modo: ModoPreparo, fatores: Fator[]) {
   const forma = modo === "CRU" ? undefined : ingrediente.formas_preparadas.find((f) => f.modo_preparo === modo);
@@ -58,6 +62,7 @@ function paraDominio(ingrediente: IngredienteCalculo, quantidade_crua_g: number,
     quantidade_crua_g,
     modo,
     fator_coccao: fator,
+    fator_referencia: modo === "CRU" ? null : referenciaDoFator(ingrediente.grupo_alimentar, modo, fatores),
     forma_preparada: forma !== undefined,
     composicao: {
       energia_kcal: fonte.energia_kcal,

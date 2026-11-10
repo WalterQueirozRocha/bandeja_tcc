@@ -7,7 +7,7 @@ import { GRUPO_ALIMENTAR, MODO_PREPARO, opcoes } from "@/lib/rotulos";
 type Fator = { id: number; grupo_alimentar: string; modo_preparo: string; fator_coccao: number; referencia: string };
 
 const MODOS = opcoes(MODO_PREPARO).filter((o) => o.valor !== "CRU");
-const REFERENCIA_PADRAO = "Domene (2018)";
+const REFERENCIA_PADRAO = "Silva et al. (2012)";
 
 // M1: novo fator (um por grupo e modo; cru usa sempre 1).
 export function NovoFator() {

@@ -38,6 +38,8 @@ export type ItemComposicao = {
   modo: Modo;
   // null: forma preparada sem fator publicado para o grupo; o peso final fica igual ao cru.
   fator_coccao: number | null;
+  // Referência do fator (cadastro de fatores); aparece nas hipóteses da ficha.
+  fator_referencia?: string | null;
   composicao: Composicao;
   // true: `composicao` é da forma preparada na TACO; false: é a crua e o fator só muda o peso.
   forma_preparada: boolean;
@@ -86,7 +88,7 @@ export function comporPreparacao(itens: ItemComposicao[], porcao_g: number): Res
           ? `${item.nome} (${item.modo}): composição da forma preparada na TACO; sem fator de cocção publicado para o grupo, peso final = peso cru`
           : item.forma_preparada
             ? `${item.nome} (${item.modo}): composição da forma preparada na TACO; fator de cocção ${item.fator_coccao}`
-            : `${item.nome} (${item.modo}): composição crua; fator de cocção ${item.fator_coccao} só no peso (Domene, 2018)`,
+            : `${item.nome} (${item.modo}): composição crua; fator de cocção ${item.fator_coccao} só no peso (${item.fator_referencia ?? "referência do fator não informada"})`,
     );
     return { nome: item.nome, peso_final_g: peso, nutrientes };
   });
