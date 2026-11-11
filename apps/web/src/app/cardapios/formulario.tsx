@@ -13,6 +13,7 @@ export function FormularioCardapio({ preparacoes, inicial, dataPadrao }: { prepa
   const router = useRouter();
   const { erro, setErro, ocupado, executar } = useAcao();
   const [data, setData] = useState(inicial?.data ?? dataPadrao);
+  const [ate, setAte] = useState("");
   const [periodo, setPeriodo] = useState(inicial?.periodo ?? "MANHA");
   const [itens, setItens] = useState<Item[]>(inicial?.itens ?? [{ preparacao_id: 0, preco: 0 }]);
   const mudar = (i: number, item: Partial<Item>) => setItens(itens.map((x, j) => (j === i ? { ...x, ...item } : x)));
@@ -21,7 +22,9 @@ export function FormularioCardapio({ preparacoes, inicial, dataPadrao }: { prepa
     e.preventDefault();
     if (itens.some((i) => !i.preparacao_id)) return setErro("Escolha a preparação de cada item.");
     const corpo = { data, periodo, itens };
-    const r = inicial ? await executar(`/api/cardapios/${inicial.id}`, "PUT", corpo) : await executar("/api/cardapios", "POST", corpo);
+    const r = inicial
+      ? await executar(`/api/cardapios/${inicial.id}`, "PUT", corpo)
+      : await executar("/api/cardapios", "POST", { ...corpo, ...(ate && { ate }) });
     if (r) router.push("/cardapios");
   }
 
@@ -32,6 +35,13 @@ export function FormularioCardapio({ preparacoes, inicial, dataPadrao }: { prepa
           Data
           <input type="date" value={data} onChange={(e) => setData(e.target.value)} required className="campo" />
         </label>
+        {!inicial && (
+          <label className="flex flex-col gap-1 text-sm font-medium">
+            Até (opcional)
+            <input type="date" value={ate} min={data} onChange={(e) => setAte(e.target.value)} className="campo" />
+            <span className="text-xs font-normal text-secondary">Um cardápio por dia útil</span>
+          </label>
+        )}
         <label className="flex flex-col gap-1 text-sm font-medium">
           Turno
           <select value={periodo} onChange={(e) => setPeriodo(e.target.value)} className="campo">
