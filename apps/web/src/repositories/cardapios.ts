@@ -37,8 +37,11 @@ export async function preparacoesAtivas(ids: number[]) {
   return new Set((await prisma.preparacao.findMany({ where: { id: { in: ids }, ativo: true }, select: { id: true } })).map((p) => p.id));
 }
 
-export function criarCardapio(data: string, periodo: Periodo, itens: ItemNovo[]) {
-  return prisma.cardapio.create({ data: { data: paraData(data), periodo, itens: { create: itens } }, select: { id: true } });
+// Um cardápio por data, todos com os mesmos itens, numa transação.
+export function criarCardapios(datas: string[], periodo: Periodo, itens: ItemNovo[]) {
+  return prisma.$transaction(
+    datas.map((data) => prisma.cardapio.create({ data: { data: paraData(data), periodo, itens: { create: itens } }, select: { id: true } })),
+  );
 }
 
 // Mantém o id dos itens que continuam (as vendas apontam para ItemCardapio).

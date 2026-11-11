@@ -182,6 +182,12 @@ export const cardapio = z.object({
     .refine((itens) => unicos(itens.map((i) => i.preparacao_id)), "preparação repetida"),
 });
 
+// Com `ate`, publica um cardápio por dia útil do intervalo.
+export const novoCardapio = cardapio
+  .extend({ ate: z.iso.date().optional() })
+  .refine((c) => !c.ate || c.ate >= c.data, { message: "a data final deve ser igual ou posterior à inicial", path: ["ate"] })
+  .refine((c) => !c.ate || Date.parse(c.ate) - Date.parse(c.data) <= 31 * 86_400_000, { message: "intervalo de no máximo 31 dias", path: ["ate"] });
+
 export const buscaCardapios = z.object({
   data: z.iso.date().optional(),
   periodo: z.enum(Periodo).optional(),
@@ -266,6 +272,7 @@ export type PanoramaEntrada = z.infer<typeof consultaPanorama>;
 export type SintomaEntrada = z.infer<typeof registroSintoma>;
 export type VendaEntrada = z.infer<typeof venda>;
 export type CardapioEntrada = z.infer<typeof cardapio>;
+export type NovoCardapioEntrada = z.infer<typeof novoCardapio>;
 export type PerfilEntrada = z.infer<typeof perfilSaude>;
 export type NovoIngrediente = z.infer<typeof novoIngrediente>;
 export type MarcadorEntrada = z.infer<typeof marcador>;
