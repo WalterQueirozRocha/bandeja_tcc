@@ -10,7 +10,7 @@
     "dev": "npm run dev -w @bandeja/web",
     "build": "npm run build -w @bandeja/web",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present && npm run test:e2e",
     "test:e2e": "npm run test:e2e -w @bandeja/web",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
