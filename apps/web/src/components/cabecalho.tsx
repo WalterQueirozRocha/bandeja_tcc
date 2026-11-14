@@ -3,8 +3,13 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Bell, LogIn, LogOut, Monitor, Moon, Sun } from "lucide-react";
 import type { Papel } from "@bandeja/dados";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { COOKIE_TEMA, EVENTO_NOTIFICACOES, LINKS, type Tema } from "@/lib/navegacao";
+import { PAPEL } from "@/lib/rotulos";
+import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
 
 // D2: o layout não renderiza de novo na navegação; o sino busca o número a cada troca de tela (N4) e após marcar como lida.
@@ -27,23 +32,19 @@ function Sino({ inicial }: { inicial: number }) {
 
   const rotulo = naoLidas === 0 ? "Notificações, nenhuma não lida" : `Notificações, ${naoLidas} não lida${naoLidas > 1 ? "s" : ""}`;
   return (
-    <Link href="/notificacoes" aria-label={rotulo} title={rotulo} className="btn-secundario relative px-2 py-1.5 hover:no-underline" data-testid="sino">
-      <svg viewBox="0 0 24 24" aria-hidden="true" className="size-5">
-        <path
-          d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"
-          stroke="currentColor"
-          strokeWidth={2}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-        />
-      </svg>
-      {naoLidas > 0 && (
-        <span aria-hidden="true" className="absolute -right-1.5 -top-1.5 min-w-5 rounded-full bg-bloqueado px-1 text-center text-xs font-bold leading-5 text-white tabular-nums">
-          {naoLidas > 99 ? "99+" : naoLidas}
-        </span>
-      )}
-    </Link>
+    <Button asChild variant="outline" size="icon" className="relative">
+      <Link href="/notificacoes" aria-label={rotulo} title={rotulo} data-testid="sino">
+        <Bell aria-hidden="true" className="size-4" />
+        {naoLidas > 0 && (
+          <span
+            aria-hidden="true"
+            className="absolute -top-1.5 -right-1.5 min-w-5 rounded-full bg-bloqueado px-1 text-center text-[11px] font-bold leading-5 text-white shadow-xs tabular-nums"
+          >
+            {naoLidas > 99 ? "99+" : naoLidas}
+          </span>
+        )}
+      </Link>
+    </Button>
   );
 }
 
@@ -67,31 +68,19 @@ function SeletorTema({ tema }: { tema?: Tema }) {
     setAtual(proximo);
   }
 
-  const traco = { stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", fill: "none" } as const;
   return (
-    <button
+    <Button
       type="button"
+      variant="outline"
+      size="icon"
       onClick={trocar}
       aria-label={`Tema ${NOME_TEMA[atual]}. Trocar tema`}
       title={`Tema ${NOME_TEMA[atual]}`}
-      className="btn-secundario px-2 py-1.5"
     >
-      <svg viewBox="0 0 24 24" aria-hidden="true" className="size-5">
-        {atual === "sistema" && (
-          <>
-            <rect x="3" y="4" width="18" height="12" rx="2" {...traco} />
-            <path d="M8 20h8M12 16v4" {...traco} />
-          </>
-        )}
-        {atual === "claro" && (
-          <>
-            <circle cx="12" cy="12" r="4" {...traco} />
-            <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" {...traco} />
-          </>
-        )}
-        {atual === "escuro" && <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" {...traco} />}
-      </svg>
-    </button>
+      {atual === "sistema" && <Monitor aria-hidden="true" className="size-4" />}
+      {atual === "claro" && <Sun aria-hidden="true" className="size-4" />}
+      {atual === "escuro" && <Moon aria-hidden="true" className="size-4" />}
+    </Button>
   );
 }
 
@@ -102,30 +91,41 @@ export function Cabecalho({ papel, tema, naoLidas }: { papel: Papel | null; tema
   async function sair() {
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/login");
-    router.refresh(); // o cabeçalho (layout) passa a ver que não há sessão
+    router.refresh();
   }
 
   return (
-    <header className="border-b border-borda bg-surface-card">
+    <header className="sticky top-0 z-40 border-b border-borda bg-surface-card/95 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-3 px-4 py-3">
         <Link href="/" aria-label="Bandeja, início" className="hover:no-underline">
           <Logo />
         </Link>
         <div className="ml-auto flex items-center gap-2">
+          {papel && (
+            <Badge variant="secondary" className="hidden sm:inline-flex">
+              {PAPEL[papel]}
+            </Badge>
+          )}
           {papel && <Sino key={papel} inicial={naoLidas} />}
           <SeletorTema tema={tema} />
           {papel ? (
-            <button type="button" onClick={sair} className="btn-secundario py-1.5 text-sm">
+            <Button type="button" variant="outline" size="sm" onClick={sair}>
+              <LogOut aria-hidden="true" className="size-3.5" />
               Sair
-            </button>
+            </Button>
           ) : (
-            caminho !== "/login" && <Link href="/login" className="btn-primario py-1.5 text-sm hover:no-underline">
-              Entrar
-            </Link>
+            caminho !== "/login" && (
+              <Button asChild size="sm">
+                <Link href="/login">
+                  <LogIn aria-hidden="true" className="size-3.5" />
+                  Entrar
+                </Link>
+              </Button>
+            )
           )}
         </div>
         {papel && (
-          <nav aria-label="Principal" className="w-full overflow-x-auto">
+          <nav aria-label="Principal" className="w-full overflow-x-auto border-t border-borda/60 pt-2">
             <ul className="flex gap-1">
               {LINKS[papel].map(({ href, rotulo }) => {
                 const ativo = caminho === href || caminho.startsWith(`${href}/`);
@@ -134,9 +134,12 @@ export function Cabecalho({ papel, tema, naoLidas }: { papel: Papel | null; tema
                     <Link
                       href={href}
                       aria-current={ativo ? "page" : undefined}
-                      className={`block whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium hover:no-underline ${
-                        ativo ? "bg-brand-primary text-white" : "text-secondary hover:bg-surface-bg hover:text-brand-navy"
-                      }`}
+                      className={cn(
+                        "block rounded-lg px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-colors hover:no-underline",
+                        ativo
+                          ? "bg-brand-primary text-white shadow-2xs"
+                          : "text-secondary hover:bg-surface-hover hover:text-brand-navy",
+                      )}
                     >
                       {rotulo}
                     </Link>

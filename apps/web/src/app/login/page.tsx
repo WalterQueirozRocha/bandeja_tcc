@@ -2,6 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ArrowLeft, KeyRound, LogIn } from "lucide-react";
+import { MensagemErro } from "@/components/acao";
+import { Logo } from "@/components/logo";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { telaInicial } from "@/lib/navegacao";
 
 export default function Login() {
@@ -17,8 +24,8 @@ export default function Login() {
       body: JSON.stringify({ email: form.get("email"), senha: form.get("senha") }),
     });
     if (!res.ok) return setErro("E-mail ou senha inválidos");
-    router.push(telaInicial((await res.json()).usuario.papel)); // A1: a primeira tela do perfil
-    router.refresh(); // o cabeçalho (layout) passa a ver a sessão
+    router.push(telaInicial((await res.json()).usuario.papel));
+    router.refresh();
   }
 
   // Sem e-mail: o pedido vira notificação para a coordenação, que redefine a senha.
@@ -34,56 +41,86 @@ export default function Login() {
   if (esqueci)
     return (
       <main className="flex flex-1 items-center justify-center p-4">
-        <div className="cartao flex w-full max-w-sm flex-col gap-4 p-6">
-          <h1>Esqueci a senha</h1>
-          <p className="text-sm text-secondary">Informe o seu e-mail. A coordenação da escola recebe o pedido e redefine a sua senha.</p>
-          <form action={pedirNovaSenha} className="flex flex-col gap-3">
-            <label className="flex flex-col gap-1 text-sm font-medium">
-              E-mail
-              <input name="email" type="email" required autoComplete="username" className="campo" />
-            </label>
-            <button type="submit" className="btn-primario">
-              Pedir nova senha
-            </button>
-            {aviso && (
-              <p role="status" className="text-sm">
-                {aviso}
-              </p>
-            )}
-          </form>
-          <button type="button" onClick={() => (setEsqueci(false), setAviso(""))} className="self-start text-sm underline">
-            Voltar para entrar
-          </button>
-        </div>
+        <Card className="w-full max-w-sm">
+          <CardHeader>
+            <CardTitle asChild>
+              <h1>Esqueci a senha</h1>
+            </CardTitle>
+            <CardDescription>
+              Informe o seu e-mail. A coordenação da escola recebe o pedido e redefine a sua senha.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form action={pedirNovaSenha} className="flex flex-col gap-3.5">
+              <Label>
+                E-mail
+                <Input name="email" type="email" required autoComplete="username" placeholder="seu.email@escola.br" />
+              </Label>
+              <Button type="submit" className="w-full">
+                <KeyRound aria-hidden="true" className="size-4" />
+                Pedir nova senha
+              </Button>
+              {aviso && (
+                <p role="status" className="rounded-lg border border-borda bg-surface-muted px-3 py-2 text-sm text-brand-navy">
+                  {aviso}
+                </p>
+              )}
+            </form>
+          </CardContent>
+          <CardFooter>
+            <Button
+              type="button"
+              variant="link"
+              size="sm"
+              className="px-0"
+              onClick={() => {
+                setEsqueci(false);
+                setAviso("");
+              }}
+            >
+              <ArrowLeft aria-hidden="true" className="size-3.5" />
+              Voltar para entrar
+            </Button>
+          </CardFooter>
+        </Card>
       </main>
     );
 
   return (
     <main className="flex flex-1 items-center justify-center p-4">
-      <div className="cartao flex w-full max-w-sm flex-col gap-4 p-6">
-        <h1>Entrar</h1>
-        <form action={entrar} className="flex flex-col gap-3">
-          <label className="flex flex-col gap-1 text-sm font-medium">
-            E-mail
-            <input name="email" type="email" required autoComplete="username" className="campo" />
-          </label>
-          <label className="flex flex-col gap-1 text-sm font-medium">
-            Senha
-            <input name="senha" type="password" required autoComplete="current-password" className="campo" />
-          </label>
-          <button type="submit" className="btn-primario">
-            Entrar
-          </button>
-          {erro && (
-            <p role="alert" className="text-sm font-medium text-bloqueado-texto">
-              {erro}
-            </p>
-          )}
-        </form>
-        <button type="button" onClick={() => setEsqueci(true)} className="self-start text-sm underline">
-          Esqueci minha senha
-        </button>
-      </div>
+      <Card className="w-full max-w-sm">
+        <CardHeader className="items-start gap-3">
+          <Logo />
+          <div className="flex flex-col gap-1">
+            <CardTitle asChild>
+              <h1>Entrar</h1>
+            </CardTitle>
+            <CardDescription>Acesse a plataforma com o seu e-mail e senha institucional.</CardDescription>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <form action={entrar} className="flex flex-col gap-3.5">
+            <Label>
+              E-mail
+              <Input name="email" type="email" required autoComplete="username" placeholder="seu.email@escola.br" />
+            </Label>
+            <Label>
+              Senha
+              <Input name="senha" type="password" required autoComplete="current-password" />
+            </Label>
+            <Button type="submit" className="mt-1 w-full">
+              <LogIn aria-hidden="true" className="size-4" />
+              Entrar
+            </Button>
+            <MensagemErro erro={erro} />
+          </form>
+        </CardContent>
+        <CardFooter>
+          <Button type="button" variant="link" size="sm" className="px-0" onClick={() => setEsqueci(true)}>
+            Esqueci minha senha
+          </Button>
+        </CardFooter>
+      </Card>
     </main>
   );
 }

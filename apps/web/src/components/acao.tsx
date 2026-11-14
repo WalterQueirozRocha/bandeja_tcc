@@ -2,6 +2,20 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { AlertCircle, CheckCircle2, RotateCcw, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 type CorpoErro = { erro?: string; detalhes?: { campo: string; mensagem: string }[] };
 
@@ -45,8 +59,9 @@ export function useAcao() {
 export function MensagemErro({ erro }: { erro: string }) {
   if (!erro) return null;
   return (
-    <p role="alert" className="text-sm font-medium text-bloqueado-texto">
-      {erro}
+    <p role="alert" className="inline-flex items-center gap-1.5 rounded-md border border-bloqueado/40 bg-bloqueado-fundo px-2.5 py-1.5 text-sm font-medium text-bloqueado-texto">
+      <AlertCircle aria-hidden="true" className="size-4 shrink-0 text-bloqueado" />
+      <span>{erro}</span>
     </p>
   );
 }
@@ -58,7 +73,6 @@ export function AcoesRegistro({ url, ativo, nome, voltarPara }: { url: string; a
   const [aviso, setAviso] = useState("");
 
   async function excluir() {
-    if (!confirm(`Excluir ${nome}? Se já estiver em uso, ele será desabilitado (some das consultas, mas continua nos registros).`)) return;
     const r = await executar<{ resultado: "APAGADO" | "DESABILITADO" }>(url, "DELETE");
     if (!r) return;
     if (r.resultado === "APAGADO" && voltarPara) router.push(voltarPara);
@@ -68,16 +82,42 @@ export function AcoesRegistro({ url, ativo, nome, voltarPara }: { url: string; a
   return (
     <span className="flex flex-wrap items-center gap-2">
       {ativo ? (
-        <button type="button" disabled={ocupado} onClick={excluir} className="btn-secundario py-1 text-sm">
-          Excluir
-        </button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button type="button" variant="outline" size="sm" disabled={ocupado}>
+              <Trash2 aria-hidden="true" className="size-3.5" />
+              Excluir
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir {nome}?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Se já estiver em uso, ele será apenas desabilitado (some das consultas, mas continua preservado nos registros históricos).
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction variant="destructive" onClick={excluir}>
+                Confirmar exclusão
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       ) : (
-        <button type="button" disabled={ocupado} onClick={() => executar(`${url}/habilitar`, "POST").then((r) => r && setAviso("Habilitado."))} className="btn-primario py-1 text-sm">
+        <Button
+          type="button"
+          size="sm"
+          disabled={ocupado}
+          onClick={() => executar(`${url}/habilitar`, "POST").then((r) => r && setAviso("Habilitado."))}
+        >
+          <RotateCcw aria-hidden="true" className="size-3.5" />
           Habilitar
-        </button>
+        </Button>
       )}
       {aviso && (
-        <span role="status" className="text-sm text-secondary">
+        <span role="status" className="inline-flex items-center gap-1 text-sm text-secondary">
+          <CheckCircle2 aria-hidden="true" className="size-3.5 text-compativel" />
           {aviso}
         </span>
       )}
@@ -88,5 +128,9 @@ export function AcoesRegistro({ url, ativo, nome, voltarPara }: { url: string; a
 
 // Situação do registro (B2): desabilitado aparece só para quem pode habilitar.
 export function SeloDesabilitado() {
-  return <span className="rounded-full border border-borda px-2 py-0.5 text-xs font-bold uppercase text-secondary">Desabilitado</span>;
+  return (
+    <Badge variant="outline" className="uppercase">
+      Desabilitado
+    </Badge>
+  );
 }
