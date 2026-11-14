@@ -2,8 +2,24 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Link2Off, Plus, Save, Trash2 } from "lucide-react";
 import { MensagemErro, useAcao } from "@/components/acao";
 import { BuscaIngrediente } from "@/components/busca-ingrediente";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/ui/native-select";
 import { CATEGORIA_CARBOIDRATO, GRUPO_ALIMENTAR, LISTA_IG, MODO_PREPARO, PRESENCA, opcoes } from "@/lib/rotulos";
 
 type Categoria = { codigo: string; nome: string };
@@ -30,47 +46,65 @@ const texto = (v: number | null | undefined) => (v === null || v === undefined ?
 
 function CampoTexto({ rotulo, valor, onChange, dica }: { rotulo: string; valor: string; onChange: (v: string) => void; dica?: string }) {
   return (
-    <label className="flex flex-col gap-1 text-sm font-medium">
+    <Label>
       {rotulo}
-      <input value={valor} onChange={(e) => onChange(e.target.value)} required maxLength={300} placeholder={dica} className="campo" />
-    </label>
+      <Input value={valor} onChange={(e) => onChange(e.target.value)} required maxLength={300} placeholder={dica} />
+    </Label>
   );
 }
 
-function Selecao({ rotulo, valor, onChange, itens }: { rotulo: string; valor: string; onChange: (v: string) => void; itens: { valor: string; rotulo: string }[] }) {
+function Selecao({
+  rotulo,
+  valor,
+  onChange,
+  itens,
+}: {
+  rotulo: string;
+  valor: string;
+  onChange: (v: string) => void;
+  itens: { valor: string; rotulo: string }[];
+}) {
   return (
-    <label className="flex flex-col gap-1 text-sm font-medium">
+    <Label>
       {rotulo}
-      <select value={valor} onChange={(e) => onChange(e.target.value)} className="campo">
+      <NativeSelect value={valor} onChange={(e) => onChange(e.target.value)}>
         {itens.map((o) => (
           <option key={o.valor} value={o.valor}>
             {o.rotulo}
           </option>
         ))}
-      </select>
-    </label>
+      </NativeSelect>
+    </Label>
   );
 }
 
 function ListaMarcadores({ lista, setLista, categorias }: { lista: Marcador[]; setLista: (l: Marcador[]) => void; categorias: Categoria[] }) {
   const [novo, setNovo] = useState<Marcador>({ categoria_codigo: "", presenca: "CONTEM" });
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2.5">
       {lista.length === 0 && <p className="text-sm text-secondary">Nenhum marcador.</p>}
       {lista.map((m) => (
         <div
           key={m.categoria_codigo}
-          className={`flex items-center gap-2 rounded-md border px-2 py-1 text-sm ${
-            m.presenca === "CONTEM" ? "border-bloqueado bg-bloqueado-fundo text-bloqueado-texto" : "border-atencao bg-atencao-fundo text-atencao-texto"
+          className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm ${
+            m.presenca === "CONTEM"
+              ? "border-bloqueado/50 bg-bloqueado-fundo text-bloqueado-texto"
+              : "border-atencao/50 bg-atencao-fundo text-atencao-texto"
           }`}
         >
           <strong className="uppercase">{PRESENCA[m.presenca]}:</strong> {categorias.find((c) => c.codigo === m.categoria_codigo)?.nome}
-          <button type="button" onClick={() => setLista(lista.filter((x) => x !== m))} className="ml-auto underline">
+          <Button
+            type="button"
+            variant="link"
+            size="sm"
+            onClick={() => setLista(lista.filter((x) => x !== m))}
+            className="ml-auto h-auto p-0 text-current"
+          >
             Remover
-          </button>
+          </Button>
         </div>
       ))}
-      <div className="grid gap-2 sm:grid-cols-[1fr_10rem_auto] sm:items-end">
+      <div className="grid gap-2.5 sm:grid-cols-[1fr_10rem_auto] sm:items-end">
         <Selecao
           rotulo="Categoria"
           valor={novo.categoria_codigo}
@@ -78,17 +112,18 @@ function ListaMarcadores({ lista, setLista, categorias }: { lista: Marcador[]; s
           itens={[{ valor: "", rotulo: "Escolha…" }, ...categorias.map((c) => ({ valor: c.codigo, rotulo: c.nome }))]}
         />
         <Selecao rotulo="Presença" valor={novo.presenca} onChange={(v) => setNovo({ ...novo, presenca: v })} itens={opcoes(PRESENCA)} />
-        <button
+        <Button
           type="button"
+          variant="outline"
           disabled={!novo.categoria_codigo || lista.some((m) => m.categoria_codigo === novo.categoria_codigo)}
           onClick={() => {
             setLista([...lista, novo]);
             setNovo({ ...novo, categoria_codigo: "" });
           }}
-          className="btn-secundario"
         >
+          <Plus aria-hidden="true" className="size-4" />
           Adicionar
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -129,7 +164,7 @@ export function FormularioIngrediente({
       if (await executar(`/api/ingredientes/${id}`, "PUT", { ...dados, ...(outraTabela && { fonte }), motivo })) {
         setAviso("Dados salvos.");
         setMotivo("");
-        router.refresh(); // atualiza o histórico de alterações
+        router.refresh();
       }
       return;
     }
@@ -138,14 +173,14 @@ export function FormularioIngrediente({
   }
 
   return (
-    <form onSubmit={salvar} className="flex flex-col gap-3">
+    <form onSubmit={salvar} className="flex flex-col gap-3.5">
       {!id && <Selecao rotulo="Origem dos dados" valor={origem} onChange={setOrigem} itens={ORIGENS_NOVAS} />}
       {outraTabela && <CampoTexto rotulo="Fonte da composição" valor={fonte} onChange={setFonte} dica="Ex.: TBCA 7.2, código C0001" />}
-      <label className="flex flex-col gap-1 text-sm font-medium">
+      <Label>
         {outraTabela ? "Nome (como na tabela de origem)" : "Nome (como no rótulo)"}
-        <input value={dados.nome} onChange={(e) => setDados({ ...dados, nome: e.target.value })} required maxLength={200} className="campo" />
-      </label>
-      <div className="grid gap-2 sm:grid-cols-2">
+        <Input value={dados.nome} onChange={(e) => setDados({ ...dados, nome: e.target.value })} required maxLength={200} />
+      </Label>
+      <div className="grid gap-3 sm:grid-cols-2">
         <Selecao rotulo="Grupo" valor={dados.grupo_alimentar} onChange={(v) => setDados({ ...dados, grupo_alimentar: v })} itens={opcoes(GRUPO_ALIMENTAR)} />
         <Selecao
           rotulo="Carboidrato principal (Rytz)"
@@ -154,34 +189,55 @@ export function FormularioIngrediente({
           itens={opcoes(CATEGORIA_CARBOIDRATO)}
         />
       </div>
-      <fieldset className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        <legend className="mb-1 text-sm font-semibold">Por 100 g (vazio = não informado {outraTabela ? "na tabela" : "no rótulo"})</legend>
+      <fieldset className="grid grid-cols-2 gap-2.5 rounded-xl border border-borda bg-surface-muted/40 p-3.5 sm:grid-cols-4">
+        <legend className="px-1 text-xs font-semibold text-secondary">
+          Por 100 g (vazio = não informado {outraTabela ? "na tabela" : "no rótulo"})
+        </legend>
         {NUTRIENTES.map(([campo, rotulo]) => (
-          <label key={campo} className="flex flex-col gap-1 text-sm">
+          <Label key={campo}>
             {rotulo}
-            <input inputMode="decimal" value={texto(dados[campo])} onChange={(e) => setDados({ ...dados, [campo]: numeroOuNulo(e.target.value) })} className="campo tabular-nums" />
-          </label>
+            <Input
+              inputMode="decimal"
+              value={texto(dados[campo])}
+              onChange={(e) => setDados({ ...dados, [campo]: numeroOuNulo(e.target.value) })}
+              className="tabular-nums"
+            />
+          </Label>
         ))}
-        <label className="flex flex-col gap-1 text-sm">
+        <Label>
           RDS (%)
-          <input inputMode="decimal" value={texto(dados.rds_percentual)} onChange={(e) => setDados({ ...dados, rds_percentual: numeroOuNulo(e.target.value) })} className="campo tabular-nums" />
-        </label>
+          <Input
+            inputMode="decimal"
+            value={texto(dados.rds_percentual)}
+            onChange={(e) => setDados({ ...dados, rds_percentual: numeroOuNulo(e.target.value) })}
+            className="tabular-nums"
+          />
+        </Label>
       </fieldset>
       {!id && (
-        <fieldset className="flex flex-col gap-2">
-          <legend className="mb-1 text-sm font-semibold">{outraTabela ? "Alergênicos e restrições" : "Alergênicos e restrições do rótulo"}</legend>
+        <fieldset className="flex flex-col gap-2.5 rounded-xl border border-borda bg-surface-muted/40 p-3.5">
+          <legend className="px-1 text-xs font-semibold text-secondary">
+            {outraTabela ? "Alergênicos e restrições" : "Alergênicos e restrições do rótulo"}
+          </legend>
           {outraTabela && (
-            <p className="text-sm text-secondary">Como na TACO, a marcação fica pendente até a conferência dupla, e a ficha técnica só aceita o alimento depois dela.</p>
+            <p className="text-sm text-secondary">
+              Como na TACO, a marcação fica pendente até a conferência dupla, e a ficha técnica só aceita o alimento depois dela.
+            </p>
           )}
           <ListaMarcadores lista={marcadores} setLista={setMarcadores} categorias={categorias} />
         </fieldset>
       )}
       {id && <CampoTexto rotulo="Motivo da alteração" valor={motivo} onChange={setMotivo} dica="Ex.: correção conforme o rótulo novo" />}
       <div className="flex flex-wrap items-center gap-2">
-        <button type="submit" disabled={ocupado} className="btn-primario">
+        <Button type="submit" disabled={ocupado}>
+          <Save aria-hidden="true" className="size-4" />
           {id ? "Salvar dados" : "Cadastrar ingrediente"}
-        </button>
-        {aviso && <span role="status" className="text-sm">{aviso}</span>}
+        </Button>
+        {aviso && (
+          <span role="status" className="text-sm font-medium text-brand-navy">
+            {aviso}
+          </span>
+        )}
       </div>
       <MensagemErro erro={erro} />
     </form>
@@ -199,7 +255,6 @@ export function EdicaoTaco({ id, categoria, rds, livres }: { id: number; categor
   const [fonte, setFonte] = useState("");
   const [motivo, setMotivo] = useState("");
   const [aviso, setAviso] = useState("");
-  // Só vão os campos não analisados que mudaram; a fonte acompanha esses campos.
   const mudados = livres.filter((l) => numeroOuNulo(valores[l.campo]) !== l.valor);
 
   async function salvar(e: React.FormEvent) {
@@ -220,40 +275,52 @@ export function EdicaoTaco({ id, categoria, rds, livres }: { id: number; categor
   }
 
   return (
-    <form onSubmit={salvar} className="flex flex-col gap-3">
-      <div className="grid gap-2 sm:grid-cols-[1fr_8rem]">
-        <Selecao rotulo="Carboidrato principal (Rytz)" valor={dados.categoria_carboidrato} onChange={(v) => setDados({ ...dados, categoria_carboidrato: v })} itens={opcoes(CATEGORIA_CARBOIDRATO)} />
-        <label className="flex flex-col gap-1 text-sm font-medium">
+    <form onSubmit={salvar} className="flex flex-col gap-3.5">
+      <div className="grid gap-3 sm:grid-cols-[1fr_8rem]">
+        <Selecao
+          rotulo="Carboidrato principal (Rytz)"
+          valor={dados.categoria_carboidrato}
+          onChange={(v) => setDados({ ...dados, categoria_carboidrato: v })}
+          itens={opcoes(CATEGORIA_CARBOIDRATO)}
+        />
+        <Label>
           RDS (%)
-          <input inputMode="decimal" value={dados.rds} onChange={(e) => setDados({ ...dados, rds: e.target.value })} className="campo tabular-nums" />
-        </label>
+          <Input inputMode="decimal" value={dados.rds} onChange={(e) => setDados({ ...dados, rds: e.target.value })} className="tabular-nums" />
+        </Label>
       </div>
       {livres.length > 0 && (
-        <fieldset className="flex flex-col gap-2">
-          <legend className="mb-1 text-sm font-semibold">Campos que a TACO não analisou (por 100 g)</legend>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <fieldset className="flex flex-col gap-2.5 rounded-xl border border-borda bg-surface-muted/40 p-3.5">
+          <legend className="px-1 text-xs font-semibold text-secondary">Campos que a TACO não analisou (por 100 g)</legend>
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
             {livres.map((l) => (
-              <label key={l.campo} className="flex flex-col gap-1 text-sm">
+              <Label key={l.campo}>
                 {NUTRIENTES.find(([c]) => c === l.campo)?.[1]}
-                <input
+                <Input
                   inputMode="decimal"
                   value={valores[l.campo]}
                   onChange={(e) => setValores({ ...valores, [l.campo]: e.target.value })}
-                  className="campo tabular-nums"
+                  className="tabular-nums"
                 />
-                {l.fonte && <span className="text-xs text-secondary">Fonte: {l.fonte}</span>}
-              </label>
+                {l.fonte && <span className="text-xs font-normal text-secondary">Fonte: {l.fonte}</span>}
+              </Label>
             ))}
           </div>
-          {mudados.length > 0 && <CampoTexto rotulo="Fonte dos valores preenchidos" valor={fonte} onChange={setFonte} dica="Ex.: TBCA 7.2, código C0001" />}
+          {mudados.length > 0 && (
+            <CampoTexto rotulo="Fonte dos valores preenchidos" valor={fonte} onChange={setFonte} dica="Ex.: TBCA 7.2, código C0001" />
+          )}
         </fieldset>
       )}
       <CampoTexto rotulo="Motivo da alteração" valor={motivo} onChange={setMotivo} dica="Ex.: composição ausente na TACO" />
       <div className="flex flex-wrap items-center gap-2">
-        <button type="submit" disabled={ocupado} className="btn-primario">
+        <Button type="submit" disabled={ocupado}>
+          <Save aria-hidden="true" className="size-4" />
           Salvar
-        </button>
-        {aviso && <span role="status" className="text-sm">{aviso}</span>}
+        </Button>
+        {aviso && (
+          <span role="status" className="text-sm font-medium text-brand-navy">
+            {aviso}
+          </span>
+        )}
       </div>
       <p className="text-xs text-secondary">
         Reimportar a TACO mantém estes campos; a categoria e o RDS só mudam se o alimento estiver no <code>carboidratos.csv</code>.
@@ -274,11 +341,11 @@ export function EditorMarcadores({ id, taco, inicial, categorias }: { id: number
   async function salvar() {
     const ok = await executar(`/api/ingredientes/${id}/marcadores`, "PUT", { marcadores: lista, ...(taco && conferentes) });
     setAviso(ok ? "Marcadores salvos." : "");
-    if (ok) router.refresh(); // atualiza a situação da conferência
+    if (ok) router.refresh();
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3.5">
       <ListaMarcadores lista={lista} setLista={setLista} categorias={categorias} />
       {taco && (
         <p className="text-sm text-secondary">
@@ -286,22 +353,27 @@ export function EditorMarcadores({ id, taco, inicial, categorias }: { id: number
         </p>
       )}
       {taco && (
-        <div className="grid gap-2 sm:grid-cols-2">
-          <label className="flex flex-col gap-1 text-sm font-medium">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Label>
             Conferido por (1)
-            <input value={conferentes.conferido_por_1} onChange={(e) => setConferentes({ ...conferentes, conferido_por_1: e.target.value })} className="campo" />
-          </label>
-          <label className="flex flex-col gap-1 text-sm font-medium">
+            <Input value={conferentes.conferido_por_1} onChange={(e) => setConferentes({ ...conferentes, conferido_por_1: e.target.value })} />
+          </Label>
+          <Label>
             Conferido por (2)
-            <input value={conferentes.conferido_por_2} onChange={(e) => setConferentes({ ...conferentes, conferido_por_2: e.target.value })} className="campo" />
-          </label>
+            <Input value={conferentes.conferido_por_2} onChange={(e) => setConferentes({ ...conferentes, conferido_por_2: e.target.value })} />
+          </Label>
         </div>
       )}
       <div className="flex flex-wrap items-center gap-2">
-        <button type="button" onClick={salvar} disabled={ocupado} className="btn-primario self-start">
+        <Button type="button" onClick={salvar} disabled={ocupado} className="self-start">
+          <Save aria-hidden="true" className="size-4" />
           Salvar marcadores
-        </button>
-        {aviso && <span role="status" className="text-sm">{aviso}</span>}
+        </Button>
+        {aviso && (
+          <span role="status" className="text-sm font-medium text-brand-navy">
+            {aviso}
+          </span>
+        )}
       </div>
       <MensagemErro erro={erro} />
     </div>
@@ -324,45 +396,74 @@ export function FormularioIg({ id, inicial }: { id: number; inicial: Ig | null }
   });
   const [aviso, setAviso] = useState("");
   const campo = (nome: keyof typeof dados, rotulo: string) => (
-    <label className="flex flex-col gap-1 text-sm font-medium">
+    <Label>
       {rotulo}
-      <input value={dados[nome]} onChange={(e) => setDados({ ...dados, [nome]: e.target.value })} className="campo" />
-    </label>
+      <Input value={dados[nome]} onChange={(e) => setDados({ ...dados, [nome]: e.target.value })} />
+    </Label>
   );
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="grid gap-2 sm:grid-cols-3">
+    <div className="flex flex-col gap-3.5">
+      <div className="grid gap-3 sm:grid-cols-3">
         {campo("ig", "IG")}
-        <Selecao rotulo="Escala" valor={dados.escala} onChange={(v) => setDados({ ...dados, escala: v })} itens={[{ valor: "GLICOSE", rotulo: "Glicose" }, { valor: "PAO", rotulo: "Pão (÷ 1,4)" }]} />
+        <Selecao
+          rotulo="Escala"
+          valor={dados.escala}
+          onChange={(v) => setDados({ ...dados, escala: v })}
+          itens={[
+            { valor: "GLICOSE", rotulo: "Glicose" },
+            { valor: "PAO", rotulo: "Pão (÷ 1,4)" },
+          ]}
+        />
         <Selecao rotulo="Lista" valor={dados.lista} onChange={(v) => setDados({ ...dados, lista: v })} itens={opcoes(LISTA_IG)} />
       </div>
       {campo("item_correspondente", "Item correspondente na tabela")}
       {campo("justificativa", "Justificativa do pareamento")}
-      <div className="grid gap-2 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-2">
         {campo("conferido_por_1", "Conferido por (1)")}
         {campo("conferido_por_2", "Conferido por (2)")}
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <button
+        <Button
           type="button"
           disabled={ocupado}
           onClick={async () => setAviso((await executar(`/api/ingredientes/${id}/ig`, "PUT", { ...dados, ig: numeroOuNulo(dados.ig) })) ? "IG salvo." : "")}
-          className="btn-primario"
         >
+          <Save aria-hidden="true" className="size-4" />
           Salvar IG
-        </button>
+        </Button>
         {inicial && (
-          <button
-            type="button"
-            disabled={ocupado}
-            onClick={async () => confirm("Remover o IG pareado?") && setAviso((await executar(`/api/ingredientes/${id}/ig`, "DELETE")) ? "IG removido." : "")}
-            className="btn-secundario"
-          >
-            Remover IG
-          </button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button type="button" variant="outline" disabled={ocupado}>
+                <Trash2 aria-hidden="true" className="size-3.5" />
+                Remover IG
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Remover o IG pareado?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Sem um IG pareado, a estimativa de carga glicêmica pela FAO/OMS não será calculada nas preparações que utilizam este ingrediente.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={async () => setAviso((await executar(`/api/ingredientes/${id}/ig`, "DELETE")) ? "IG removido." : "")}
+                  className="bg-bloqueado text-white hover:opacity-90"
+                >
+                  Remover IG
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         )}
-        {aviso && <span role="status" className="text-sm">{aviso}</span>}
+        {aviso && (
+          <span role="status" className="text-sm font-medium text-brand-navy">
+            {aviso}
+          </span>
+        )}
       </div>
       <MensagemErro erro={erro} />
     </div>
@@ -375,7 +476,7 @@ export function FormaCrua({ id, atual }: { id: number; atual: { id: number; nome
   const [modo, setModo] = useState(atual?.modo ?? "COZIDO");
   const cozidos = opcoes(MODO_PREPARO).filter((o) => o.valor !== "CRU");
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3.5">
       <p className="text-sm">
         {atual ? (
           <>
@@ -392,9 +493,10 @@ export function FormaCrua({ id, atual }: { id: number; atual: { id: number; nome
         onEscolher={(crua) => executar(`/api/ingredientes/${id}/forma-crua`, "PUT", { forma_crua_id: crua.id, modo_preparo: modo })}
       />
       {atual && (
-        <button type="button" disabled={ocupado} onClick={() => executar(`/api/ingredientes/${id}/forma-crua`, "DELETE")} className="btn-secundario self-start">
+        <Button type="button" variant="outline" disabled={ocupado} onClick={() => executar(`/api/ingredientes/${id}/forma-crua`, "DELETE")} className="self-start">
+          <Link2Off aria-hidden="true" className="size-3.5" />
           Desligar da forma crua
-        </button>
+        </Button>
       )}
       <MensagemErro erro={erro} />
     </div>

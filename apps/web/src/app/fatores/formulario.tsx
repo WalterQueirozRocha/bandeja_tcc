@@ -1,7 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import { Plus, Save, Trash2 } from "lucide-react";
 import { MensagemErro, useAcao } from "@/components/acao";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/ui/native-select";
 import { GRUPO_ALIMENTAR, MODO_PREPARO, opcoes } from "@/lib/rotulos";
 
 type Fator = { id: number; grupo_alimentar: string; modo_preparo: string; fator_coccao: number; referencia: string };
@@ -21,43 +39,57 @@ export function NovoFator() {
   }
 
   return (
-    <form onSubmit={salvar} className="cartao flex flex-col gap-3">
-      <h2>Novo fator</h2>
-      <div className="grid gap-2 sm:grid-cols-4 sm:items-end">
-        <label className="flex flex-col gap-1 text-sm font-medium">
-          Grupo
-          <select value={dados.grupo_alimentar} onChange={(e) => setDados({ ...dados, grupo_alimentar: e.target.value })} className="campo">
-            {opcoes(GRUPO_ALIMENTAR).map((o) => (
-              <option key={o.valor} value={o.valor}>
-                {o.rotulo}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="flex flex-col gap-1 text-sm font-medium">
-          Modo
-          <select value={dados.modo_preparo} onChange={(e) => setDados({ ...dados, modo_preparo: e.target.value })} className="campo">
-            {MODOS.map((o) => (
-              <option key={o.valor} value={o.valor}>
-                {o.rotulo}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="flex flex-col gap-1 text-sm font-medium">
-          Fator
-          <input inputMode="decimal" value={dados.fator_coccao} onChange={(e) => setDados({ ...dados, fator_coccao: e.target.value })} required className="campo tabular-nums" />
-        </label>
-        <label className="flex flex-col gap-1 text-sm font-medium">
-          Referência
-          <input value={dados.referencia} onChange={(e) => setDados({ ...dados, referencia: e.target.value })} required className="campo" />
-        </label>
-      </div>
-      <button type="submit" disabled={ocupado} className="btn-primario self-start">
-        Adicionar fator
-      </button>
-      <MensagemErro erro={erro} />
-    </form>
+    <Card asChild>
+      <form onSubmit={salvar}>
+        <CardHeader>
+          <CardTitle>Novo fator</CardTitle>
+          <CardDescription>Cadastre o fator térmico de rendimento por grupo alimentar e modo de preparo.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-3 sm:grid-cols-4 sm:items-end">
+            <Label>
+              Grupo
+              <NativeSelect value={dados.grupo_alimentar} onChange={(e) => setDados({ ...dados, grupo_alimentar: e.target.value })}>
+                {opcoes(GRUPO_ALIMENTAR).map((o) => (
+                  <option key={o.valor} value={o.valor}>
+                    {o.rotulo}
+                  </option>
+                ))}
+              </NativeSelect>
+            </Label>
+            <Label>
+              Modo
+              <NativeSelect value={dados.modo_preparo} onChange={(e) => setDados({ ...dados, modo_preparo: e.target.value })}>
+                {MODOS.map((o) => (
+                  <option key={o.valor} value={o.valor}>
+                    {o.rotulo}
+                  </option>
+                ))}
+              </NativeSelect>
+            </Label>
+            <Label>
+              Fator
+              <Input
+                inputMode="decimal"
+                value={dados.fator_coccao}
+                onChange={(e) => setDados({ ...dados, fator_coccao: e.target.value })}
+                required
+                className="tabular-nums"
+              />
+            </Label>
+            <Label>
+              Referência
+              <Input value={dados.referencia} onChange={(e) => setDados({ ...dados, referencia: e.target.value })} required />
+            </Label>
+          </div>
+          <Button type="submit" disabled={ocupado} className="self-start">
+            <Plus aria-hidden="true" className="size-4" />
+            Adicionar fator
+          </Button>
+          <MensagemErro erro={erro} />
+        </CardContent>
+      </form>
+    </Card>
   );
 }
 
@@ -74,32 +106,53 @@ export function LinhaFator({ fator }: { fator: Fator }) {
   }
 
   return (
-    <li className="cartao flex flex-col gap-2 py-3">
-      <div className="grid gap-2 sm:grid-cols-[1fr_7rem_1fr_auto_auto] sm:items-end">
-        <span className="font-semibold sm:pb-2">
-          {GRUPO_ALIMENTAR[fator.grupo_alimentar]} · {MODO_PREPARO[fator.modo_preparo]}
+    <li className="cartao flex flex-col gap-2 py-3.5">
+      <div className="grid gap-2.5 sm:grid-cols-[1fr_7rem_1fr_auto_auto] sm:items-end">
+        <span className="flex flex-wrap items-center gap-2 font-semibold sm:pb-2">
+          <span>{GRUPO_ALIMENTAR[fator.grupo_alimentar]}</span>
+          <Badge variant="secondary">{MODO_PREPARO[fator.modo_preparo]}</Badge>
         </span>
-        <label className="flex flex-col gap-1 text-sm">
+        <Label>
           Fator
-          <input inputMode="decimal" value={valor} onChange={(e) => setValor(e.target.value)} className="campo tabular-nums" />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
+          <Input inputMode="decimal" value={valor} onChange={(e) => setValor(e.target.value)} className="tabular-nums" />
+        </Label>
+        <Label>
           Referência
-          <input value={referencia} onChange={(e) => setReferencia(e.target.value)} className="campo" />
-        </label>
-        <button type="button" disabled={ocupado} onClick={salvar} className="btn-secundario">
+          <Input value={referencia} onChange={(e) => setReferencia(e.target.value)} />
+        </Label>
+        <Button type="button" variant="outline" disabled={ocupado} onClick={salvar}>
+          <Save aria-hidden="true" className="size-3.5" />
           Salvar
-        </button>
-        <button
-          type="button"
-          disabled={ocupado}
-          onClick={() => confirm("Remover este fator? O modo deixa de ser oferecido para o grupo.") && executar(`/api/fatores/${fator.id}`, "DELETE")}
-          className="btn-secundario"
-        >
-          Remover
-        </button>
+        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button type="button" variant="outline" disabled={ocupado}>
+              <Trash2 aria-hidden="true" className="size-3.5" />
+              Remover
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Remover este fator?</AlertDialogTitle>
+              <AlertDialogDescription>
+                O modo {MODO_PREPARO[fator.modo_preparo]?.toLowerCase()} deixará de ser oferecido nas fichas técnicas para o grupo{" "}
+                {GRUPO_ALIMENTAR[fator.grupo_alimentar]?.toLowerCase()}.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={() => executar(`/api/fatores/${fator.id}`, "DELETE")} className="bg-bloqueado text-white hover:opacity-90">
+                Remover
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
-      {aviso && <span role="status" className="text-sm">{aviso}</span>}
+      {aviso && (
+        <span role="status" className="text-sm font-medium text-brand-navy">
+          {aviso}
+        </span>
+      )}
       <MensagemErro erro={erro} />
     </li>
   );

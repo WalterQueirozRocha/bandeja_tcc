@@ -1,5 +1,13 @@
 import Link from "next/link";
+import { ChevronLeft, ChevronRight, Plus, Search } from "lucide-react";
 import { SeloDesabilitado } from "@/components/acao";
+import { FiltroAutomatico } from "@/components/filtro-automatico";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
 import { GRUPO_ALIMENTAR, ORIGEM_INGREDIENTE } from "@/lib/rotulos";
 import { listarIngredientes } from "@/repositories/ingredientes";
@@ -21,59 +29,75 @@ export default async function Ingredientes({ searchParams }: PageProps<"/ingredi
   return (
     <main className="flex flex-col gap-4 p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h1>Ingredientes</h1>
+        <div>
+          <h1>Ingredientes</h1>
+          <p className="text-sm text-secondary">Alimentos da TACO, rótulos industrializados e tabelas complementares.</p>
+        </div>
         {editor && (
-          <Link href="/ingredientes/novo" className="btn-primario hover:no-underline">
-            Novo alimento
-          </Link>
+          <Button asChild>
+            <Link href="/ingredientes/novo">
+              <Plus aria-hidden="true" className="size-4" />
+              Novo alimento
+            </Link>
+          </Button>
         )}
       </div>
-      <form className="flex flex-wrap items-center gap-2">
-        <input name="busca" defaultValue={busca} placeholder="Buscar por nome" className="campo min-w-0 flex-1" />
-        {operador && (
-          <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" name="inativos" value="true" defaultChecked={inativos} />
-            Mostrar desabilitados
-          </label>
-        )}
-        <button type="submit" className="btn-primario">
-          Buscar
-        </button>
-      </form>
-      <p className="text-sm text-secondary tabular-nums">{total} encontrados</p>
-      <div className="cartao overflow-x-auto p-0">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-surface-bg text-secondary">
-            <tr className="border-b border-borda">
-              <th className="p-3 font-semibold">Nome</th>
-              <th className="p-3 font-semibold">Grupo</th>
-              <th className="p-3 font-semibold">Origem</th>
-              <th className="p-3 font-semibold">Marcadores</th>
-            </tr>
-          </thead>
-          <tbody>
+
+      <Card className="p-3.5">
+        <FiltroAutomatico className="flex flex-wrap items-center gap-3">
+          <div className="relative min-w-0 flex-1">
+            <Search aria-hidden="true" className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-secondary" />
+            <Input name="busca" defaultValue={busca} placeholder="Buscar por nome" aria-label="Buscar por nome" className="pl-9" />
+          </div>
+          {operador && (
+            <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-borda bg-surface-card px-3 py-1.5 text-sm font-medium text-brand-navy transition-colors select-none hover:border-brand-royal/60">
+              <Checkbox name="inativos" value="true" defaultChecked={inativos} />
+              Mostrar desabilitados
+            </label>
+          )}
+        </FiltroAutomatico>
+      </Card>
+
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-medium text-secondary tabular-nums">{total} encontrados</p>
+      </div>
+
+      <Card className="overflow-hidden p-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Nome</TableHead>
+              <TableHead>Grupo</TableHead>
+              <TableHead>Origem</TableHead>
+              <TableHead>Marcadores</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {itens.map((i) => (
-              <tr key={i.id} className="border-b border-borda last:border-0">
-                <td className="p-3 font-medium">
-                  <Link href={`/ingredientes/${i.id}`}>{i.nome}</Link> {!i.ativo && <SeloDesabilitado />}
-                </td>
-                <td className="p-3 text-secondary">{GRUPO_ALIMENTAR[i.grupo_alimentar]}</td>
-                <td className="p-3 text-secondary">{ORIGEM_INGREDIENTE[i.origem]}</td>
-                <td className="p-3">
+              <TableRow key={i.id}>
+                <TableCell className="font-medium">
+                  <Link href={`/ingredientes/${i.id}`} className="text-brand-navy hover:text-brand-royal">
+                    {i.nome}
+                  </Link>{" "}
+                  {!i.ativo && <SeloDesabilitado />}
+                </TableCell>
+                <TableCell className="text-secondary">{GRUPO_ALIMENTAR[i.grupo_alimentar]}</TableCell>
+                <TableCell>
+                  <Badge variant="secondary">{ORIGEM_INGREDIENTE[i.origem]}</Badge>
+                </TableCell>
+                <TableCell>
                   <span className="flex flex-wrap gap-1">
-                    {i.origem !== "ROTULO" && !i.marcacao_conferida_em && (
-                      <span className="rounded-md border border-borda px-1.5 py-0.5 text-xs font-semibold text-secondary">Pendente</span>
-                    )}
+                    {i.origem !== "ROTULO" && !i.marcacao_conferida_em && <Badge variant="outline">Pendente</Badge>}
                     {i.origem !== "ROTULO" && i.marcacao_conferida_em && i.marcadores.length === 0 && (
-                      <span className="rounded-md border border-borda px-1.5 py-0.5 text-xs font-semibold text-secondary">Sem alergênico</span>
+                      <Badge variant="outline">Sem alergênico</Badge>
                     )}
                     {i.marcadores.map((m) => (
                       <span
                         key={m.categoria_codigo}
-                        className={`rounded-md border px-1.5 py-0.5 text-xs font-semibold ${
+                        className={`rounded-md border px-2 py-0.5 text-xs font-semibold ${
                           m.presenca === "PODE_CONTER"
-                            ? "border-atencao bg-atencao-fundo text-atencao-texto"
-                            : "border-bloqueado bg-bloqueado-fundo text-bloqueado-texto"
+                            ? "border-atencao/60 bg-atencao-fundo text-atencao-texto"
+                            : "border-bloqueado/60 bg-bloqueado-fundo text-bloqueado-texto"
                         }`}
                       >
                         {m.categoria_codigo}
@@ -81,22 +105,29 @@ export default async function Ingredientes({ searchParams }: PageProps<"/ingredi
                       </span>
                     ))}
                   </span>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
-      </div>
+          </TableBody>
+        </Table>
+      </Card>
+
       <nav aria-label="Páginas" className="flex gap-2">
         {pagina > 1 && (
-          <a href={link(pagina - 1)} className="btn-secundario hover:no-underline">
-            ← Anterior
-          </a>
+          <Button asChild variant="outline" size="sm">
+            <a href={link(pagina - 1)}>
+              <ChevronLeft aria-hidden="true" className="size-4" />
+              Anterior
+            </a>
+          </Button>
         )}
         {pagina * TAMANHO < total && (
-          <a href={link(pagina + 1)} className="btn-secundario hover:no-underline">
-            Próxima →
-          </a>
+          <Button asChild variant="outline" size="sm">
+            <a href={link(pagina + 1)}>
+              Próxima
+              <ChevronRight aria-hidden="true" className="size-4" />
+            </a>
+          </Button>
         )}
       </nav>
     </main>

@@ -1,3 +1,4 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
 import { listarCategorias } from "@/repositories/ingredientes";
 import { FormularioIngrediente } from "../secoes";
@@ -11,9 +12,15 @@ export default async function NovoIngrediente() {
   return (
     <main className="flex flex-col gap-4 p-4">
       <h1>Novo alimento</h1>
-      <div className="cartao">
-        <FormularioIngrediente categorias={categorias} />
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Dados nutricionais e restrições</CardTitle>
+          <CardDescription>Cadastre um alimento a partir do rótulo da embalagem ou de outra tabela de composição.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <FormularioIngrediente categorias={categorias} />
+        </CardContent>
+      </Card>
     </main>
   );
 }

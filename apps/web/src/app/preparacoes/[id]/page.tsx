@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Pencil } from "lucide-react";
 import { AcoesRegistro, SeloDesabilitado } from "@/components/acao";
 import { Indicador, PAINEL } from "@/components/indicador";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
 import { buscarPreparacao } from "@/repositories/preparacoes";
 import { ErroNegocio } from "@/services/erros";
@@ -38,71 +41,94 @@ export default async function Preparacao({ params }: PageProps<"/preparacoes/[id
         {!ativo && <SeloDesabilitado />}
         {sessao.papel === "OPERADOR" && (
           <span className="flex flex-wrap items-center gap-2">
-            <Link href={`/preparacoes/${id}/editar`} className="btn-primario py-1 text-sm hover:no-underline">
-              Editar
-            </Link>
+            <Button asChild size="sm">
+              <Link href={`/preparacoes/${id}/editar`}>
+                <Pencil aria-hidden="true" className="size-3.5" />
+                Editar
+              </Link>
+            </Button>
             <AcoesRegistro url={`/api/preparacoes/${id}`} ativo={ativo} nome="esta preparação" voltarPara="/preparacoes" />
           </span>
         )}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <section className="cartao flex flex-col gap-3">
-          <h2>Carga glicêmica ({cg.rotulo})</h2>
-          <dl className={`${PAINEL} grid-cols-3`}>
-            <Indicador rotulo="Carb. disponível" valor={`${num(cg.carboidrato_disponivel_g)} g`} destaque />
-            <Indicador rotulo={`CG (Rytz · ${cg.rotulo})`} valor={cg.rytz ? num(cg.rytz.cg) : "—"} />
-            <Indicador rotulo={`CG (FAO · ${cg.rotulo})`} valor={cg.fao ? num(cg.fao.cg) : "—"} />
-          </dl>
-          <ul className="text-sm text-secondary tabular-nums">
-            <li>Rytz et al.: {cg.rytz ? `IG ${num(cg.rytz.ig)} · CG ${num(cg.rytz.cg)}` : "não calculável"}</li>
-            <li>FAO/OMS: {cg.fao ? `IG ${num(cg.fao.ig)} · CG ${num(cg.fao.cg)}` : `não calculável (${cg.motivo_fao})`}</li>
-          </ul>
-        </section>
+        <Card>
+          <CardHeader>
+            <CardTitle>Carga glicêmica ({cg.rotulo})</CardTitle>
+            <CardDescription>Estimativa da porção pelos modelos de Rytz et al. (2019) e FAO/OMS (1998).</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <dl className={`${PAINEL} grid-cols-3`}>
+              <Indicador rotulo="Carb. disponível" valor={`${num(cg.carboidrato_disponivel_g)} g`} destaque />
+              <Indicador rotulo={`CG (Rytz · ${cg.rotulo})`} valor={cg.rytz ? num(cg.rytz.cg) : "—"} />
+              <Indicador rotulo={`CG (FAO · ${cg.rotulo})`} valor={cg.fao ? num(cg.fao.cg) : "—"} />
+            </dl>
+            <ul className="flex flex-col gap-1 text-sm text-secondary tabular-nums">
+              <li>Rytz et al.: {cg.rytz ? `IG ${num(cg.rytz.ig)} · CG ${num(cg.rytz.cg)}` : "não calculável"}</li>
+              <li>FAO/OMS: {cg.fao ? `IG ${num(cg.fao.ig)} · CG ${num(cg.fao.cg)}` : `não calculável (${cg.motivo_fao})`}</li>
+            </ul>
+          </CardContent>
+        </Card>
 
-        <section className="cartao flex flex-col gap-3">
-          <h2>Composição da porção</h2>
-          <dl className={`${PAINEL} grid-cols-2 sm:grid-cols-3`}>
-            <Indicador rotulo="Energia" valor={`${num(p.energia_kcal)} kcal`} />
-            <Indicador rotulo="Carboidrato" valor={`${num(p.carboidrato_g)} g`} />
-            <Indicador rotulo="Fibra" valor={`${num(p.fibra_g)} g`} />
-            <Indicador rotulo="Proteína" valor={`${num(p.proteina_g)} g`} />
-            <Indicador rotulo="Lipídeos" valor={`${num(p.lipideos_g)} g`} />
-          </dl>
-        </section>
+        <Card>
+          <CardHeader>
+            <CardTitle>Composição da porção</CardTitle>
+            <CardDescription>Macronutrientes calculados para a porção servida ({num(composicao.preparacao.porcao_g)} g).</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <dl className={`${PAINEL} grid-cols-2 sm:grid-cols-3`}>
+              <Indicador rotulo="Energia" valor={`${num(p.energia_kcal)} kcal`} />
+              <Indicador rotulo="Carboidrato" valor={`${num(p.carboidrato_g)} g`} />
+              <Indicador rotulo="Fibra" valor={`${num(p.fibra_g)} g`} />
+              <Indicador rotulo="Proteína" valor={`${num(p.proteina_g)} g`} />
+              <Indicador rotulo="Lipídeos" valor={`${num(p.lipideos_g)} g`} />
+            </dl>
+          </CardContent>
+        </Card>
       </div>
 
-      <section className="cartao flex flex-col gap-2">
-        <h2>Rastreabilidade de alergênicos</h2>
-        {alergenos.length === 0 ? (
-          <p className="text-secondary">Nenhuma categoria marcada.</p>
-        ) : (
-          <ul className="flex flex-col gap-1 text-sm">
-            {alergenos.map((a) => (
-              <li
-                key={a.categoria}
-                className={`rounded-md border px-2 py-1 ${
-                  a.presenca === "CONTEM"
-                    ? "border-bloqueado bg-bloqueado-fundo text-bloqueado-texto"
-                    : "border-atencao bg-atencao-fundo text-atencao-texto"
-                }`}
-              >
-                <strong className="uppercase">{a.presenca === "CONTEM" ? "Contém" : "Pode conter"}:</strong> {a.nome}{" "}
-                <em>({a.origens.join(", ")})</em>
-              </li>
+      <Card>
+        <CardHeader>
+          <CardTitle>Rastreabilidade de alergênicos</CardTitle>
+          <CardDescription>União dos marcadores dos ingredientes e do contato na cozinha.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {alergenos.length === 0 ? (
+            <p className="text-secondary">Nenhuma categoria marcada.</p>
+          ) : (
+            <ul className="flex flex-col gap-1.5 text-sm">
+              {alergenos.map((a) => (
+                <li
+                  key={a.categoria}
+                  className={`rounded-lg border px-3 py-2 ${
+                    a.presenca === "CONTEM"
+                      ? "border-bloqueado/50 bg-bloqueado-fundo text-bloqueado-texto"
+                      : "border-atencao/50 bg-atencao-fundo text-atencao-texto"
+                  }`}
+                >
+                  <strong className="uppercase">{a.presenca === "CONTEM" ? "Contém" : "Pode conter"}:</strong> {a.nome}{" "}
+                  <em>({a.origens.join(", ")})</em>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card id="fontes">
+        <CardHeader>
+          <CardTitle>Fontes e hipóteses</CardTitle>
+          <CardDescription>Premissas e referências aplicadas na composição e na estimativa glicêmica desta ficha.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ul className="list-disc space-y-1 pl-5 text-sm text-secondary">
+            {[...new Set(cg.hipoteses)].map((h) => (
+              <li key={h}>{h}</li>
             ))}
           </ul>
-        )}
-      </section>
-
-      <section id="fontes" className="cartao flex flex-col gap-2">
-        <h2>Fontes e hipóteses</h2>
-        <ul className="list-disc pl-5 text-sm text-secondary">
-          {[...new Set(cg.hipoteses)].map((h) => (
-            <li key={h}>{h}</li>
-          ))}
-        </ul>
-      </section>
+        </CardContent>
+      </Card>
     </main>
   );
 }

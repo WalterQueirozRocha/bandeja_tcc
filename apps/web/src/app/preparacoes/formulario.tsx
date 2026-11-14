@@ -2,8 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Plus, Save, Trash2 } from "lucide-react";
 import { MensagemErro, useAcao } from "@/components/acao";
 import { BuscaIngrediente } from "@/components/busca-ingrediente";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/ui/native-select";
 import { MODO_PREPARO } from "@/lib/rotulos";
 
 type Item = { ingrediente_id: number; nome: string; quantidade_crua_g: number; modo_preparo: string; modos: string[] };
@@ -47,100 +53,136 @@ export function FormularioPreparacao({ inicial, categorias }: { inicial?: Prepar
       itens: itens.map(({ ingrediente_id, quantidade_crua_g, modo_preparo }) => ({ ingrediente_id, quantidade_crua_g, modo_preparo })),
       contato_cozinha: contatos,
     };
-    const r = inicial ? await executar<{ id: number }>(`/api/preparacoes/${inicial.id}`, "PUT", corpo) : await executar<{ id: number }>("/api/preparacoes", "POST", corpo);
+    const r = inicial
+      ? await executar<{ id: number }>(`/api/preparacoes/${inicial.id}`, "PUT", corpo)
+      : await executar<{ id: number }>("/api/preparacoes", "POST", corpo);
     if (r) router.push(`/preparacoes/${r.id}`);
   }
 
   return (
     <form onSubmit={salvar} className="flex flex-col gap-4">
-      <div className="grid gap-2 sm:grid-cols-[1fr_10rem]">
-        <label className="flex flex-col gap-1 text-sm font-medium">
-          Nome
-          <input value={nome} onChange={(e) => setNome(e.target.value)} required maxLength={200} className="campo" />
-        </label>
-        <label className="flex flex-col gap-1 text-sm font-medium">
-          Porção (g)
-          <input type="number" min={1} step="any" value={porcao} onChange={(e) => setPorcao(Number(e.target.value))} required className="campo tabular-nums" />
-        </label>
-      </div>
-
-      <fieldset className="cartao flex flex-col gap-3">
-        <legend className="sr-only">Ingredientes</legend>
-        <h2>Ingredientes (peso cru)</h2>
-        {itens.length === 0 && <p className="text-sm text-secondary">Nenhum ingrediente.</p>}
-        {itens.map((item, i) => (
-          <div key={item.ingrediente_id} className="grid gap-2 border-b border-borda pb-3 sm:grid-cols-[1fr_8rem_9rem_auto] sm:items-end">
-            <span className="font-medium sm:pb-2">{item.nome}</span>
-            <label className="flex flex-col gap-1 text-sm font-medium">
-              Peso cru (g)
-              <input
-                type="number"
-                min={0.1}
-                step="any"
-                value={item.quantidade_crua_g}
-                onChange={(e) => mudar(i, { quantidade_crua_g: Number(e.target.value) })}
-                className="campo tabular-nums"
-              />
-            </label>
-            <label className="flex flex-col gap-1 text-sm font-medium">
-              Modo de preparo
-              <select value={item.modo_preparo} onChange={(e) => mudar(i, { modo_preparo: e.target.value })} className="campo">
-                {item.modos.map((m) => (
-                  <option key={m} value={m}>
-                    {MODO_PREPARO[m]}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <button type="button" onClick={() => setItens(itens.filter((_, j) => j !== i))} className="btn-secundario">
-              Remover
-            </button>
+      <Card>
+        <CardHeader>
+          <CardTitle>Identificação e porção</CardTitle>
+          <CardDescription>Informe o nome da preparação e o peso da porção servida.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-3 sm:grid-cols-[1fr_10rem]">
+            <Label>
+              Nome
+              <Input value={nome} onChange={(e) => setNome(e.target.value)} required maxLength={200} />
+            </Label>
+            <Label>
+              Porção (g)
+              <Input type="number" min={1} step="any" value={porcao} onChange={(e) => setPorcao(Number(e.target.value))} required className="tabular-nums" />
+            </Label>
           </div>
-        ))}
-        <BuscaIngrediente rotulo="Buscar ingrediente para adicionar" onEscolher={escolher} />
-        <p className="text-xs text-secondary">Só aparecem os modos com fator de cocção cadastrado; frito exige também a forma frita na TACO.</p>
-      </fieldset>
+        </CardContent>
+      </Card>
 
-      <fieldset className="cartao flex flex-col gap-3">
-        <legend className="sr-only">Contato na cozinha</legend>
-        <h2>Pode conter (contato na cozinha)</h2>
-        {contatos.map((c) => (
-          <div key={c.categoria_codigo} className="flex flex-wrap items-center gap-2 rounded-md border border-atencao bg-atencao-fundo px-2 py-1 text-sm text-atencao-texto">
-            <strong className="uppercase">Pode conter:</strong> {categorias.find((x) => x.codigo === c.categoria_codigo)?.nome} <em>({c.motivo})</em>
-            <button type="button" onClick={() => setContatos(contatos.filter((x) => x !== c))} className="ml-auto underline">
-              Remover
-            </button>
-          </div>
-        ))}
-        <div className="grid gap-2 sm:grid-cols-[12rem_1fr_auto] sm:items-end">
-          <label className="flex flex-col gap-1 text-sm font-medium">
-            Categoria
-            <select value={novoContato.categoria_codigo} onChange={(e) => setNovoContato({ ...novoContato, categoria_codigo: e.target.value })} className="campo">
-              <option value="">Escolha…</option>
-              {categorias.map((c) => (
-                <option key={c.codigo} value={c.codigo}>
-                  {c.nome}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex flex-col gap-1 text-sm font-medium">
-            Motivo
-            <input value={novoContato.motivo} onChange={(e) => setNovoContato({ ...novoContato, motivo: e.target.value })} maxLength={200} placeholder="Ex.: mesma frigideira do pastel" className="campo" />
-          </label>
-          <button type="button" onClick={adicionarContato} className="btn-secundario">
-            Adicionar
-          </button>
-        </div>
-      </fieldset>
+      <Card asChild>
+        <fieldset>
+          <legend className="sr-only">Ingredientes</legend>
+          <CardHeader>
+            <CardTitle>Ingredientes (peso cru)</CardTitle>
+            <CardDescription>
+              Só aparecem os modos com fator de cocção cadastrado; frito exige também a forma frita na TACO.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {itens.length === 0 && <p className="text-sm text-secondary">Nenhum ingrediente.</p>}
+            {itens.map((item, i) => (
+              <div key={item.ingrediente_id} className="grid gap-2.5 border-b border-borda pb-3 sm:grid-cols-[1fr_8rem_9rem_auto] sm:items-end">
+                <span className="font-semibold text-brand-navy sm:pb-2">{item.nome}</span>
+                <Label>
+                  Peso cru (g)
+                  <Input
+                    type="number"
+                    min={0.1}
+                    step="any"
+                    value={item.quantidade_crua_g}
+                    onChange={(e) => mudar(i, { quantidade_crua_g: Number(e.target.value) })}
+                    className="tabular-nums"
+                  />
+                </Label>
+                <Label>
+                  Modo de preparo
+                  <NativeSelect value={item.modo_preparo} onChange={(e) => mudar(i, { modo_preparo: e.target.value })}>
+                    {item.modos.map((m) => (
+                      <option key={m} value={m}>
+                        {MODO_PREPARO[m]}
+                      </option>
+                    ))}
+                  </NativeSelect>
+                </Label>
+                <Button type="button" variant="outline" onClick={() => setItens(itens.filter((_, j) => j !== i))}>
+                  <Trash2 aria-hidden="true" className="size-3.5" />
+                  Remover
+                </Button>
+              </div>
+            ))}
+            <BuscaIngrediente rotulo="Buscar ingrediente para adicionar" onEscolher={escolher} />
+          </CardContent>
+        </fieldset>
+      </Card>
+
+      <Card asChild>
+        <fieldset>
+          <legend className="sr-only">Contato na cozinha</legend>
+          <CardHeader>
+            <CardTitle>Pode conter (contato na cozinha)</CardTitle>
+            <CardDescription>Marque categorias com risco de contato cruzado em utensílios, bancadas ou equipamentos compartilhados.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {contatos.map((c) => (
+              <div
+                key={c.categoria_codigo}
+                className="flex flex-wrap items-center gap-2 rounded-lg border border-atencao/60 bg-atencao-fundo px-3 py-2 text-sm text-atencao-texto"
+              >
+                <strong className="uppercase">Pode conter:</strong> {categorias.find((x) => x.codigo === c.categoria_codigo)?.nome} <em>({c.motivo})</em>
+                <Button type="button" variant="link" size="sm" onClick={() => setContatos(contatos.filter((x) => x !== c))} className="ml-auto h-auto p-0 text-atencao-texto">
+                  Remover
+                </Button>
+              </div>
+            ))}
+            <div className="grid gap-2.5 sm:grid-cols-[13rem_1fr_auto] sm:items-end">
+              <Label>
+                Categoria
+                <NativeSelect value={novoContato.categoria_codigo} onChange={(e) => setNovoContato({ ...novoContato, categoria_codigo: e.target.value })}>
+                  <option value="">Escolha…</option>
+                  {categorias.map((c) => (
+                    <option key={c.codigo} value={c.codigo}>
+                      {c.nome}
+                    </option>
+                  ))}
+                </NativeSelect>
+              </Label>
+              <Label>
+                Motivo
+                <Input
+                  value={novoContato.motivo}
+                  onChange={(e) => setNovoContato({ ...novoContato, motivo: e.target.value })}
+                  maxLength={200}
+                  placeholder="Ex.: mesma frigideira do pastel"
+                />
+              </Label>
+              <Button type="button" variant="outline" onClick={adicionarContato}>
+                <Plus aria-hidden="true" className="size-4" />
+                Adicionar
+              </Button>
+            </div>
+          </CardContent>
+        </fieldset>
+      </Card>
 
       <div className="flex flex-wrap gap-2">
-        <button type="submit" disabled={ocupado} className="btn-primario">
+        <Button type="submit" disabled={ocupado}>
+          <Save aria-hidden="true" className="size-4" />
           {inicial ? "Salvar ficha" : "Criar preparação"}
-        </button>
-        <button type="button" onClick={() => router.back()} className="btn-secundario">
+        </Button>
+        <Button type="button" variant="outline" onClick={() => router.back()}>
           Cancelar
-        </button>
+        </Button>
       </div>
       <MensagemErro erro={erro} />
     </form>
