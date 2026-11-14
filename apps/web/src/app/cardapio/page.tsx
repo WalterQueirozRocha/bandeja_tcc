@@ -1,6 +1,12 @@
 import Link from "next/link";
+import { ExternalLink, Sparkles } from "lucide-react";
 import { Alerta, ROTULO, Selo } from "@/components/alerta";
+import { FiltroAutomatico } from "@/components/filtro-automatico";
 import { Indicador, PAINEL } from "@/components/indicador";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { DatePicker } from "@/components/ui/date-picker";
+import { NativeSelect } from "@/components/ui/native-select";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
 import { hojeNaBahia } from "@/lib/datas";
 import { alunosDoResponsavel } from "@/repositories/alunos";
@@ -32,29 +38,31 @@ export default async function Cardapio({ searchParams }: PageProps<"/cardapio">)
 
   return (
     <main className="flex flex-col gap-4 p-4">
-      <h1>Cardápio</h1>
-      <form className="flex flex-wrap gap-2">
-        <input type="date" name="data" defaultValue={data} aria-label="Data" className="campo" />
-        <select name="periodo" defaultValue={periodo} aria-label="Turno" className="campo">
-          <option value="MANHA">Manhã</option>
-          <option value="TARDE">Tarde</option>
-        </select>
-        {alunos.length > 0 && (
-          <select name="aluno_id" defaultValue={alunoParam ?? alunos[0]!.id} aria-label="Aluno" className="campo">
-            {alunos.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.nome}
-              </option>
-            ))}
-          </select>
-        )}
-        <button type="submit" className="btn-primario">
-          Ver
-        </button>
-      </form>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1>Cardápio</h1>
+          <p className="text-sm text-secondary">Consulte os itens do turno, estimativas de carga glicêmica e compatibilidade alimentar.</p>
+        </div>
+        <FiltroAutomatico className="flex flex-wrap items-center gap-2">
+          <DatePicker name="data" defaultValue={data} aria-label="Data" required className="w-40" />
+          <NativeSelect name="periodo" defaultValue={periodo} aria-label="Turno" className="w-32">
+            <option value="MANHA">Manhã</option>
+            <option value="TARDE">Tarde</option>
+          </NativeSelect>
+          {alunos.length > 0 && (
+            <NativeSelect name="aluno_id" defaultValue={alunoParam ?? alunos[0]!.id} aria-label="Aluno" className="w-44">
+              {alunos.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.nome}
+                </option>
+              ))}
+            </NativeSelect>
+          )}
+        </FiltroAutomatico>
+      </div>
 
       {!conteudo ? (
-        <p className="text-secondary">Nenhum cardápio publicado para esta data e turno.</p>
+        <Card className="py-8 text-center text-secondary">Nenhum cardápio publicado para esta data e turno.</Card>
       ) : (
         <ul className="grid gap-4 md:grid-cols-2">
           {conteudo.itens.map((item) => {
@@ -65,55 +73,72 @@ export default async function Cardapio({ searchParams }: PageProps<"/cardapio">)
             const contem = comOrigem("CONTEM");
             const podeConter = comOrigem("PODE_CONTER");
             return (
-              <li key={item.id} className="cartao flex flex-col gap-3" data-testid="item-cardapio">
-                <div>
-                  <h2 className="text-base">
-                    <Link href={`/preparacoes/${item.preparacao_id}`} className="text-brand-navy">
-                      {item.nome}
+              <li key={item.id} className="flex" data-testid="item-cardapio">
+                <Card className="w-full justify-between">
+                  <CardHeader className="flex-row items-start justify-between gap-3">
+                    <div>
+                      <CardTitle className="text-base">
+                        <Link href={`/preparacoes/${item.preparacao_id}`} className="text-brand-navy hover:text-brand-royal">
+                          {item.nome}
+                        </Link>
+                      </CardTitle>
+                    </div>
+                    <Badge variant="secondary" className="text-sm tabular-nums">
+                      R$ {item.preco.toFixed(2).replace(".", ",")}
+                    </Badge>
+                  </CardHeader>
+
+                  <CardContent>
+                    {item.compatibilidade && (
+                      <div data-testid="compatibilidade" className="flex flex-col items-start gap-2">
+                        <Selo estado={item.compatibilidade.resultado}>{ROTULO[item.compatibilidade.resultado]}</Selo>
+                        {item.compatibilidade.alertas.map((a) => (
+                          <Alerta key={a.texto} estado={a.resultado} className="w-full text-sm font-semibold">
+                            {a.texto}
+                          </Alerta>
+                        ))}
+                      </div>
+                    )}
+
+                    <dl className={`${PAINEL} grid-cols-3`}>
+                      <Indicador rotulo="Carb. disponível" valor={`${num(cg.carboidrato_disponivel_g)} g`} destaque />
+                      <Indicador rotulo={`CG (Rytz · ${cg.rotulo})`} valor={cg.rytz ? num(cg.rytz.cg) : "—"} />
+                      <Indicador rotulo={`CG (FAO · ${cg.rotulo})`} valor={cg.fao ? num(cg.fao.cg) : "—"} />
+                    </dl>
+
+                    <div className="flex flex-col gap-1.5 text-sm">
+                      {contem.length === 0 && podeConter.length === 0 && <p className="text-secondary">Nenhum alergênico marcado.</p>}
+                      {contem.length > 0 && (
+                        <p className="rounded-lg border border-bloqueado/50 bg-bloqueado-fundo px-2.5 py-1.5 text-bloqueado-texto">
+                          <strong className="uppercase">Contém:</strong> {contem.join(", ")}
+                        </p>
+                      )}
+                      {podeConter.length > 0 && (
+                        <p className="rounded-lg border border-atencao/50 bg-atencao-fundo px-2.5 py-1.5 text-atencao-texto">
+                          <strong className="uppercase">Pode conter:</strong> {podeConter.join(", ")}
+                        </p>
+                      )}
+                    </div>
+
+                    {"alternativas" in item && item.alternativas.length > 0 && (
+                      <p
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-compativel/40 bg-compativel-fundo px-2.5 py-1.5 text-sm font-medium text-compativel-texto"
+                        data-testid="alternativas"
+                      >
+                        <Sparkles aria-hidden="true" className="size-4 shrink-0 text-compativel" />
+                        Alternativas compatíveis: {item.alternativas.map((a) => a.nome).join(", ")}
+                      </p>
+                    )}
+                  </CardContent>
+
+                  <CardFooter className="justify-between text-xs text-secondary">
+                    <span>Porção: {num(item.porcao_g)} g</span>
+                    <Link href={`/preparacoes/${item.preparacao_id}#fontes`} className="inline-flex items-center gap-1 text-sm font-medium">
+                      Fontes e hipóteses
+                      <ExternalLink aria-hidden="true" className="size-3.5" />
                     </Link>
-                  </h2>
-                  <p className="text-sm text-secondary tabular-nums">R$ {item.preco.toFixed(2).replace(".", ",")}</p>
-                </div>
-
-                {item.compatibilidade && (
-                  <div data-testid="compatibilidade" className="flex flex-col items-start gap-2">
-                    <Selo estado={item.compatibilidade.resultado}>{ROTULO[item.compatibilidade.resultado]}</Selo>
-                    {item.compatibilidade.alertas.map((a) => (
-                      <Alerta key={a.texto} estado={a.resultado} className="w-full text-sm font-semibold">
-                        {a.texto}
-                      </Alerta>
-                    ))}
-                  </div>
-                )}
-
-                <dl className={`${PAINEL} grid-cols-3`}>
-                  <Indicador rotulo="Carb. disponível" valor={`${num(cg.carboidrato_disponivel_g)} g`} destaque />
-                  <Indicador rotulo={`CG (Rytz · ${cg.rotulo})`} valor={cg.rytz ? num(cg.rytz.cg) : "—"} />
-                  <Indicador rotulo={`CG (FAO · ${cg.rotulo})`} valor={cg.fao ? num(cg.fao.cg) : "—"} />
-                </dl>
-                <Link href={`/preparacoes/${item.preparacao_id}#fontes`} className="text-sm">
-                  Fontes e hipóteses
-                </Link>
-
-                <div className="flex flex-col gap-1 text-sm">
-                  {contem.length === 0 && podeConter.length === 0 && <p className="text-secondary">Nenhum alergênico marcado.</p>}
-                  {contem.length > 0 && (
-                    <p className="rounded-md border border-bloqueado bg-bloqueado-fundo px-2 py-1 text-bloqueado-texto">
-                      <strong className="uppercase">Contém:</strong> {contem.join(", ")}
-                    </p>
-                  )}
-                  {podeConter.length > 0 && (
-                    <p className="rounded-md border border-atencao bg-atencao-fundo px-2 py-1 text-atencao-texto">
-                      <strong className="uppercase">Pode conter:</strong> {podeConter.join(", ")}
-                    </p>
-                  )}
-                </div>
-
-                {"alternativas" in item && item.alternativas.length > 0 && (
-                  <p className="text-sm font-medium text-compativel-texto" data-testid="alternativas">
-                    Alternativas compatíveis: {item.alternativas.map((a) => a.nome).join(", ")}
-                  </p>
-                )}
+                  </CardFooter>
+                </Card>
               </li>
             );
           })}

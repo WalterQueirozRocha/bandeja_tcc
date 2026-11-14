@@ -1,4 +1,7 @@
+import { ShieldBan } from "lucide-react";
 import { Selo } from "@/components/alerta";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
 import { alunosDoResponsavel } from "@/repositories/alunos";
 import { listarPreparacoes } from "@/repositories/preparacoes";
@@ -16,27 +19,47 @@ export default async function Bloqueios() {
     : [[], []];
 
   return (
-    <main className="flex flex-col gap-4 p-4">
-      <h1>Bloqueios</h1>
+    <main className="flex flex-col gap-6 py-6">
+      <header className="flex flex-col gap-1">
+        <div className="flex items-center gap-2 text-brand-royal">
+          <ShieldBan className="size-5" aria-hidden="true" />
+          <span className="text-xs font-semibold uppercase tracking-wider">Restrição de Venda</span>
+        </div>
+        <h1>Bloqueios</h1>
+        <p className="text-sm text-secondary">
+          {responsavel
+            ? "Solicite o bloqueio de preparações específicas para os alunos sob sua responsabilidade."
+            : "Gerencie as solicitações de bloqueio enviadas pelos responsáveis."}
+        </p>
+      </header>
+
       {responsavel && <NovoBloqueio alunos={alunos} preparacoes={preparacoes.map((p) => ({ id: p.id, nome: p.nome }))} />}
-      {bloqueios.length === 0 && <p className="text-secondary">Nenhum bloqueio.</p>}
-      <ul className="flex flex-col gap-2">
-        {bloqueios.map((b) => (
-          <li key={b.id} className="cartao flex flex-wrap items-center gap-3 py-3">
-            <span className="flex-1">
-              <span className="font-semibold">{b.preparacao.nome}</span>
-              <span className="block text-sm text-secondary">{b.aluno.nome}</span>
-            </span>
-            {/* Executado = venda bloqueada (RF14); as outras situações não têm cor semântica. */}
-            {b.situacao === "EXECUTADA" ? (
-              <Selo estado="BLOQUEADO">{b.situacao}</Selo>
-            ) : (
-              <span className="rounded-full border border-borda px-2.5 py-0.5 text-xs font-bold text-secondary">{b.situacao}</span>
-            )}
-            <AcaoBloqueio id={b.id} papel={sessao.papel} situacao={b.situacao} />
-          </li>
-        ))}
-      </ul>
+
+      {bloqueios.length === 0 && (
+        <Card className="items-center justify-center py-10 text-center">
+          <p className="text-secondary">Nenhum bloqueio.</p>
+        </Card>
+      )}
+
+      {bloqueios.length > 0 && (
+        <ul className="flex flex-col gap-2.5">
+          {bloqueios.map((b) => (
+            <li key={b.id} className="flex flex-wrap items-center gap-3 rounded-xl border border-borda bg-surface-card p-4 shadow-xs">
+              <span className="flex-1">
+                <span className="font-semibold text-brand-navy">{b.preparacao.nome}</span>
+                <span className="block text-sm text-secondary">{b.aluno.nome}</span>
+              </span>
+              {/* Executado = venda bloqueada (RF14); as outras situações não têm cor semântica. */}
+              {b.situacao === "EXECUTADA" ? (
+                <Selo estado="BLOQUEADO">{b.situacao}</Selo>
+              ) : (
+                <Badge variant="secondary">{b.situacao}</Badge>
+              )}
+              <AcaoBloqueio id={b.id} papel={sessao.papel} situacao={b.situacao} />
+            </li>
+          ))}
+        </ul>
+      )}
     </main>
   );
 }

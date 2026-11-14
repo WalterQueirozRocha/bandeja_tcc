@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { Check, Search, ShoppingBag, UserCheck, X } from "lucide-react";
 import { Alerta } from "@/components/alerta";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox, Radio } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 
 type Item = { id: number; nome: string; preco: number };
 type Aluno = { id: number; nome: string; serie: string };
@@ -23,7 +29,8 @@ const ESTADO = { CONCLUIDA: "COMPATIVEL", BLOQUEADA: "BLOQUEADO", CONFIRMACAO_NE
 
 const reais = (n: number) => `R$ ${n.toFixed(2).replace(".", ",")}`;
 
-const opcao = "flex cursor-pointer items-center gap-3 rounded-lg border border-borda bg-surface-card p-3 has-checked:border-brand-royal has-checked:ring-1 has-checked:ring-brand-royal";
+const opcao =
+  "flex cursor-pointer items-center gap-3 rounded-lg border border-borda bg-surface-card p-3 transition-colors hover:border-brand-royal/60 has-checked:border-brand-royal has-checked:bg-brand-royal/5 has-checked:ring-1 has-checked:ring-brand-royal";
 
 export function Balcao({ itens }: { itens: Item[] }) {
   const [busca, setBusca] = useState("");
@@ -67,73 +74,105 @@ export function Balcao({ itens }: { itens: Item[] }) {
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      <section className="cartao flex flex-col gap-3">
-        <h2>Aluno</h2>
-        <div className="flex gap-2">
-          <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Nome do aluno" className="campo min-w-0 flex-1" />
-          <button type="button" onClick={buscarAlunos} className="btn-secundario">
-            Buscar aluno
-          </button>
-        </div>
-        {alunos.map((a) => (
-          <label key={a.id} className={opcao}>
-            <input
-              type="radio"
-              name="aluno"
-              checked={aluno?.id === a.id}
-              onChange={() => {
-                setAluno(a);
-                setResposta(null);
-              }}
-            />
-            <span>
-              {a.nome} <span className="text-secondary">({a.serie})</span>
-            </span>
-          </label>
-        ))}
-      </section>
-
-      <section className="cartao flex flex-col gap-3">
-        <fieldset className="flex flex-col gap-2">
-          <legend className="mb-2 font-heading text-lg font-bold">Itens</legend>
-          {itens.map((i) => (
-            <label key={i.id} className={opcao}>
-              <input
-                type="checkbox"
-                checked={i.id in marcados}
-                onChange={(e) => marcar(i.id, e.target.checked ? 1 : null)}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between gap-2">
+            <CardTitle className="flex items-center gap-2">
+              <UserCheck aria-hidden="true" className="size-5 text-brand-royal" />
+              Aluno
+            </CardTitle>
+            {aluno && <Badge variant="default">{aluno.nome}</Badge>}
+          </div>
+          <CardDescription>Busque pelo nome para selecionar o aluno atendido no balcão.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search aria-hidden="true" className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-secondary" />
+              <Input
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    buscarAlunos();
+                  }
+                }}
+                placeholder="Nome do aluno"
+                className="pl-9"
               />
-              <span className="flex-1">{i.nome}</span>
-              {i.id in marcados && (
-                <input
-                  type="number"
-                  min={1}
-                  max={20}
-                  value={marcados[i.id]}
-                  onChange={(e) => marcar(i.id, Math.min(20, Math.max(1, Math.trunc(Number(e.target.value)) || 1)))}
-                  aria-label={`Quantidade de ${i.nome}`}
-                  className="campo w-16 text-center"
+            </div>
+            <Button type="button" variant="outline" onClick={buscarAlunos}>
+              Buscar aluno
+            </Button>
+          </div>
+          <div className="flex flex-col gap-2">
+            {alunos.map((a) => (
+              <label key={a.id} className={opcao}>
+                <Radio
+                  name="aluno"
+                  checked={aluno?.id === a.id}
+                  onChange={() => {
+                    setAluno(a);
+                    setResposta(null);
+                  }}
                 />
-              )}
-              <span className="text-secondary tabular-nums">{reais(i.preco)}</span>
-            </label>
-          ))}
-        </fieldset>
-        <p className="flex justify-between font-semibold" data-testid="total-venda">
-          <span>Total</span>
-          <span className="tabular-nums">{reais(total)}</span>
-        </p>
-        <button type="button" disabled={!aluno || Object.keys(marcados).length === 0} onClick={() => vender()} className="btn-primario">
-          Registrar venda
-        </button>
-      </section>
+                <span className="flex flex-1 items-center justify-between gap-2 font-medium">
+                  <span>{a.nome}</span>
+                  <span className="rounded-md bg-surface-muted px-2 py-0.5 text-xs font-normal text-secondary">({a.serie})</span>
+                </span>
+              </label>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="justify-between">
+        <CardContent>
+          <fieldset className="flex flex-col gap-2">
+            <legend className="mb-2 flex items-center gap-2 font-heading text-lg font-bold">
+              <ShoppingBag aria-hidden="true" className="size-5 text-brand-royal" />
+              Itens
+            </legend>
+            {itens.map((i) => (
+              <label key={i.id} className={opcao}>
+                <Checkbox checked={i.id in marcados} onChange={(e) => marcar(i.id, e.target.checked ? 1 : null)} />
+                <span className="flex-1 font-medium">{i.nome}</span>
+                {i.id in marcados && (
+                  <Input
+                    type="number"
+                    min={1}
+                    max={20}
+                    value={marcados[i.id]}
+                    onChange={(e) => marcar(i.id, Math.min(20, Math.max(1, Math.trunc(Number(e.target.value)) || 1)))}
+                    aria-label={`Quantidade de ${i.nome}`}
+                    className="h-8 w-16 px-2 text-center tabular-nums"
+                  />
+                )}
+                <Badge variant="secondary" className="tabular-nums">
+                  {reais(i.preco)}
+                </Badge>
+              </label>
+            ))}
+          </fieldset>
+        </CardContent>
+        <CardFooter className="flex-col items-stretch gap-3 bg-surface-muted/40 -mx-5 -mb-5 rounded-b-xl p-5">
+          <p className="flex items-center justify-between text-base font-bold" data-testid="total-venda">
+            <span>Total</span>
+            <span className="text-lg text-brand-teal tabular-nums">{reais(total)}</span>
+          </p>
+          <Button type="button" size="lg" disabled={!aluno || Object.keys(marcados).length === 0} onClick={() => vender()} className="w-full">
+            Registrar venda
+          </Button>
+        </CardFooter>
+      </Card>
 
       {resposta && (
         <div role="alert" data-testid="resultado-venda" className="md:col-span-2">
           {resposta.erro ? (
             <Alerta estado="BLOQUEADO">{resposta.erro}</Alerta>
           ) : !estado ? (
-            <p className="cartao font-semibold">{TITULO[resposta.resultado]}</p>
+            <Card className="font-semibold">{TITULO[resposta.resultado]}</Card>
           ) : (
             <Alerta
               estado={estado}
@@ -147,12 +186,14 @@ export function Balcao({ itens }: { itens: Item[] }) {
               {alternativas.length > 0 && <p>Sugestões compatíveis: {alternativas.join(", ")}</p>}
               {resposta.resultado === "CONFIRMACAO_NECESSARIA" && (
                 <div className="mt-2 flex flex-wrap gap-2">
-                  <button type="button" onClick={() => vender("CONCLUIR")} className="btn-primario">
+                  <Button type="button" onClick={() => vender("CONCLUIR")}>
+                    <Check aria-hidden="true" className="size-4" />
                     Concluir venda
-                  </button>
-                  <button type="button" onClick={() => vender("ENCERRAR")} className="btn-secundario">
+                  </Button>
+                  <Button type="button" variant="outline" onClick={() => vender("ENCERRAR")}>
+                    <X aria-hidden="true" className="size-4" />
                     Encerrar venda
-                  </button>
+                  </Button>
                 </div>
               )}
             </Alerta>
