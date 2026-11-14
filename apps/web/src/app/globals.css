@@ -15,6 +15,8 @@
   --brand-teal: light-dark(#0d9488, #2dd4bf);
   --surface-bg: light-dark(#f8fafc, #0f172a);
   --surface-card: light-dark(#ffffff, #1e293b);
+  --surface-muted: light-dark(#f1f5f9, #0f172a);
+  --surface-hover: light-dark(#f1f5f9, #334155);
   --text-secondary: light-dark(#475569, #94a3b8);
   --borda: light-dark(#e2e8f0, #334155);
   --logo-sub: light-dark(#2563eb, #38bdf8);
@@ -54,6 +56,8 @@
   --color-brand-teal: var(--brand-teal);
   --color-surface-bg: var(--surface-bg);
   --color-surface-card: var(--surface-card);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-hover: var(--surface-hover);
   --color-secondary: var(--text-secondary);
   --color-borda: var(--borda);
   --color-logo-sub: var(--logo-sub);
@@ -88,11 +92,11 @@
   }
 
   h2 {
-    @apply text-lg;
+    @apply text-lg tracking-tight;
   }
 
   a {
-    @apply text-brand-royal underline-offset-2 hover:underline;
+    @apply text-brand-royal underline-offset-4 transition-colors hover:underline;
   }
 
   :focus-visible {
@@ -102,19 +106,19 @@
 
 @layer components {
   .cartao {
-    @apply rounded-xl border border-borda bg-surface-card p-4 shadow-sm;
+    @apply rounded-xl border border-borda bg-surface-card p-5 shadow-xs transition-shadow;
   }
 
   .campo {
-    @apply rounded-lg border border-borda bg-surface-card px-3 py-2 text-brand-navy placeholder:text-secondary focus:border-brand-royal focus:outline-none;
+    @apply h-9 rounded-lg border border-borda bg-surface-card px-3 py-1.5 text-sm text-brand-navy shadow-2xs transition-colors placeholder:text-secondary focus:border-brand-royal focus:ring-2 focus:ring-brand-royal/20 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-primario {
-    @apply rounded-lg bg-brand-primary px-4 py-2 font-semibold text-white hover:bg-brand-primary-hover disabled:cursor-not-allowed disabled:opacity-40;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-sm font-semibold text-white shadow-2xs transition-colors hover:bg-brand-primary-hover disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   .btn-secundario {
-    @apply rounded-lg border border-borda bg-surface-card px-4 py-2 font-medium text-brand-navy hover:border-brand-royal disabled:opacity-40;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-borda bg-surface-card px-4 py-2 text-sm font-medium text-brand-navy shadow-2xs transition-colors hover:border-brand-royal hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   .logo-icone {
