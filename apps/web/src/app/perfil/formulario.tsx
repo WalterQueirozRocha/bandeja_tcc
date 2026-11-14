@@ -1,8 +1,26 @@
 "use client";
 
 import { useState } from "react";
+import { Plus, Save, ShieldOff, Trash2 } from "lucide-react";
 import { MensagemErro, useAcao } from "@/components/acao";
 import { Selo } from "@/components/alerta";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/ui/native-select";
 import { EXCLUSAO_ESTRITA, TIPO_CATEGORIA, TIPO_RESTRICAO, opcoes } from "@/lib/rotulos";
 
 type Restricao = { categoria_codigo: string; tipo: string; limite_notificacao: number | null };
@@ -14,7 +32,17 @@ const TEXTO_CONSENTIMENTO =
 
 const LIMITE_PADRAO = 2;
 
-export function FormularioPerfil({ alunoId, consentido, categorias, inicial }: { alunoId: number; consentido: boolean; categorias: Categoria[]; inicial: Restricao[] }) {
+export function FormularioPerfil({
+  alunoId,
+  consentido,
+  categorias,
+  inicial,
+}: {
+  alunoId: number;
+  consentido: boolean;
+  categorias: Categoria[];
+  inicial: Restricao[];
+}) {
   const { erro, setErro, ocupado, executar } = useAcao();
   const [lista, setLista] = useState(inicial);
   const [nova, setNova] = useState<Restricao>({ categoria_codigo: "", tipo: "ALERGIA", limite_notificacao: null });
@@ -25,7 +53,12 @@ export function FormularioPerfil({ alunoId, consentido, categorias, inicial }: {
 
   function mudarTipo(tipo: string) {
     // Doença celíaca só existe na categoria Glúten.
-    setNova({ ...nova, tipo, categoria_codigo: tipo === "DOENCA_CELIACA" ? "GLUTEN" : nova.categoria_codigo, limite_notificacao: estrita(tipo) ? null : LIMITE_PADRAO });
+    setNova({
+      ...nova,
+      tipo,
+      categoria_codigo: tipo === "DOENCA_CELIACA" ? "GLUTEN" : nova.categoria_codigo,
+      limite_notificacao: estrita(tipo) ? null : LIMITE_PADRAO,
+    });
   }
 
   function adicionar() {
@@ -47,7 +80,6 @@ export function FormularioPerfil({ alunoId, consentido, categorias, inicial }: {
   }
 
   async function revogar() {
-    if (!confirm("Revogar o consentimento? O perfil de saúde deste aluno será apagado.")) return;
     if (await executar(`/api/alunos/${alunoId}/perfil`, "DELETE")) {
       setLista([]);
       setAviso("Consentimento revogado e perfil apagado.");
@@ -58,10 +90,10 @@ export function FormularioPerfil({ alunoId, consentido, categorias, inicial }: {
 
   return (
     <div className="flex flex-col gap-4">
-      <ul className="flex flex-col gap-2">
-        {lista.length === 0 && <li className="text-secondary">Nenhuma restrição declarada.</li>}
+      <ul className="flex flex-col gap-2.5">
+        {lista.length === 0 && <li className="rounded-xl border border-borda bg-surface-card py-6 text-center text-secondary">Nenhuma restrição declarada.</li>}
         {lista.map((r) => (
-          <li key={r.categoria_codigo} className="cartao flex flex-wrap items-center gap-3 py-3">
+          <li key={r.categoria_codigo} className="cartao flex flex-wrap items-center gap-3 py-3.5">
             <span className="flex-1">
               <span className="font-semibold">{nomeDa(r.categoria_codigo)}</span>
               <span className="block text-sm text-secondary">{TIPO_RESTRICAO[r.tipo]}</span>
@@ -69,87 +101,114 @@ export function FormularioPerfil({ alunoId, consentido, categorias, inicial }: {
             {estrita(r.tipo) ? (
               <Selo estado="BLOQUEADO">Bloqueia a venda</Selo>
             ) : (
-              <label className="flex items-center gap-2 text-sm">
+              <label className="flex items-center gap-2 text-sm font-medium">
                 Limite por semana
-                <input
+                <Input
                   type="number"
                   min={0}
                   max={50}
                   value={r.limite_notificacao ?? LIMITE_PADRAO}
                   onChange={(e) => setLista(lista.map((x) => (x === r ? { ...x, limite_notificacao: Number(e.target.value) } : x)))}
-                  className="campo w-20 py-1"
+                  className="h-8 w-20 text-center tabular-nums"
                 />
               </label>
             )}
-            <button type="button" onClick={() => setLista(lista.filter((x) => x !== r))} className="btn-secundario py-1 text-sm">
+            <Button type="button" variant="outline" size="sm" onClick={() => setLista(lista.filter((x) => x !== r))}>
+              <Trash2 aria-hidden="true" className="size-3.5" />
               Remover
-            </button>
+            </Button>
           </li>
         ))}
       </ul>
 
-      <fieldset className="cartao flex flex-col gap-3">
-        <legend className="sr-only">Adicionar restrição</legend>
-        <h2>Adicionar restrição</h2>
-        <div className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
-          <label className="flex flex-col gap-1 text-sm font-medium">
-            Tipo
-            <select value={nova.tipo} onChange={(e) => mudarTipo(e.target.value)} className="campo">
-              {opcoes(TIPO_RESTRICAO).map((o) => (
-                <option key={o.valor} value={o.valor}>
-                  {o.rotulo}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex flex-col gap-1 text-sm font-medium">
-            Categoria
-            <select
-              value={nova.categoria_codigo}
-              disabled={nova.tipo === "DOENCA_CELIACA"}
-              onChange={(e) => setNova({ ...nova, categoria_codigo: e.target.value })}
-              className="campo"
-            >
-              <option value="">Escolha…</option>
-              {porTipo.map((g) => (
-                <optgroup key={g.tipo} label={TIPO_CATEGORIA[g.tipo]}>
-                  {g.itens.map((c) => (
-                    <option key={c.codigo} value={c.codigo}>
-                      {c.nome}
+      <Card asChild>
+        <fieldset>
+          <legend className="sr-only">Adicionar restrição</legend>
+          <CardHeader>
+            <CardTitle>Adicionar restrição</CardTitle>
+            <CardDescription>
+              Alergia e doença celíaca <strong>bloqueiam</strong> a venda (inclusive em &quot;pode conter&quot;). Intolerância, restrição religiosa e preferência
+              geram um <strong>alerta</strong> no balcão e contam no limite da semana.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+              <Label>
+                Tipo
+                <NativeSelect value={nova.tipo} onChange={(e) => mudarTipo(e.target.value)}>
+                  {opcoes(TIPO_RESTRICAO).map((o) => (
+                    <option key={o.valor} value={o.valor}>
+                      {o.rotulo}
                     </option>
                   ))}
-                </optgroup>
-              ))}
-            </select>
-          </label>
-          <button type="button" onClick={adicionar} className="btn-secundario self-end">
-            Adicionar
-          </button>
-        </div>
-        <p className="text-sm text-secondary">
-          Alergia e doença celíaca <strong>bloqueiam</strong> a venda (inclusive em &quot;pode conter&quot;). Intolerância, restrição religiosa e preferência
-          geram um <strong>alerta</strong> no balcão e contam no limite da semana.
-        </p>
-      </fieldset>
+                </NativeSelect>
+              </Label>
+              <Label>
+                Categoria
+                <NativeSelect
+                  value={nova.categoria_codigo}
+                  disabled={nova.tipo === "DOENCA_CELIACA"}
+                  onChange={(e) => setNova({ ...nova, categoria_codigo: e.target.value })}
+                >
+                  <option value="">Escolha…</option>
+                  {porTipo.map((g) => (
+                    <optgroup key={g.tipo} label={TIPO_CATEGORIA[g.tipo]}>
+                      {g.itens.map((c) => (
+                        <option key={c.codigo} value={c.codigo}>
+                          {c.nome}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </NativeSelect>
+              </Label>
+              <Button type="button" variant="outline" onClick={adicionar}>
+                <Plus aria-hidden="true" className="size-4" />
+                Adicionar
+              </Button>
+            </div>
+          </CardContent>
+        </fieldset>
+      </Card>
 
       {!consentido && (
-        <label className="flex gap-3 rounded-lg border border-borda bg-surface-card p-3 text-sm">
-          <input type="checkbox" checked={aceite} onChange={(e) => setAceite(e.target.checked)} className="mt-1" />
+        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-borda bg-surface-card p-4 text-sm leading-relaxed shadow-2xs transition-colors has-checked:border-brand-royal has-checked:bg-brand-royal/5">
+          <Checkbox checked={aceite} onChange={(e) => setAceite(e.target.checked)} className="mt-1" />
           <span>{TEXTO_CONSENTIMENTO}</span>
         </label>
       )}
 
       <div className="flex flex-wrap items-center gap-2">
-        <button type="button" onClick={salvar} disabled={ocupado || (!consentido && !aceite)} className="btn-primario">
+        <Button type="button" onClick={salvar} disabled={ocupado || (!consentido && !aceite)}>
+          <Save aria-hidden="true" className="size-4" />
           Salvar perfil
-        </button>
+        </Button>
         {consentido && (
-          <button type="button" onClick={revogar} disabled={ocupado} className="btn-secundario">
-            Revogar consentimento
-          </button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button type="button" variant="outline" disabled={ocupado}>
+                <ShieldOff aria-hidden="true" className="size-4" />
+                Revogar consentimento
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Revogar o consentimento?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  O perfil de saúde deste aluno será apagado imediatamente e os itens do cardápio deixarão de exibir alertas personalizados.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={revogar} className="bg-bloqueado text-white hover:opacity-90">
+                  Confirmar revogação
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         )}
         {aviso && (
-          <span role="status" className="text-sm font-medium">
+          <span role="status" className="text-sm font-medium text-brand-navy">
             {aviso}
           </span>
         )}

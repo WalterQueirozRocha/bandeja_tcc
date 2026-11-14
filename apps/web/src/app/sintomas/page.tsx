@@ -1,4 +1,6 @@
+import { Clock } from "lucide-react";
 import { Alerta } from "@/components/alerta";
+import { Card } from "@/components/ui/card";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
 import { buscarAlunoDoUsuario } from "@/repositories/alunos";
 import { registrosDoAluno } from "@/repositories/sintomas";
@@ -14,25 +16,33 @@ export default async function Sintomas() {
 
   return (
     <main className="flex flex-col gap-4 p-4">
-      <Alerta estado="AVISO" role="note" data-testid="aviso-sintomas" className="sticky top-2 z-10 font-semibold shadow-sm">
+      <Alerta estado="AVISO" role="note" data-testid="aviso-sintomas" className="sticky top-16 z-10 font-semibold shadow-sm">
         {aviso}
       </Alerta>
-      <h1>Como estou me sentindo</h1>
+      <div>
+        <h1>Como estou me sentindo</h1>
+        <p className="text-sm text-secondary">Registre no seu diário pessoal caso sinta algum desconforto após comer.</p>
+      </div>
       <FormularioSintoma alunoId={aluno.id} grupos={grupos} />
-      <h2>Meus registros</h2>
-      {registros.length === 0 && <p className="text-secondary">Nenhum registro.</p>}
-      <ul className="flex flex-col gap-2">
-        {registros.map((r) => (
-          <li key={r.id} className="cartao py-3">
-            <span className="block text-sm text-secondary tabular-nums">
-              {r.data_hora.toLocaleString("pt-BR", { timeZone: "America/Bahia" })}
-            </span>
-            {r.sintoma.descricao}
-            {r.observacao && `: ${r.observacao}`}
-            {descreverAlimento(r) && <span className="block text-sm text-secondary">{descreverAlimento(r)}</span>}
-          </li>
-        ))}
-      </ul>
+      <section className="flex flex-col gap-3 pt-2">
+        <h2>Meus registros</h2>
+        {registros.length === 0 && <Card className="py-6 text-center text-secondary">Nenhum registro.</Card>}
+        <ul className="flex flex-col gap-2.5">
+          {registros.map((r) => (
+            <li key={r.id} className="cartao flex flex-col gap-1 py-3.5">
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-secondary tabular-nums">
+                <Clock aria-hidden="true" className="size-3.5" />
+                {r.data_hora.toLocaleString("pt-BR", { timeZone: "America/Bahia" })}
+              </span>
+              <span className="font-semibold text-brand-navy">
+                {r.sintoma.descricao}
+                {r.observacao && `: ${r.observacao}`}
+              </span>
+              {descreverAlimento(r) && <span className="text-sm text-secondary">{descreverAlimento(r)}</span>}
+            </li>
+          ))}
+        </ul>
+      </section>
     </main>
   );
 }

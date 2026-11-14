@@ -1,4 +1,6 @@
-import { Selo } from "@/components/alerta";
+import { Alerta, Selo } from "@/components/alerta";
+import { FiltroAutomatico } from "@/components/filtro-automatico";
+import { NativeSelect } from "@/components/ui/native-select";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
 import { EXCLUSAO_ESTRITA, TIPO_RESTRICAO } from "@/lib/rotulos";
 import { alunosDoResponsavel, buscarAlunoDoUsuario } from "@/repositories/alunos";
@@ -29,26 +31,31 @@ export default async function PaginaPerfil({ searchParams }: PageProps<"/perfil"
 
   return (
     <main className="flex flex-col gap-4 p-4">
-      <h1>{responsavel ? "Perfil de saúde" : "Meu perfil"}</h1>
-      {alunos.length > 1 && (
-        <form className="flex gap-2">
-          <select name="aluno_id" defaultValue={alunoId} aria-label="Aluno" className="campo">
-            {alunos.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.nome}
-              </option>
-            ))}
-          </select>
-          <button type="submit" className="btn-secundario">
-            Ver
-          </button>
-        </form>
-      )}
-      <p className="text-sm text-secondary">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1>{responsavel ? "Perfil de saúde" : "Meu perfil"}</h1>
+          <p className="text-sm text-secondary">
+            Restrições alimentares declaradas para verificação automática no cardápio e no atendimento da cantina.
+          </p>
+        </div>
+        {alunos.length > 1 && (
+          <FiltroAutomatico className="flex items-center gap-2">
+            <NativeSelect name="aluno_id" defaultValue={alunoId} aria-label="Aluno" className="w-48">
+              {alunos.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.nome}
+                </option>
+              ))}
+            </NativeSelect>
+          </FiltroAutomatico>
+        )}
+      </div>
+
+      <Alerta estado={perfil.consentimento ? "COMPATIVEL" : "AVISO"} role="note">
         {perfil.consentimento
           ? `Consentimento registrado em ${new Date(perfil.consentimento.em).toLocaleDateString("pt-BR", { timeZone: "America/Bahia" })}.`
           : "Nenhum perfil declarado: os itens do cardápio aparecem como compatíveis."}
-      </p>
+      </Alerta>
 
       {responsavel ? (
         <FormularioPerfil
@@ -59,10 +66,10 @@ export default async function PaginaPerfil({ searchParams }: PageProps<"/perfil"
           inicial={perfil.restricoes.map((r) => ({ categoria_codigo: r.categoria_codigo, tipo: r.tipo, limite_notificacao: r.limite_notificacao }))}
         />
       ) : (
-        <ul className="flex flex-col gap-2">
-          {perfil.restricoes.length === 0 && <li className="text-secondary">Nenhuma restrição declarada.</li>}
+        <ul className="flex flex-col gap-2.5">
+          {perfil.restricoes.length === 0 && <li className="rounded-xl border border-borda bg-surface-card py-8 text-center text-secondary">Nenhuma restrição declarada.</li>}
           {perfil.restricoes.map((r) => (
-            <li key={r.categoria_codigo} className="cartao flex flex-wrap items-center justify-between gap-2 py-3">
+            <li key={r.categoria_codigo} className="cartao flex flex-wrap items-center justify-between gap-2 py-3.5">
               <span>
                 <span className="font-semibold">{r.categoria}</span>
                 <span className="block text-sm text-secondary">{TIPO_RESTRICAO[r.tipo]}</span>

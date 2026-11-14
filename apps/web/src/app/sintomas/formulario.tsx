@@ -2,6 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { CheckCircle2, Utensils } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Checkbox, Radio } from "@/components/ui/checkbox";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 type Grupo = { grupo: string; sintomas: { codigo: string; descricao: string }[] };
 type ItemComprado = { venda_id: number; item_cardapio_id: number; comprado_em: string; nome: string };
@@ -14,7 +21,7 @@ const NOME_GRUPO: Record<string, string> = {
   OUTROS: "Outros",
 };
 
-// Hora local no formato do <input type="datetime-local">.
+// Hora local no formato YYYY-MM-DDTHH:mm.
 const agoraLocal = () => {
   const d = new Date();
   return new Date(d.getTime() - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
@@ -75,69 +82,78 @@ export function FormularioSintoma({ alunoId, grupos }: { alunoId: number; grupos
 
   return (
     <form action={registrar} className="flex flex-col gap-4">
-      <label className="flex flex-col gap-1 text-sm font-medium">
-        Data e hora
-        <input type="datetime-local" name="data_hora" value={dataHora} onChange={(e) => setDataHora(e.target.value)} required className="campo" />
-      </label>
-      <fieldset className="cartao flex flex-col gap-2" data-testid="alimento-sintoma">
-        <legend className="font-heading font-bold">O que você comeu antes?</legend>
+      <Card>
+        <Label className="max-w-xs">
+          Data e hora
+          <DateTimePicker name="data_hora" value={dataHora} onChange={(e) => setDataHora(e.target.value)} required />
+        </Label>
+      </Card>
+
+      <fieldset className="cartao flex flex-col gap-2.5" data-testid="alimento-sintoma">
+        <legend className="flex items-center gap-2 font-heading text-base font-bold">
+          <Utensils aria-hidden="true" className="size-4 text-brand-royal" />
+          O que você comeu antes?
+        </legend>
         <p className="text-sm text-secondary">Marque o que comprou na cantina ou escreva o que comeu de fora. Pelo menos um dos dois.</p>
         {comprados === null && <p className="text-sm text-secondary">Carregando suas compras…</p>}
         {comprados?.length === 0 && <p className="text-sm text-secondary">Nenhuma compra na cantina nas 24 h anteriores.</p>}
         {comprados?.map((i) => (
           <label
             key={chave(i)}
-            className="flex cursor-pointer items-center gap-2 rounded-lg border border-borda p-2 has-checked:border-brand-royal has-checked:ring-1 has-checked:ring-brand-royal"
+            className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-borda bg-surface-card p-2.5 text-sm font-medium transition-colors hover:border-brand-royal/60 has-checked:border-brand-royal has-checked:bg-brand-royal/5 has-checked:ring-1 has-checked:ring-brand-royal"
           >
-            <input
-              type="checkbox"
+            <Checkbox
               checked={marcados.includes(chave(i))}
               onChange={(e) => setMarcados(e.target.checked ? [...marcados, chave(i)] : marcados.filter((k) => k !== chave(i)))}
             />
-            {i.nome}
-            <span className="ml-auto text-sm text-secondary tabular-nums">
+            <span>{i.nome}</span>
+            <span className="ml-auto text-xs text-secondary tabular-nums">
               {new Date(i.comprado_em).toLocaleString("pt-BR", { timeZone: "America/Bahia", dateStyle: "short", timeStyle: "short" })}
             </span>
           </label>
         ))}
-        <input
+        <Input
           value={externo}
           onChange={(e) => setExterno(e.target.value)}
           maxLength={100}
           aria-label="Alimento de fora da cantina"
           placeholder="De fora da cantina (ex.: lanche de casa)"
-          className="campo"
         />
       </fieldset>
+
       <div className="grid gap-4 md:grid-cols-2">
         {grupos.map((g) => (
-          <div key={g.grupo} className="cartao">
+          <Card key={g.grupo}>
             <fieldset className="flex flex-col gap-2">
-              <legend className="mb-2 font-heading font-bold">{NOME_GRUPO[g.grupo]}</legend>
+              <legend className="mb-2 font-heading text-base font-bold">{NOME_GRUPO[g.grupo]}</legend>
               {g.sintomas.map((s) => (
                 <label
                   key={s.codigo}
-                  className="flex cursor-pointer items-center gap-2 rounded-lg border border-borda p-2 has-checked:border-brand-royal has-checked:ring-1 has-checked:ring-brand-royal"
+                  className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-borda bg-surface-card p-2.5 text-sm transition-colors hover:border-brand-royal/60 has-checked:border-brand-royal has-checked:bg-brand-royal/5 has-checked:ring-1 has-checked:ring-brand-royal"
                 >
-                  <input type="radio" name="sintoma" value={s.codigo} checked={sintoma === s.codigo} onChange={() => setSintoma(s.codigo)} />
-                  {s.descricao}
+                  <Radio name="sintoma" value={s.codigo} checked={sintoma === s.codigo} onChange={() => setSintoma(s.codigo)} />
+                  <span>{s.descricao}</span>
                 </label>
               ))}
             </fieldset>
-          </div>
+          </Card>
         ))}
       </div>
+
       {sintoma === "OUTRO" && (
-        <input name="observacao" maxLength={100} aria-label="Observação" placeholder="Descreva em poucas palavras (opcional)" className="campo" />
+        <Input name="observacao" maxLength={100} aria-label="Observação" placeholder="Descreva em poucas palavras (opcional)" />
       )}
-      <button type="submit" disabled={!sintoma || !indicouAlimento} className="btn-primario">
-        Registrar
-      </button>
-      {mensagem && (
-        <p role="status" className="font-medium">
-          {mensagem}
-        </p>
-      )}
+      <div className="flex flex-wrap items-center gap-3">
+        <Button type="submit" size="lg" disabled={!sintoma || !indicouAlimento}>
+          <CheckCircle2 aria-hidden="true" className="size-4" />
+          Registrar
+        </Button>
+        {mensagem && (
+          <p role="status" className="text-sm font-medium text-brand-navy">
+            {mensagem}
+          </p>
+        )}
+      </div>
     </form>
   );
 }
