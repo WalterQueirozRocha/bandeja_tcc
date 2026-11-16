@@ -52,12 +52,14 @@ export async function importarA1(pasta = PASTA_A1) {
   return `${importadas} preparações da A1 importadas`;
 }
 
+// Categoria vazia = preparação sem alergênico (entra na avaliação com o conjunto vazio).
 function categoriasPorPreparacao(arquivo: URL) {
   const mapa = new Map<string, Set<string>>();
   for (const l of lerTabela(arquivo)) {
     const prep = l.preparacao?.trim() ?? "";
     if (!mapa.has(prep)) mapa.set(prep, new Set());
-    mapa.get(prep)!.add(l.categoria?.trim() ?? "");
+    const categoria = l.categoria?.trim();
+    if (categoria) mapa.get(prep)!.add(categoria);
   }
   return mapa;
 }
