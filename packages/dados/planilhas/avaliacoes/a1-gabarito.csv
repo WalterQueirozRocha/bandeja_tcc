@@ -1,1 +1,98 @@
 preparacao;categoria
+Enroladinho de pizza;GLUTEN
+Enroladinho de pizza;LACTOSE
+Enroladinho de pizza;LEITE
+Enroladinho de pizza;OVOS
+Enroladinho de pizza;SOJA
+Enroladinho de pizza;SUINA
+Enroladinho de pizza;TRIGO
+Pizza;GLUTEN
+Pizza;LACTOSE
+Pizza;LEITE
+Pizza;OVOS
+Pizza;TRIGO
+Empada;AVES
+Empada;GLUTEN
+Empada;LACTOSE
+Empada;LEITE
+Empada;OVOS
+Empada;TRIGO
+Hambúrguer;BOVINA
+Hambúrguer;GLUTEN
+Hambúrguer;LACTOSE
+Hambúrguer;LEITE
+Hambúrguer;OVOS
+Hambúrguer;SOJA
+Hambúrguer;TRIGO
+Esfirra;BOVINA
+Esfirra;GLUTEN
+Esfirra;LACTOSE
+Esfirra;LEITE
+Esfirra;SOJA
+Esfirra;TRIGO
+Bolo de cenoura com cobertura de chocolate;GLUTEN
+Bolo de cenoura com cobertura de chocolate;LACTOSE
+Bolo de cenoura com cobertura de chocolate;LEITE
+Bolo de cenoura com cobertura de chocolate;OVOS
+Bolo de cenoura com cobertura de chocolate;SOJA
+Bolo de cenoura com cobertura de chocolate;TRIGO
+Chocolate quente;LACTOSE
+Chocolate quente;LEITE
+Chocolate quente;SOJA
+Pão de queijo;LACTOSE
+Pão de queijo;LEITE
+Pão de queijo;OVOS
+Misto-quente;GLUTEN
+Misto-quente;LACTOSE
+Misto-quente;LEITE
+Misto-quente;SUINA
+Misto-quente;TRIGO
+Cachorro-quente;AVES
+Cachorro-quente;BOVINA
+Cachorro-quente;GLUTEN
+Cachorro-quente;SOJA
+Cachorro-quente;SUINA
+Cachorro-quente;TRIGO
+Filé de frango grelhado;AVES
+Carne moída com batata;BOVINA
+Carne moída com batata;SOJA
+Estrogonofe de frango;AVES
+Estrogonofe de frango;LACTOSE
+Estrogonofe de frango;LEITE
+Picadinho de carne com legumes;BOVINA
+Picadinho de carne com legumes;SOJA
+Macarrão à bolonhesa;BOVINA
+Macarrão à bolonhesa;GLUTEN
+Macarrão à bolonhesa;TRIGO
+Coxa com sobrecoxa assada;AVES
+Coxa com sobrecoxa assada;OVOS
+Carne de panela;BOVINA
+Carne de panela;SOJA
+Filé de peixe crocante;GLUTEN
+Filé de peixe crocante;LACTOSE
+Filé de peixe crocante;LEITE
+Filé de peixe crocante;PEIXES
+Filé de peixe crocante;PESCADOS
+Filé de peixe crocante;TRIGO
+Bife grelhado à portuguesa;BOVINA
+Bife grelhado à portuguesa;SOJA
+Almôndegas ao sugo;BOVINA
+Almôndegas ao sugo;GLUTEN
+Almôndegas ao sugo;OVOS
+Almôndegas ao sugo;TRIGO
+Panquecas de carne;BOVINA
+Panquecas de carne;GLUTEN
+Panquecas de carne;LACTOSE
+Panquecas de carne;LEITE
+Panquecas de carne;OVOS
+Panquecas de carne;SOJA
+Panquecas de carne;TRIGO
+Peixe à milanesa;GLUTEN
+Peixe à milanesa;OVOS
+Peixe à milanesa;PEIXES
+Peixe à milanesa;PESCADOS
+Peixe à milanesa;TRIGO
+Bife e ovo;BOVINA
+Bife e ovo;OVOS
+Bife e ovo;SOJA
+Salada de frutas;

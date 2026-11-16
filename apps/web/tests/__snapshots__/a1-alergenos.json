@@ -1,0 +1,163 @@
+{
+  "A1 Almôndegas ao sugo": [
+    "BOVINA:CONTEM",
+    "GLUTEN:CONTEM",
+    "OVOS:CONTEM",
+    "TRIGO:CONTEM"
+  ],
+  "A1 Bife e ovo": [
+    "BOVINA:CONTEM",
+    "OVOS:CONTEM",
+    "SOJA:CONTEM"
+  ],
+  "A1 Bife grelhado à portuguesa": [
+    "BOVINA:CONTEM",
+    "SOJA:CONTEM"
+  ],
+  "A1 Bolo de cenoura com cobertura de chocolate": [
+    "GLUTEN:CONTEM",
+    "LACTOSE:CONTEM",
+    "LEITE:CONTEM",
+    "OVOS:CONTEM",
+    "SOJA:CONTEM",
+    "TRIGO:CONTEM"
+  ],
+  "A1 Cachorro-quente": [
+    "AVES:PODE_CONTER",
+    "BOVINA:CONTEM",
+    "GLUTEN:CONTEM",
+    "LACTOSE:CONTEM",
+    "LEITE:CONTEM",
+    "OVOS:PODE_CONTER",
+    "SOJA:CONTEM",
+    "SUINA:CONTEM",
+    "TRIGO:CONTEM"
+  ],
+  "A1 Carne de panela": [
+    "BOVINA:CONTEM",
+    "SOJA:CONTEM"
+  ],
+  "A1 Carne moída com batata": [
+    "BOVINA:CONTEM",
+    "SOJA:CONTEM"
+  ],
+  "A1 Chocolate quente": [
+    "LACTOSE:CONTEM",
+    "LEITE:CONTEM",
+    "SOJA:PODE_CONTER"
+  ],
+  "A1 Coxa com sobrecoxa assada": [
+    "AVES:CONTEM",
+    "OVOS:CONTEM",
+    "SOJA:PODE_CONTER"
+  ],
+  "A1 Empada": [
+    "AVES:CONTEM",
+    "GLUTEN:CONTEM",
+    "LACTOSE:CONTEM",
+    "LEITE:CONTEM",
+    "OVOS:CONTEM",
+    "SOJA:PODE_CONTER",
+    "TRIGO:CONTEM"
+  ],
+  "A1 Enroladinho de pizza": [
+    "GLUTEN:CONTEM",
+    "LACTOSE:CONTEM",
+    "LEITE:CONTEM",
+    "OVOS:CONTEM",
+    "SOJA:CONTEM",
+    "SUINA:CONTEM",
+    "TRIGO:CONTEM"
+  ],
+  "A1 Esfirra": [
+    "BOVINA:CONTEM",
+    "GLUTEN:CONTEM",
+    "LACTOSE:CONTEM",
+    "LEITE:CONTEM",
+    "SOJA:CONTEM",
+    "TRIGO:CONTEM"
+  ],
+  "A1 Estrogonofe de frango": [
+    "AVES:CONTEM",
+    "GLUTEN:PODE_CONTER",
+    "LACTOSE:CONTEM",
+    "LEITE:CONTEM",
+    "SOJA:PODE_CONTER",
+    "TRIGO:PODE_CONTER"
+  ],
+  "A1 Filé de frango grelhado": [
+    "AVES:CONTEM"
+  ],
+  "A1 Filé de peixe crocante": [
+    "GLUTEN:CONTEM",
+    "LACTOSE:CONTEM",
+    "LEITE:CONTEM",
+    "PEIXES:CONTEM",
+    "PESCADOS:CONTEM",
+    "TRIGO:CONTEM"
+  ],
+  "A1 Hambúrguer": [
+    "BOVINA:CONTEM",
+    "GLUTEN:CONTEM",
+    "LACTOSE:CONTEM",
+    "LEITE:CONTEM",
+    "OVOS:CONTEM",
+    "SOJA:CONTEM",
+    "TRIGO:CONTEM"
+  ],
+  "A1 Macarrão à bolonhesa": [
+    "BOVINA:CONTEM",
+    "GLUTEN:CONTEM",
+    "LACTOSE:PODE_CONTER",
+    "LEITE:PODE_CONTER",
+    "OVOS:PODE_CONTER",
+    "SOJA:PODE_CONTER",
+    "TRIGO:CONTEM"
+  ],
+  "A1 Misto-quente": [
+    "GLUTEN:CONTEM",
+    "LACTOSE:CONTEM",
+    "LEITE:CONTEM",
+    "SOJA:PODE_CONTER",
+    "SUINA:CONTEM",
+    "TRIGO:CONTEM"
+  ],
+  "A1 Panquecas de carne": [
+    "BOVINA:CONTEM",
+    "GLUTEN:CONTEM",
+    "LACTOSE:CONTEM",
+    "LEITE:CONTEM",
+    "OVOS:CONTEM",
+    "SOJA:CONTEM",
+    "TRIGO:CONTEM"
+  ],
+  "A1 Pão de queijo": [
+    "LACTOSE:CONTEM",
+    "LEITE:CONTEM",
+    "OVOS:CONTEM",
+    "SOJA:PODE_CONTER"
+  ],
+  "A1 Peixe à milanesa": [
+    "GLUTEN:CONTEM",
+    "OVOS:CONTEM",
+    "PEIXES:CONTEM",
+    "PESCADOS:CONTEM",
+    "TRIGO:CONTEM"
+  ],
+  "A1 Picadinho de carne com legumes": [
+    "BOVINA:CONTEM",
+    "GLUTEN:PODE_CONTER",
+    "LACTOSE:PODE_CONTER",
+    "LEITE:PODE_CONTER",
+    "SOJA:CONTEM",
+    "TRIGO:PODE_CONTER"
+  ],
+  "A1 Pizza": [
+    "GLUTEN:CONTEM",
+    "LACTOSE:CONTEM",
+    "LEITE:CONTEM",
+    "OVOS:CONTEM",
+    "TRIGO:CONTEM"
+  ],
+  "A1 Salada de frutas": []
+}

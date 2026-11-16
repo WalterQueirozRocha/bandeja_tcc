@@ -1,1 +1,85 @@
 preparacao;categoria
+Enroladinho de pizza;LEITE
+Enroladinho de pizza;SOJA
+Pizza;LEITE
+Pizza;SOJA
+Empada;LEITE
+Empada;SOJA
+Hambúrguer;SOJA
+Esfirra;LEITE
+Esfirra;SOJA
+Bolo de cenoura com cobertura de chocolate;OVOS
+Bolo de cenoura com cobertura de chocolate;SOJA
+Chocolate quente;LACTOSE
+Chocolate quente;LEITE
+Pão de queijo;GLUTEN
+Pão de queijo;LACTOSE
+Pão de queijo;LEITE
+Pão de queijo;TRIGO
+Misto-quente;BOVINA
+Misto-quente;CENTEIO
+Misto-quente;CEVADA
+Misto-quente;LACTOSE
+Misto-quente;LEITE
+Misto-quente;OVOS
+Misto-quente;SOJA
+Misto-quente;SUINA
+Misto-quente;TRIGO
+Cachorro-quente;AVES
+Cachorro-quente;BOVINA
+Cachorro-quente;LEITE
+Cachorro-quente;OVOS
+Cachorro-quente;SOJA
+Cachorro-quente;SUINA
+Cachorro-quente;TRIGO
+Filé de frango grelhado;AVES
+Filé de frango grelhado;SOJA
+Carne moída com batata;AVES
+Carne moída com batata;GLUTEN
+Carne moída com batata;SOJA
+Carne moída com batata;SUINA
+Estrogonofe de frango;BOVINA
+Estrogonofe de frango;LEITE
+Estrogonofe de frango;PESCADOS
+Estrogonofe de frango;SOJA
+Picadinho de carne com legumes;BOVINA
+Picadinho de carne com legumes;SOJA
+Macarrão à bolonhesa;BOVINA
+Macarrão à bolonhesa;LEITE
+Macarrão à bolonhesa;OVOS
+Macarrão à bolonhesa;SOJA
+Macarrão à bolonhesa;TRIGO
+Coxa com sobrecoxa assada;AVES
+Coxa com sobrecoxa assada;SOJA
+Carne de panela;BOVINA
+Carne de panela;GLUTEN
+Carne de panela;SOJA
+Filé de peixe crocante;LEITE
+Filé de peixe crocante;PESCADOS
+Filé de peixe crocante;SOJA
+Bife grelhado à portuguesa;BOVINA
+Almôndegas ao sugo;BOVINA
+Almôndegas ao sugo;GLUTEN
+Almôndegas ao sugo;SOJA
+Panquecas de carne;AVES
+Panquecas de carne;BOVINA
+Panquecas de carne;CENTEIO
+Panquecas de carne;GLUTEN
+Panquecas de carne;LEITE
+Panquecas de carne;OVOS
+Panquecas de carne;PEIXES
+Panquecas de carne;SUINA
+Peixe à milanesa;GLUTEN
+Peixe à milanesa;LACTOSE
+Peixe à milanesa;LEITE
+Peixe à milanesa;OVOS
+Peixe à milanesa;PEIXES
+Peixe à milanesa;PESCADOS
+Peixe à milanesa;SOJA
+Peixe à milanesa;TRIGO
+Bife e ovo;AVES
+Bife e ovo;BOVINA
+Bife e ovo;OVOS
+Bife e ovo;SOJA
+Bife e ovo;SUINA
+Salada de frutas;
