@@ -64,7 +64,13 @@ const marcador = z.object({
   presenca: z.enum(Presenca),
 });
 
-const conferente = z.string().trim().min(1).max(100);
+// "PENDENTE ..." é o marcador provisório das planilhas (lib/conferencia.ts): não vale como nome de quem conferiu.
+const conferente = z
+  .string()
+  .trim()
+  .min(1)
+  .max(100)
+  .refine((v) => !/^pendente\b/i.test(v), "informe o nome de quem conferiu, não um marcador provisório");
 
 const listaMarcadores = z.array(marcador).refine(semRepetir, "categoria repetida");
 

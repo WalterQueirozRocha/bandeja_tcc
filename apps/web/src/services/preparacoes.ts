@@ -8,6 +8,7 @@ import {
   type Modo,
 } from "@bandeja/dominio";
 import type { GrupoAlimentar, ModoPreparo } from "@bandeja/dados";
+import { situacaoMarcacao } from "@/lib/conferencia";
 import type { DadosPreparacaoEntrada } from "@/lib/validacao";
 import { codigosCategorias } from "@/repositories/ingredientes";
 import {
@@ -167,7 +168,20 @@ export async function calcularComposicao(id: number) {
 
 export async function calcularAlergenos(id: number) {
   const { prep, convertidos } = await carregar(id);
-  return { preparacao: resumo(prep), alergenos: alergenosDe(prep, convertidos, await nomesCategorias()) };
+  return {
+    preparacao: resumo(prep),
+    alergenos: alergenosDe(prep, convertidos, await nomesCategorias()),
+    nao_conferidos: marcacaoNaoConferida(prep),
+  };
+}
+
+// Ingredientes (ou a forma preparada usada) cuja marcação foi liberada só com conferentes provisórios.
+function marcacaoNaoConferida(prep: PreparacaoCalculo) {
+  const nomes = prep.itens.flatMap(({ ingrediente, modo_preparo }) => {
+    const forma = ingrediente.formas_preparadas.find((f) => f.modo_preparo === modo_preparo);
+    return [ingrediente, ...(forma ? [forma] : [])].some((i) => situacaoMarcacao(i) === "NAO_CONFERIDA") ? [ingrediente.nome] : [];
+  });
+  return [...new Set(nomes)];
 }
 
 export async function calcularCargaGlicemica(id: number) {

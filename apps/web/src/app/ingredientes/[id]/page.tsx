@@ -6,6 +6,7 @@ import { Indicador, PAINEL } from "@/components/indicador";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
+import { conferenciaProvisoria, situacaoMarcacao } from "@/lib/conferencia";
 import { CATEGORIA_CARBOIDRATO, GRUPO_ALIMENTAR, LISTA_IG, MODO_PREPARO, ORIGEM_INGREDIENTE, PAPEL, PRESENCA } from "@/lib/rotulos";
 import { listarCategorias } from "@/repositories/ingredientes";
 import { alteracoesDoIngrediente, COMPOSICAO, detalharIngrediente } from "@/services/ingredientes";
@@ -152,7 +153,12 @@ export default async function Ingrediente({ params }: PageProps<"/ingredientes/[
               </ul>
             )}
             {mapeado &&
-              (i.marcacao_conferida_em ? (
+              (situacaoMarcacao(i) === "NAO_CONFERIDA" ? (
+                <Alerta estado="ATENCAO" role="note" data-testid="marcacao-nao-conferida">
+                  Marcação ainda não conferida em dupla: foi importada da planilha da equipe com conferentes provisórios, para
+                  liberar a plataforma nos testes. Confira-a antes do uso com estudantes.
+                </Alerta>
+              ) : i.marcacao_conferida_em ? (
                 <p className="text-xs text-secondary" data-testid="marcacao-conferida">
                   Marcação conferida por {i.marcacao_conferida_por_1} e {i.marcacao_conferida_por_2} em{" "}
                   {i.marcacao_conferida_em.toLocaleString("pt-BR", { timeZone: "America/Bahia", dateStyle: "short", timeStyle: "short" })}.
@@ -177,6 +183,11 @@ export default async function Ingrediente({ params }: PageProps<"/ingredientes/[
               </p>
             ) : (
               <p className="text-sm text-secondary">Sem IG pareado: a estimativa FAO/OMS não é calculada para preparações com este ingrediente.</p>
+            )}
+            {i.valor_ig && conferenciaProvisoria(i.valor_ig) && (
+              <p className="text-xs text-atencao-texto" data-testid="ig-nao-conferido">
+                Pareamento ainda não conferido em dupla (conferentes provisórios na planilha da equipe).
+              </p>
             )}
             {operador && <FormularioIg id={id} inicial={i.valor_ig} />}
           </CardContent>
