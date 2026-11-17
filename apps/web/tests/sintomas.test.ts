@@ -5,6 +5,7 @@ import * as login from "@/app/api/auth/login/route";
 import * as registros from "@/app/api/alunos/[id]/sintomas/route";
 import * as itens from "@/app/api/alunos/[id]/sintomas/itens/route";
 import * as sintomas from "@/app/api/sintomas/route";
+import { descreverSintomas } from "@/services/sintomas";
 
 const AVISO =
   "Este registro não é um diagnóstico. Se você sentir falta de ar, aperto na garganta, inchaço na boca ou tontura, avise agora um adulto da escola.";
@@ -97,19 +98,36 @@ describe("CT20: registro de sintoma", () => {
     const antes = await contar();
 
     const data_hora = agora(-30);
-    const res = await registrar({ sintoma_codigo: "DOR_COLICA", data_hora });
+    const res = await registrar({ sintomas_codigo: ["DOR_COLICA"], data_hora });
     expect(res.status).toBe(201);
-    expect(await json(res)).toMatchObject({ sintoma_codigo: "DOR_COLICA", observacao: null, data_hora, alimento_externo: "lanche de casa" });
+    expect(await json(res)).toMatchObject({ sintomas_codigo: ["DOR_COLICA"], observacao: null, data_hora, alimento_externo: "lanche de casa" });
 
     expect(await contar()).toEqual(antes);
     const lista = await json(await registros.GET(req(`/api/alunos/${alunoId}/sintomas`, tokens.aluno), ctx(alunoId)));
-    expect(lista[0]).toMatchObject({ sintoma: { codigo: "DOR_COLICA", descricao: "Dor ou cólica", grupo: "BARRIGA" }, alimento_externo: "lanche de casa", itens_cantina: [] });
+    expect(lista[0]).toMatchObject({ sintomas: [{ codigo: "DOR_COLICA", descricao: "Dor ou cólica", grupo: "BARRIGA" }], alimento_externo: "lanche de casa", itens_cantina: [] });
+  });
+
+  it("vários sintomas viram uma única ocorrência, na ordem dos grupos da tela", async () => {
+    const data_hora = agora(-20);
+    const res = await registrar({ sintomas_codigo: ["OUTRO", "DOR_COLICA", "COCEIRA_PELE"], data_hora, observacao: "dor de cabeça" });
+    expect(res.status).toBe(201);
+    const { id } = await json(res);
+    const lista = await json(await registros.GET(req(`/api/alunos/${alunoId}/sintomas`, tokens.aluno), ctx(alunoId)));
+    const ocorrencia = lista.find((r: { id: number }) => r.id === id);
+    expect(ocorrencia.sintomas.map((s: { codigo: string }) => s.codigo)).toEqual(["COCEIRA_PELE", "DOR_COLICA", "OUTRO"]);
+    expect(ocorrencia).toMatchObject({ observacao: "dor de cabeça", alimento_externo: "lanche de casa", data_hora });
+    expect(descreverSintomas(ocorrencia)).toBe("Coceira, Dor ou cólica, Outro: dor de cabeça");
+  });
+
+  it("nenhum sintoma ou sintoma repetido → 400", async () => {
+    expect((await registrar({ sintomas_codigo: [], data_hora: agora() })).status).toBe(400);
+    expect((await registrar({ sintomas_codigo: ["ENJOO", "ENJOO"], data_hora: agora() })).status).toBe(400);
   });
 });
 
 describe("D3: alimento consumido antes do sintoma", () => {
   it("indicar o alimento é obrigatório", async () => {
-    const res = await registrar({ sintoma_codigo: "ENJOO", data_hora: agora(), alimento_externo: undefined });
+    const res = await registrar({ sintomas_codigo: ["ENJOO"], data_hora: agora(), alimento_externo: undefined });
     expect(res.status).toBe(422);
     expect((await json(res)).erro).toMatch(/Indique o que comeu/);
   });
@@ -120,7 +138,7 @@ describe("D3: alimento consumido antes do sintoma", () => {
   });
 
   it("item comprado na janela é aceito e aparece no diário com o nome da preparação", async () => {
-    const res = await registrar({ sintoma_codigo: "ENJOO", data_hora: agora(), itens: [compras.recente], alimento_externo: undefined });
+    const res = await registrar({ sintomas_codigo: ["ENJOO"], data_hora: agora(), itens: [compras.recente], alimento_externo: undefined });
     expect(res.status).toBe(201);
     const lista = await json(await registros.GET(req(`/api/alunos/${alunoId}/sintomas`, tokens.aluno), ctx(alunoId)));
     expect(lista[0]).toMatchObject({ itens_cantina: [`${PREFIXO}Coxinha`], alimento_externo: null });
@@ -131,17 +149,17 @@ describe("D3: alimento consumido antes do sintoma", () => {
     ["de venda bloqueada", () => compras.bloqueada],
     ["de outro aluno", () => compras.deOutro],
   ])("item %s → 422", async (_, item) => {
-    const res = await registrar({ sintoma_codigo: "ENJOO", data_hora: agora(), itens: [item()] });
+    const res = await registrar({ sintomas_codigo: ["ENJOO"], data_hora: agora(), itens: [item()] });
     expect(res.status).toBe(422);
     expect((await json(res)).erro).toMatch(/24 h antes do sintoma/);
   });
 
   it("item repetido → 400", async () => {
-    expect((await registrar({ sintoma_codigo: "ENJOO", data_hora: agora(), itens: [compras.recente, compras.recente] })).status).toBe(400);
+    expect((await registrar({ sintomas_codigo: ["ENJOO"], data_hora: agora(), itens: [compras.recente, compras.recente] })).status).toBe(400);
   });
 
   it("alimento de fora acima de 100 caracteres → 400", async () => {
-    expect((await registrar({ sintoma_codigo: "ENJOO", data_hora: agora(), alimento_externo: "x".repeat(101) })).status).toBe(400);
+    expect((await registrar({ sintomas_codigo: ["ENJOO"], data_hora: agora(), alimento_externo: "x".repeat(101) })).status).toBe(400);
   });
 
   it("só o próprio aluno consulta os itens; sem `ate` → 400", async () => {
@@ -155,31 +173,35 @@ describe("acesso (Quadro 9)", () => {
   it("responsável, operador e coordenação não veem nem registram → 403", async () => {
     for (const token of [tokens.responsavel, tokens.operador, tokens.coordenacao]) {
       expect((await registros.GET(req(`/api/alunos/${alunoId}/sintomas`, token), ctx(alunoId))).status).toBe(403);
-      expect((await registrar({ sintoma_codigo: "ENJOO", data_hora: agora() }, token)).status).toBe(403);
+      expect((await registrar({ sintomas_codigo: ["ENJOO"], data_hora: agora() }, token)).status).toBe(403);
     }
   });
 
   it("aluno não acessa registros de outro aluno → 403", async () => {
     expect((await registros.GET(req("/api/alunos/999999/sintomas", tokens.aluno), ctx(999999))).status).toBe(403);
-    expect((await registrar({ sintoma_codigo: "ENJOO", data_hora: agora() }, tokens.aluno, 999999)).status).toBe(403);
+    expect((await registrar({ sintomas_codigo: ["ENJOO"], data_hora: agora() }, tokens.aluno, 999999)).status).toBe(403);
   });
 });
 
 describe("validações", () => {
   it('"Outro" aceita texto curto opcional (doc v3); os demais não aceitam texto', async () => {
-    expect((await registrar({ sintoma_codigo: "OUTRO", data_hora: agora() })).status).toBe(201);
-    expect((await registrar({ sintoma_codigo: "OUTRO", data_hora: agora(), observacao: "dor de cabeça" })).status).toBe(201);
-    expect((await registrar({ sintoma_codigo: "ENJOO", data_hora: agora(), observacao: "x" })).status).toBe(422);
-    expect((await registrar({ sintoma_codigo: "OUTRO", data_hora: agora(), observacao: "x".repeat(101) })).status).toBe(400);
+    expect((await registrar({ sintomas_codigo: ["OUTRO"], data_hora: agora() })).status).toBe(201);
+    expect((await registrar({ sintomas_codigo: ["OUTRO"], data_hora: agora(), observacao: "dor de cabeça" })).status).toBe(201);
+    expect((await registrar({ sintomas_codigo: ["ENJOO"], data_hora: agora(), observacao: "x" })).status).toBe(422);
+    expect((await registrar({ sintomas_codigo: ["OUTRO"], data_hora: agora(), observacao: "x".repeat(101) })).status).toBe(400);
+    expect((await registrar({ sintomas_codigo: ["ENJOO", "OUTRO"], data_hora: agora(), observacao: "x" })).status).toBe(201);
   });
 
   it("data/hora no futuro → 422 (com 5 min de tolerância)", async () => {
-    expect((await registrar({ sintoma_codigo: "ENJOO", data_hora: agora(60) })).status).toBe(422);
-    expect((await registrar({ sintoma_codigo: "ENJOO", data_hora: agora(2) })).status).toBe(201);
+    expect((await registrar({ sintomas_codigo: ["ENJOO"], data_hora: agora(60) })).status).toBe(422);
+    expect((await registrar({ sintomas_codigo: ["ENJOO"], data_hora: agora(2) })).status).toBe(201);
   });
 
   it("data/hora sem fuso → 400; sintoma inexistente → 422", async () => {
-    expect((await registrar({ sintoma_codigo: "ENJOO", data_hora: "2026-10-23T10:00:00" })).status).toBe(400);
-    expect((await registrar({ sintoma_codigo: "XYZ", data_hora: agora() })).status).toBe(422);
+    expect((await registrar({ sintomas_codigo: ["ENJOO"], data_hora: "2026-10-23T10:00:00" })).status).toBe(400);
+    expect((await registrar({ sintomas_codigo: ["XYZ"], data_hora: agora() })).status).toBe(422);
+    const res = await registrar({ sintomas_codigo: ["ENJOO", "XYZ"], data_hora: agora() });
+    expect(res.status).toBe(422);
+    expect((await json(res)).erro).toBe("Sintoma inexistente: XYZ");
   });
 });

@@ -249,7 +249,11 @@ export const marcacaoLidas = z.object({ id: z.number().int().positive().optional
 const itemComprado = z.object({ venda_id: z.number().int().positive(), item_cardapio_id: z.number().int().positive() });
 
 export const registroSintoma = z.object({
-  sintoma_codigo: z.string().trim().min(1),
+  sintomas_codigo: z
+    .array(z.string().trim().min(1))
+    .min(1)
+    .max(30)
+    .refine((l) => new Set(l).size === l.length, "sintoma repetido"),
   data_hora: z.iso.datetime({ offset: true }),
   observacao: z.string().trim().min(1).max(100).optional(),
   itens: z

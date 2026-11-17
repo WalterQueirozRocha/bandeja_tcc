@@ -456,22 +456,33 @@ model Sintoma {
   descricao String
   grupo     GrupoSintoma
 
-  registros RegistroSintoma[]
+  registros RegistroSintomaSintoma[]
 }
 
+// Uma ocorrência: data e hora, os sintomas marcados e o que o aluno comeu antes.
 model RegistroSintoma {
   id               Int      @id @default(autoincrement())
   aluno_id         Int
-  sintoma_codigo   String
   data_hora        DateTime
-  observacao       String?  @db.VarChar(100) // só para o sintoma "outro"
+  observacao       String?  @db.VarChar(100) // só quando o sintoma "outro" está marcado
   registrado_em    DateTime @default(now()) // quando foi gravado; limite do que um pedido autorizado libera (RF20)
   // D3: o que o aluno comeu antes (itens da cantina e/ou alimento de fora); só registro, sem cálculo nem alerta (§4.8)
   alimento_externo String?  @db.VarChar(100)
 
-  aluno   Aluno                 @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
-  sintoma Sintoma               @relation(fields: [sintoma_codigo], references: [codigo])
-  itens   RegistroSintomaItem[]
+  aluno    Aluno                    @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  sintomas RegistroSintomaSintoma[]
+  itens    RegistroSintomaItem[]
+}
+
+// Sintomas marcados numa ocorrência.
+model RegistroSintomaSintoma {
+  registro_id    Int
+  sintoma_codigo String
+
+  registro RegistroSintoma @relation(fields: [registro_id], references: [id], onDelete: Cascade)
+  sintoma  Sintoma         @relation(fields: [sintoma_codigo], references: [codigo])
+
+  @@id([registro_id, sintoma_codigo])
 }
 
 // D3: itens das próprias compras indicados no registro do sintoma.

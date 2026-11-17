@@ -1,6 +1,6 @@
 import { textos } from "@bandeja/dominio";
 import type { SintomaEntrada } from "@/lib/validacao";
-import { buscarSintoma, gravarRegistro, itensComprados, listarSintomas } from "@/repositories/sintomas";
+import { codigosExistentes, gravarRegistro, itensComprados, listarSintomas } from "@/repositories/sintomas";
 import { ErroNegocio } from "./erros";
 
 const SINTOMA_OUTRO = "OUTRO";
@@ -31,11 +31,18 @@ export function descreverAlimento({ itens_cantina, alimento_externo }: { itens_c
   return partes.length ? `Comeu antes. ${partes.join(" ")}` : null;
 }
 
+// Sintomas da ocorrência numa linha, com o texto do "Outro" junto dele. Mesmo texto no diário, na tela do RF20 e no PDF.
+export function descreverSintomas({ sintomas, observacao }: { sintomas: { codigo: string; descricao: string }[]; observacao: string | null }) {
+  return sintomas.map((s) => (s.codigo === SINTOMA_OUTRO && observacao ? `${s.descricao}: ${observacao}` : s.descricao)).join(", ");
+}
+
 // RF12 / doc §4.8: só grava. Nenhum cálculo, alerta, contagem ou notificação.
 export async function registrarSintoma(aluno_id: number, dados: SintomaEntrada, agora = new Date()) {
-  if (!(await buscarSintoma(dados.sintoma_codigo))) throw new ErroNegocio(`Sintoma inexistente: ${dados.sintoma_codigo}`);
-  // Doc v3 §4.8: no "Outro" o texto é opcional; nos demais, não se aceita texto.
-  if (dados.sintoma_codigo !== SINTOMA_OUTRO && dados.observacao) throw new ErroNegocio('O texto livre é só para o sintoma "Outro"');
+  const existentes = await codigosExistentes(dados.sintomas_codigo);
+  const inexistentes = dados.sintomas_codigo.filter((c) => !existentes.has(c));
+  if (inexistentes.length) throw new ErroNegocio(`Sintoma inexistente: ${inexistentes.join(", ")}`);
+  // Doc v3 §4.8: com o "Outro" marcado o texto é opcional; sem ele, não se aceita texto.
+  if (!dados.sintomas_codigo.includes(SINTOMA_OUTRO) && dados.observacao) throw new ErroNegocio('O texto livre é só para o sintoma "Outro"');
   const data_hora = new Date(dados.data_hora);
   if (data_hora.getTime() > agora.getTime() + TOLERANCIA_FUTURO_MS) throw new ErroNegocio("A data e a hora não podem estar no futuro");
   // D3 (S3): indicar o alimento é obrigatório; o item precisa ser de compra concluída do próprio aluno, dentro da janela.
@@ -49,7 +56,7 @@ export async function registrarSintoma(aluno_id: number, dados: SintomaEntrada, 
     }
   }
   return gravarRegistro(aluno_id, {
-    sintoma_codigo: dados.sintoma_codigo,
+    sintomas_codigo: dados.sintomas_codigo,
     data_hora,
     observacao: dados.observacao ?? null,
     alimento_externo: dados.alimento_externo ?? null,

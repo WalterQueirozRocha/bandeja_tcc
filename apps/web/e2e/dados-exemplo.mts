@@ -85,7 +85,9 @@ export default async function criarDadosExemplo() {
   });
 
   // RF20: um registro já gravado e um responsável por projeto (computador e celular rodam em paralelo).
-  await prisma.registroSintoma.create({ data: { aluno_id: aluno.aluno!.id, sintoma_codigo: "ENJOO", data_hora: new Date(Date.now() - 3_600_000) } });
+  await prisma.registroSintoma.create({
+    data: { aluno_id: aluno.aluno!.id, data_hora: new Date(Date.now() - 3_600_000), sintomas: { create: { sintoma_codigo: "ENJOO" } } },
+  });
   const senha_hash = await bcrypt.hash("123456", 10);
   for (const projeto of ["desktop", "celular"]) {
     await prisma.usuario.create({

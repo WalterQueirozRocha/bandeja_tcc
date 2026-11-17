@@ -32,9 +32,9 @@ const decidir = (id: number, situacao: string, token = tokens.coordenacao) =>
 const ver = (id: number, token = tokens.responsavel) => liberados.GET(req(`/api/registros-sintomas/solicitacoes/${id}/registros`, token), ctx(id));
 const baixar = (id: number, token = tokens.responsavel) => pdf.GET(req(`/api/registros-sintomas/solicitacoes/${id}/pdf`, token), ctx(id));
 // D3: o alimento é obrigatório no registro.
-const registrar = (sintoma_codigo: string, data_hora: string, observacao?: string) =>
+const registrar = (sintomas_codigo: string[], data_hora: string, observacao?: string) =>
   sintomas.POST(
-    req(`/api/alunos/${alunoId}/sintomas`, tokens.aluno, { method: "POST", body: { sintoma_codigo, data_hora, observacao, alimento_externo: "lanche de casa" } }),
+    req(`/api/alunos/${alunoId}/sintomas`, tokens.aluno, { method: "POST", body: { sintomas_codigo, data_hora, observacao, alimento_externo: "lanche de casa" } }),
     ctx(alunoId),
   );
 const TIPOS_RF20 = ["REGISTROS_SOLICITADOS", "REGISTROS_AUTORIZADOS", "REGISTROS_RECUSADOS"] as const;
@@ -81,7 +81,7 @@ describe("pedido e decisão", () => {
   let id: number;
 
   it("responsável vinculado pede; outro pedido pendente para o mesmo aluno → 422", async () => {
-    await registrar("ENJOO", new Date(Date.now() - 3_600_000).toISOString());
+    await registrar(["ENJOO"], new Date(Date.now() - 3_600_000).toISOString());
     const res = await pedir();
     expect(res.status).toBe(201);
     id = (await json(res)).id;
@@ -139,10 +139,10 @@ describe("pedido e decisão", () => {
 
   it("autorizado: o responsável vê os registros gravados até a autorização, com o alimento (D3)", async () => {
     // Gravado depois da autorização, mesmo com data passada, não entra neste pedido.
-    await registrar("OUTRO", new Date(Date.now() - 7_200_000).toISOString(), "dor de cabeça");
+    await registrar(["OUTRO", "DOR_COLICA"], new Date(Date.now() - 7_200_000).toISOString(), "dor de cabeça");
     const corpo = await json(await ver(id));
     expect(corpo.pedido.aluno.id).toBe(alunoId);
-    expect(corpo.registros).toEqual([expect.objectContaining({ sintoma: "Enjoo", alimento: "Comeu antes. De fora: lanche de casa." })]);
+    expect(corpo.registros).toEqual([expect.objectContaining({ sintomas: "Enjoo", alimento: "Comeu antes. De fora: lanche de casa." })]);
   });
 
   it("D4: o acesso à tela fica registrado, e a coordenação vê só quando foi", async () => {
@@ -171,14 +171,11 @@ describe("pedido e decisão", () => {
     expect((await acessos(id)).map((a) => a.tipo)).toEqual(["TELA", "PDF"]);
   });
 
-  it("um novo pedido autorizado libera também os registros novos", async () => {
+  it("um novo pedido autorizado libera também os registros novos, uma linha por ocorrência", async () => {
     const novo = (await json(await pedir())).id;
     await decidir(novo, "AUTORIZADA");
     const corpo = await json(await ver(novo));
-    expect(corpo.registros.map((r: { sintoma: string; observacao: string | null }) => [r.sintoma, r.observacao])).toEqual([
-      ["Enjoo", null],
-      ["Outro", "dor de cabeça"],
-    ]);
+    expect(corpo.registros.map((r: { sintomas: string }) => r.sintomas)).toEqual(["Enjoo", "Dor ou cólica, Outro: dor de cabeça"]);
   });
 
   it("recusado: nada é liberado", async () => {
