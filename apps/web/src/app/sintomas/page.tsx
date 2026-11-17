@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
 import { buscarAlunoDoUsuario } from "@/repositories/alunos";
 import { registrosDoAluno } from "@/repositories/sintomas";
-import { descreverAlimento, listaDeSintomas } from "@/services/sintomas";
+import { descreverAlimento, descreverSintomas, listaDeSintomas } from "@/services/sintomas";
 import { FormularioSintoma } from "./formulario";
 
 // RF12/RF13: diário do próprio aluno, com o aviso fixo sempre visível.
@@ -34,10 +34,7 @@ export default async function Sintomas() {
                 <Clock aria-hidden="true" className="size-3.5" />
                 {r.data_hora.toLocaleString("pt-BR", { timeZone: "America/Bahia" })}
               </span>
-              <span className="font-semibold text-brand-navy">
-                {r.sintoma.descricao}
-                {r.observacao && `: ${r.observacao}`}
-              </span>
+              <span className="font-semibold text-brand-navy">{descreverSintomas(r)}</span>
               {descreverAlimento(r) && <span className="text-sm text-secondary">{descreverAlimento(r)}</span>}
             </li>
           ))}

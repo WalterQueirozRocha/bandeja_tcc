@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { CheckCircle2, Utensils } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Checkbox, Radio } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,7 +31,7 @@ const chave = (i: { venda_id: number; item_cardapio_id: number }) => `${i.venda_
 
 export function FormularioSintoma({ alunoId, grupos }: { alunoId: number; grupos: Grupo[] }) {
   const router = useRouter();
-  const [sintoma, setSintoma] = useState("");
+  const [sintomas, setSintomas] = useState<string[]>([]);
   const [dataHora, setDataHora] = useState(agoraLocal);
   // D3: compras nas 24 h antes da data e hora informadas; o aluno marca o que comeu (ou escreve o de fora).
   const [comprados, setComprados] = useState<ItemComprado[] | null>(null);
@@ -62,7 +62,7 @@ export function FormularioSintoma({ alunoId, grupos }: { alunoId: number; grupos
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        sintoma_codigo: sintoma,
+        sintomas_codigo: sintomas,
         data_hora: new Date(dataHora).toISOString(),
         observacao: observacao || undefined,
         itens: (comprados ?? []).filter((i) => marcados.includes(chave(i))).map(({ venda_id, item_cardapio_id }) => ({ venda_id, item_cardapio_id })),
@@ -71,7 +71,7 @@ export function FormularioSintoma({ alunoId, grupos }: { alunoId: number; grupos
     });
     setMensagem(res.ok ? "Registro salvo." : ((await res.json()).erro ?? "Não foi possível salvar."));
     if (res.ok) {
-      setSintoma("");
+      setSintomas([]);
       setMarcados([]);
       setExterno("");
       router.refresh();
@@ -131,7 +131,12 @@ export function FormularioSintoma({ alunoId, grupos }: { alunoId: number; grupos
                   key={s.codigo}
                   className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-borda bg-surface-card p-2.5 text-sm transition-colors hover:border-brand-royal/60 has-checked:border-brand-royal has-checked:bg-brand-royal/5 has-checked:ring-1 has-checked:ring-brand-royal"
                 >
-                  <Radio name="sintoma" value={s.codigo} checked={sintoma === s.codigo} onChange={() => setSintoma(s.codigo)} />
+                  <Checkbox
+                    name="sintoma"
+                    value={s.codigo}
+                    checked={sintomas.includes(s.codigo)}
+                    onChange={(e) => setSintomas(e.target.checked ? [...sintomas, s.codigo] : sintomas.filter((c) => c !== s.codigo))}
+                  />
                   <span>{s.descricao}</span>
                 </label>
               ))}
@@ -140,11 +145,11 @@ export function FormularioSintoma({ alunoId, grupos }: { alunoId: number; grupos
         ))}
       </div>
 
-      {sintoma === "OUTRO" && (
+      {sintomas.includes("OUTRO") && (
         <Input name="observacao" maxLength={100} aria-label="Observação" placeholder="Descreva em poucas palavras (opcional)" />
       )}
       <div className="flex flex-wrap items-center gap-3">
-        <Button type="submit" size="lg" disabled={!sintoma || !indicouAlimento}>
+        <Button type="submit" size="lg" disabled={!sintomas.length || !indicouAlimento}>
           <CheckCircle2 aria-hidden="true" className="size-4" />
           Registrar
         </Button>
