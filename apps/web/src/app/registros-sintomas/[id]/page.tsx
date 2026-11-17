@@ -62,10 +62,7 @@ export default async function RegistrosLiberados({ params }: PageProps<"/registr
           {registros.map((r) => (
             <li key={r.id} className="flex flex-col gap-1 rounded-xl border border-borda bg-surface-card p-4 shadow-xs">
               <span className="text-xs font-medium text-secondary tabular-nums">{dataHoraNaBahia(r.data_hora)}</span>
-              <span className="font-medium text-brand-navy">
-                {r.sintoma}
-                {r.observacao && `: ${r.observacao}`}
-              </span>
+              <span className="font-medium text-brand-navy">{r.sintomas}</span>
               {r.alimento && <span className="text-sm text-secondary">{r.alimento}</span>}
             </li>
           ))}

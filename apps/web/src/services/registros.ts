@@ -8,7 +8,7 @@ import { buscarPedido, criarPedido, existePedidoPendente, gravarAcesso, gravarDe
 import { registrosGravadosAte } from "@/repositories/sintomas";
 import { exigirAcessoAoAluno } from "./alunos";
 import { ErroNegocio } from "./erros";
-import { descreverAlimento } from "./sintomas";
+import { descreverAlimento, descreverSintomas } from "./sintomas";
 
 // RF20 (decisão V3-1): o responsável pede; a coordenação autoriza sem ver o conteúdo;
 // o responsável vê na plataforma os registros gravados até a autorização e pode baixar o PDF.
@@ -69,8 +69,7 @@ export async function registrosLiberados(sessao: Sessao, id: number, tipo: TipoA
     registros: registros.map((r) => ({
       id: r.id,
       data_hora: r.data_hora,
-      sintoma: r.sintoma.descricao,
-      observacao: r.observacao,
+      sintomas: descreverSintomas(r),
       alimento: descreverAlimento(r), // D3 (S5)
     })),
   };
@@ -126,12 +125,11 @@ export async function gerarPdfRegistros({ pedido, registros }: RegistrosLiberado
   y -= 10;
   if (registros.length === 0) escrever("Nenhum registro.");
   for (const r of registros) {
-    garantirEspaco(80); // o registro (até 5 linhas, com o alimento) não se divide entre páginas
+    garantirEspaco(80); // a ocorrência (até 5 linhas, com o alimento) não se divide entre páginas
     const topo = y;
     escrever(dataHoraNaBahia(r.data_hora), { fonte: negrito });
     y = topo;
-    escrever(r.sintoma, { x: MARGEM + 110 });
-    if (r.observacao) escrever(r.observacao, { x: MARGEM + 110, tamanho: 9 });
+    escrever(r.sintomas, { x: MARGEM + 110 });
     if (r.alimento) escrever(r.alimento, { x: MARGEM + 110, tamanho: 9 });
     y -= 6;
   }
