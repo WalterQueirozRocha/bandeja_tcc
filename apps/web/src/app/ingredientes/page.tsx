@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { exigirSessaoNaPagina } from "@/lib/acesso";
+import { situacaoMarcacao } from "@/lib/conferencia";
 import { GRUPO_ALIMENTAR, ORIGEM_INGREDIENTE } from "@/lib/rotulos";
 import { listarIngredientes } from "@/repositories/ingredientes";
 
@@ -87,7 +88,12 @@ export default async function Ingredientes({ searchParams }: PageProps<"/ingredi
                 </TableCell>
                 <TableCell>
                   <span className="flex flex-wrap gap-1">
-                    {i.origem !== "ROTULO" && !i.marcacao_conferida_em && <Badge variant="outline">Pendente</Badge>}
+                    {situacaoMarcacao(i) === "PENDENTE" && <Badge variant="outline">Pendente</Badge>}
+                    {situacaoMarcacao(i) === "NAO_CONFERIDA" && (
+                      <Badge variant="outline" className="border-atencao/60 text-atencao-texto" data-testid="nao-conferido">
+                        Não conferido
+                      </Badge>
+                    )}
                     {i.origem !== "ROTULO" && i.marcacao_conferida_em && i.marcadores.length === 0 && (
                       <Badge variant="outline">Sem alergênico</Badge>
                     )}

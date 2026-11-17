@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Pencil } from "lucide-react";
 import { AcoesRegistro, SeloDesabilitado } from "@/components/acao";
+import { Alerta } from "@/components/alerta";
 import { Indicador, PAINEL } from "@/components/indicador";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,7 +26,7 @@ export default async function Preparacao({ params }: PageProps<"/preparacoes/[id
     if (e instanceof ErroNegocio && e.status === 404) notFound();
     throw e;
   }
-  const [composicao, { alergenos }, cg] = dados;
+  const [composicao, { alergenos, nao_conferidos }, cg] = dados;
   const p = composicao.porcao;
   const ativo = (await buscarPreparacao(id))?.ativo ?? true;
 
@@ -112,6 +113,12 @@ export default async function Preparacao({ params }: PageProps<"/preparacoes/[id
                 </li>
               ))}
             </ul>
+          )}
+          {nao_conferidos.length > 0 && (
+            <Alerta estado="AVISO" role="note" data-testid="alergenos-nao-conferidos">
+              Marcação ainda não conferida em dupla em: {nao_conferidos.join(", ")}. Os alergênicos acima vêm dessa marcação; confira-a
+              antes do uso com estudantes.
+            </Alerta>
           )}
         </CardContent>
       </Card>

@@ -7,6 +7,8 @@ const camposCalculo = {
   grupo_alimentar: true,
   origem: true,
   marcacao_conferida_em: true,
+  marcacao_conferida_por_1: true,
+  marcacao_conferida_por_2: true,
   forma_crua_id: true,
   modo_preparo: true,
   energia_kcal: true,

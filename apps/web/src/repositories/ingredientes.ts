@@ -48,6 +48,8 @@ export async function listarIngredientes({ busca, grupo, origem, inativos, pagin
         modo_preparo: true,
         ativo: true,
         marcacao_conferida_em: true,
+        marcacao_conferida_por_1: true,
+        marcacao_conferida_por_2: true,
         marcadores: { select: { categoria_codigo: true, presenca: true } },
       },
     }),
